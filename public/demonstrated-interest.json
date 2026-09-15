@@ -1,0 +1,111 @@
+{
+  "tracked": [
+    { "school": "Vanderbilt University", "level": "Considered" },
+    { "school": "Boston College", "level": "Considered" },
+    { "school": "Boston University", "level": "Important" },
+    { "school": "Carnegie Mellon University", "level": "Considered" },
+    { "school": "George Washington University", "level": "Considered" },
+    { "school": "Northeastern University", "level": "Important" },
+    { "school": "Tulane University", "level": "Important" },
+    { "school": "American University", "level": "Important" },
+    { "school": "Lehigh University", "level": "Important" },
+    { "school": "Worcester Polytechnic Institute", "level": "Considered" },
+    { "school": "Wake Forest University", "level": "Considered" },
+    { "school": "Syracuse University", "level": "Considered" },
+    { "school": "University of Miami", "level": "Considered" },
+    { "school": "Tufts University", "level": "Considered" },
+    { "school": "Case Western Reserve University", "level": "Important" },
+    { "school": "University of Rochester", "level": "Considered" },
+    { "school": "NYU", "level": "Considered" }
+  ],
+  "notTracked": [
+    "Harvard University",
+    "Yale University",
+    "Princeton University",
+    "Stanford University",
+    "MIT",
+    "Caltech",
+    "Columbia University",
+    "Brown University",
+    "Cornell University",
+    "Duke University",
+    "Northwestern University",
+    "Johns Hopkins University",
+    "University of Chicago",
+    "UPenn",
+    "Dartmouth College",
+    "Most public universities (UC system, Texas, Florida, etc.)"
+  ],
+  "actions": [
+    {
+      "category": "Tier 1 — Trackable signals (highest weight)",
+      "items": [
+        {
+          "action": "Visit campus (in-person or virtual)",
+          "weight": "High",
+          "tip": "Sign in at the admissions office. Both in-person and virtual visits get logged. If you can't visit, attend a regional info session in your city."
+        },
+        {
+          "action": "Apply Early Decision",
+          "weight": "Highest",
+          "tip": "ED is the single strongest signal of interest you can send. Reserve it for your true #1 — but if a tracked-DI school is your top choice, ED is non-negotiable."
+        },
+        {
+          "action": "Open every email from admissions",
+          "weight": "High",
+          "tip": "Most schools track email opens via tracking pixels. When you receive emails, open them — even if you skim. Click at least one link per email."
+        },
+        {
+          "action": "Submit a strong, school-specific 'Why Us' essay",
+          "weight": "High",
+          "tip": "A generic supplement is a negative DI signal. Reference specific courses, professors, traditions, and clubs."
+        }
+      ]
+    },
+    {
+      "category": "Tier 2 — Engagement signals",
+      "items": [
+        {
+          "action": "Attend admissions info sessions",
+          "weight": "Medium",
+          "tip": "Both in-person and virtual sessions get logged. Many schools host webinars throughout the year — sign up early and actually attend."
+        },
+        {
+          "action": "Connect with your regional admissions officer",
+          "weight": "Medium",
+          "tip": "Email a thoughtful, specific question (not 'what's it like there?'). Ask about a program, course, or research opportunity. Keep it short — 4 sentences max."
+        },
+        {
+          "action": "Sign up for the school's mailing list early",
+          "weight": "Medium",
+          "tip": "Sign up junior year, not senior fall. The longer you've been on the list, the stronger the signal."
+        },
+        {
+          "action": "Attend a college fair where the school is present",
+          "weight": "Medium",
+          "tip": "Get your barcode scanned and ask one specific question. Follow up with a thank-you email afterward."
+        }
+      ]
+    },
+    {
+      "category": "Tier 3 — Soft signals",
+      "items": [
+        {
+          "action": "Follow the school on social media",
+          "weight": "Low",
+          "tip": "Not tracked by admissions, but it keeps you informed about events and deadlines. Don't overdo it."
+        },
+        {
+          "action": "Engage with current students or alumni",
+          "weight": "Low",
+          "tip": "Reach out via LinkedIn or AdmitHub-style chatbots. Not tracked, but it gives you genuine material for your 'Why Us' essay."
+        },
+        {
+          "action": "Apply to specific scholarship programs at the school",
+          "weight": "Low",
+          "tip": "Some scholarships require separate applications. Applying signals serious interest — and may be tracked."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,102 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./test.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/test-client"
+}
+
+model User {
+  id                   String         @id
+  email                String         @unique
+  name                 String?
+  plan                 String         @default("plus")
+  stripeCustomerId     String?
+  stripeSubscriptionId String?
+  analysisCount        Int            @default(0)
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
+  deletedAt            DateTime?
+  profile              Profile?
+  colleges             CollegeList[]
+  essays               Essay[]
+  analyses             Analysis[]
+  subscriptions        Subscription[]
+}
+
+model Subscription {
+  id                 String    @id @default(cuid())
+  userId             String
+  user               User      @relation(fields: [userId], references: [id])
+  stripeSubId        String    @unique
+  stripePriceId      String
+  stripeCustomerId   String
+  status             String
+  plan               String
+  currentPeriodStart DateTime
+  currentPeriodEnd   DateTime
+  cancelAtPeriodEnd  Boolean   @default(false)
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  deletedAt          DateTime?
+
+  @@index([userId])
+}
+
+model Profile {
+  id            String    @id @default(cuid())
+  userId        String    @unique
+  user          User      @relation(fields: [userId], references: [id])
+  gpa           Float?
+  weightedGpa   Float?
+  satScore      Int?
+  actScore      Int?
+  grade         Int?
+  state         String?
+  activities    String?
+  awards        String?
+  courses       String?
+  intendedMajor String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+}
+
+model Analysis {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id])
+  type      String
+  input     String
+  result    String
+  createdAt DateTime  @default(now())
+  deletedAt DateTime?
+}
+
+model CollegeList {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  collegeName String
+  category    String
+  matchScore  Float?
+  notes       String?
+  createdAt   DateTime  @default(now())
+  deletedAt   DateTime?
+}
+
+model Essay {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id])
+  prompt    String
+  content   String
+  feedback  String?
+  wordCount Int?
+  college   String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+}

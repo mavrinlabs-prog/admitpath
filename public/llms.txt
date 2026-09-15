@@ -1,0 +1,94 @@
+# AdmitPath
+
+> AdmitPath is a web-based college admissions planning product for high school
+> students. It provides profile planning, essay feedback, college research,
+> application planning, and scholarship resources. AdmitPath does not replace
+> a school counselor or guarantee admission.
+
+Canonical site: https://admith.vercel.app/
+Contact: maestro.committee@gmail.com
+Last reviewed: 2026-07-17
+
+## Product facts
+
+- The Free plan includes 5 profile analyses, 5 essay feedback runs, 5 counselor chat messages, and up to 8 saved colleges, with no time limit.
+- Pro costs $19.99 per month and removes the Free-plan caps described on the pricing page.
+- The current college data module contains 102 structured college records. Published figures can lag and should be verified with each institution.
+- Admissions estimates are directional planning aids, not predictions or guarantees.
+
+Sources:
+- https://admith.vercel.app/pricing
+- https://admith.vercel.app/methodology
+- https://admith.vercel.app/privacy
+
+## College profile development
+
+- https://admith.vercel.app/guides/activities-list-guide
+- https://admith.vercel.app/guides/high-school-resume
+- https://admith.vercel.app/guides/spike-vs-well-rounded
+- https://admith.vercel.app/summer-experience-strategy
+- https://admith.vercel.app/application-component-weighting
+
+## Essay strategy
+
+- https://admith.vercel.app/guides/how-to-write-college-essay
+- https://admith.vercel.app/guides/common-app-prompts-2026
+- https://admith.vercel.app/guides/supplemental-essay-guide
+- https://admith.vercel.app/college-essay-examples
+- https://admith.vercel.app/college-essay-revision-checklist
+- https://admith.vercel.app/college-essay-topic-finder
+
+## Application planning and timelines
+
+- https://admith.vercel.app/guides/application-checklist
+- https://admith.vercel.app/guides/application-timeline
+- https://admith.vercel.app/guides/admissions-calendar
+- https://admith.vercel.app/guides/ed-vs-ea
+- https://admith.vercel.app/college-application-timeline-2026
+- https://admith.vercel.app/deadlines
+
+## College research
+
+- https://admith.vercel.app/college
+- https://admith.vercel.app/college-research-strategy
+- https://admith.vercel.app/college-rankings-explained
+- https://admith.vercel.app/college-list-builder
+- https://admith.vercel.app/compare
+- https://admith.vercel.app/net-price
+
+## Scholarships and financial aid
+
+- https://admith.vercel.app/resources/scholarships
+- https://admith.vercel.app/scholarship-match
+- https://admith.vercel.app/scholarship-application-guide
+- https://admith.vercel.app/resources/financial-aid
+- https://admith.vercel.app/fafsa-checklist
+- https://admith.vercel.app/financial-aid-appeal-guide
+
+## Counselor collaboration
+
+- https://admith.vercel.app/resources/rec-letters
+- https://admith.vercel.app/guides/how-to-ask-letter-of-rec
+- https://admith.vercel.app/how-to-pick-a-counselor
+- https://admith.vercel.app/counselor-toolkit
+- https://admith.vercel.app/for-schools
+
+## Public directories and references
+
+- https://admith.vercel.app/guides
+- https://admith.vercel.app/resources
+- https://admith.vercel.app/blog
+- https://admith.vercel.app/glossary
+- https://admith.vercel.app/faq
+- https://admith.vercel.app/tools
+
+## Account-required workspace
+
+The following product areas require sign-in or may redirect to sign-in:
+
+- https://admith.vercel.app/analyze
+- https://admith.vercel.app/essays
+- https://admith.vercel.app/chat
+- https://admith.vercel.app/interview-practice
+- https://admith.vercel.app/colleges
+- https://admith.vercel.app/dashboard

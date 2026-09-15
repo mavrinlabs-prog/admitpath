@@ -1,0 +1,398 @@
+{
+  "app": "Admith",
+  "target": "https://admith.vercel.app",
+  "scope": "cognifys-projects",
+  "startedAt": "2026-06-19T00:51:09.663Z",
+  "finishedAt": "2026-06-19T00:51:49.408Z",
+  "browserExecutable": "C:/Users/itmoh/AppData/Local/ms-playwright/chromium_headless_shell-1223/chrome-headless-shell-win64/chrome-headless-shell.exe",
+  "summary": {
+    "pass": false,
+    "issueCount": 1,
+    "issues": [
+      {
+        "path": "/refer",
+        "reasons": [
+          "1 console error(s)",
+          "1 bad response(s)"
+        ]
+      }
+    ]
+  },
+  "caveats": [
+    "Signed-in dashboard smoke was not possible from the fresh Playwright context because no authenticated Admith session/storage state was available. Unauthenticated dashboard behavior was checked instead.",
+    "Next.js RSC link prefetch fetches ending in net::ERR_ABORTED were recorded but classified as benign browser/navigation prefetch aborts."
+  ],
+  "vercel": {
+    "projectLink": {
+      "projectId": "prj_LS6K1tG2HQuvfS5sYixqSKjAQdzj",
+      "orgId": "team_bJYhVGrF6TeKIJJ1AsxzqYvh"
+    },
+    "productionErrorLogsLast30m": {
+      "status": "not_completed_cli_timeout",
+      "attemptedCommands": [
+        "npx.cmd vercel logs https://admith.vercel.app --since 30m --level error --json --scope cognifys-projects",
+        "npm.cmd exec --yes vercel@50.28.0 -- logs https://admith.vercel.app --since 30m --level error --json --scope cognifys-projects"
+      ],
+      "details": "Global vercel was unavailable. Both npx.cmd/npm.cmd exec Vercel CLI log attempts timed out before returning log data, and inspect timed out as well."
+    }
+  },
+  "verification": {
+    "typecheck": "npm.cmd run typecheck: passed",
+    "productionHeaderChecks": "All six requested URLs returned HTTP 200 headers during fresh curl checks."
+  },
+  "changedFiles": [
+    "C:/Users/itmoh/OneDrive/Documents/Apps/admith/app/api/referrals/route.ts",
+    "C:/Users/itmoh/OneDrive/Documents/Apps/admith/app/refer/page.tsx"
+  ],
+  "checks": [
+    {
+      "path": "/",
+      "requestedUrl": "https://admith.vercel.app/",
+      "status": 200,
+      "finalUrl": "https://admith.vercel.app/",
+      "title": "College Admissions AI Counselor | AdmitPath",
+      "textLength": 9789,
+      "bodySample": "Skip to main content AdmitPath How it works For parents Pricing Blog Sign in Get Started Calibrated to real CDS admissions data from 102 schools Know exactly where you stand. Get the plan to get in. You’ve Googled “chances at [school]” at 2",
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedRequests": [
+        {
+          "url": "https://admith.vercel.app/sign-up?_rsc=19zvn",
+          "method": "GET",
+          "resourceType": "fetch",
+          "failure": "net::ERR_ABORTED"
+        }
+      ],
+      "benignFailedRequests": [
+        {
+          "url": "https://admith.vercel.app/sign-up?_rsc=19zvn",
+          "method": "GET",
+          "resourceType": "fetch",
+          "failure": "net::ERR_ABORTED"
+        }
+      ],
+      "badResponses": [],
+      "ok": true,
+      "notes": [],
+      "actionableFailedRequests": []
+    },
+    {
+      "path": "/dashboard",
+      "requestedUrl": "https://admith.vercel.app/dashboard",
+      "status": 200,
+      "finalUrl": "https://admith.vercel.app/sign-in",
+      "title": "Sign In | AdmitPath",
+      "textLength": 545,
+      "bodySample": "Skip to main content AdmitPath WELCOME BACK Pick up where you left off. Your scores, action plan, and essay drafts are saved and ready. Sign in to keep building toward your target schools. Your 7-dimension profile score, updated Essay feedb",
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedRequests": [
+        {
+          "url": "https://admith.vercel.app/?_rsc=1kd0r",
+          "method": "GET",
+          "resourceType": "fetch",
+          "failure": "net::ERR_ABORTED"
+        }
+      ],
+      "benignFailedRequests": [
+        {
+          "url": "https://admith.vercel.app/?_rsc=1kd0r",
+          "method": "GET",
+          "resourceType": "fetch",
+          "failure": "net::ERR_ABORTED"
+        }
+      ],
+      "badResponses": [],
+      "ok": true,
+      "notes": [],
+      "actionableFailedRequests": [],
+      "authSmoke": {
+        "sessionAvailable": false,
+        "expectation": "Unauthenticated visitor should be redirected/gated.",
+        "observedFinalUrl": "https://admith.vercel.app/sign-in",
+        "observedTextSample": "Skip to main content AdmitPath WELCOME BACK Pick up where you left off. Your scores, action plan, and essay drafts are saved and ready. Sign in to keep building toward your target schools. Your 7-dimension profile score, updated Essay feedb",
+        "observedRedirectOrGate": true
+      }
+    },
+    {
+      "path": "/colleges/hamilton-college",
+      "requestedUrl": "https://admith.vercel.app/colleges/hamilton-college",
+      "status": 200,
+      "finalUrl": "https://admith.vercel.app/colleges/hamilton-college",
+      "title": "Hamilton Admissions Guide 2026 | How to Get In | AdmitPath",
+      "textLength": 5391,
+      "bodySample": "Skip to main content AdmitPath How It Works For Parents Pricing Blog Sign in Get Started All Colleges COLLEGE PROFILE How to Get Into Hamilton in 2026 Open curriculum LAC celebrated for exceptional writing instruction. Quick Answer Hamilton",
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedRequests": [
+        {
+          "url": "https://admith.vercel.app/?_rsc=18jmk",
+          "method": "GET",
+          "resourceType": "fetch",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://admith.vercel.app/pricing?_rsc=18jmk",
+          "method": "GET",
+          "resourceType": "fetch",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://admith.vercel.app/how-it-works?_rsc=18jmk",
+          "method": "GET",
+          "resourceType": "fetch",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://admith.vercel.app/parent?_rsc=18jmk",
+          "method": "GET",
+          "resourceType": "fetch",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://admith.vercel.app/counselor?_rsc=18jmk",
+          "method": "GET",
+          "resourceType": "fetch",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://admith.vercel.app/blog?_rsc=18jmk",
+          "method": "GET",
+          "resourceType": "fetch",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://admith.vercel.app/sign-in?_rsc=18jmk",
+          "method": "GET",
+          "resourceType": "fetch",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://admith.vercel.app/sign-up?_rsc=18jmk",
+          "method": "GET",
+          "resourceType": "fetch",
+          "failure": "net::ERR_ABORTED"
+        }
+      ],
+      "benignFailedRequests": [
+        {
+          "url": "https://admith.vercel.app/?_rsc=18jmk",
+          "method": "GET",
+          "resourceType": "fetch",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://admith.vercel.app/pricing?_rsc=18jmk",
+          "method": "GET",
+          "resourceType": "fetch",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://admith.vercel.app/how-it-works?_rsc=18jmk",
+          "method": "GET",
+          "resourceType": "fetch",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://admith.vercel.app/parent?_rsc=18jmk",
+          "method": "GET",
+          "resourceType": "fetch",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://admith.vercel.app/counselor?_rsc=18jmk",
+          "method": "GET",
+          "resourceType": "fetch",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://admith.vercel.app/blog?_rsc=18jmk",
+          "method": "GET",
+          "resourceType": "fetch",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://admith.vercel.app/sign-in?_rsc=18jmk",
+          "method": "GET",
+          "resourceType": "fetch",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://admith.vercel.app/sign-up?_rsc=18jmk",
+          "method": "GET",
+          "resourceType": "fetch",
+          "failure": "net::ERR_ABORTED"
+        }
+      ],
+      "badResponses": [],
+      "ok": true,
+      "notes": [],
+      "actionableFailedRequests": []
+    },
+    {
+      "path": "/colleges/university-of-michigan/essays",
+      "requestedUrl": "https://admith.vercel.app/colleges/university-of-michigan/essays",
+      "status": 200,
+      "finalUrl": "https://admith.vercel.app/colleges/university-of-michigan/essays",
+      "title": "How to Write the Michigan Supplemental Essays (2026) | AdmitPath",
+      "textLength": 5862,
+      "bodySample": "Skip to main content AdmitPath How It Works For Parents Pricing Blog Sign in Get Started Michigan Admissions MICHIGAN ESSAYS How to Write the Michigan Supplemental Essays (2026) Prompt-by-prompt analysis, brainstorm angles, composite annota",
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedRequests": [
+        {
+          "url": "https://admith.vercel.app/how-it-works?_rsc=1kseh",
+          "method": "GET",
+          "resourceType": "fetch",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://admith.vercel.app/parent?_rsc=1kseh",
+          "method": "GET",
+          "resourceType": "fetch",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://admith.vercel.app/sign-in?_rsc=1kseh",
+          "method": "GET",
+          "resourceType": "fetch",
+          "failure": "net::ERR_ABORTED"
+        }
+      ],
+      "benignFailedRequests": [
+        {
+          "url": "https://admith.vercel.app/how-it-works?_rsc=1kseh",
+          "method": "GET",
+          "resourceType": "fetch",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://admith.vercel.app/parent?_rsc=1kseh",
+          "method": "GET",
+          "resourceType": "fetch",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://admith.vercel.app/sign-in?_rsc=1kseh",
+          "method": "GET",
+          "resourceType": "fetch",
+          "failure": "net::ERR_ABORTED"
+        }
+      ],
+      "badResponses": [],
+      "ok": true,
+      "notes": [],
+      "actionableFailedRequests": []
+    },
+    {
+      "path": "/refer",
+      "requestedUrl": "https://admith.vercel.app/refer",
+      "status": 200,
+      "finalUrl": "https://admith.vercel.app/refer",
+      "title": "Refer a Friend — Share AdmitPath | AdmitPath",
+      "textLength": 588,
+      "bodySample": "Skip to main content AdmitPath Dashboard Referral Program Give a free month. Get a free month. Share AdmitPath with your friends. When they upgrade to Pro, you both get a free month. It’s that simple. YOUR REFERRAL LINK https://admith.verce",
+      "consoleErrors": [
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 401 ()"
+        }
+      ],
+      "pageErrors": [],
+      "failedRequests": [],
+      "benignFailedRequests": [],
+      "badResponses": [
+        {
+          "status": 401,
+          "url": "https://admith.vercel.app/api/referrals",
+          "requestMethod": "GET",
+          "resourceType": "fetch"
+        }
+      ],
+      "ok": false,
+      "notes": [
+        "networkidle timeout after domcontentloaded"
+      ],
+      "actionableFailedRequests": []
+    },
+    {
+      "path": "/blog/common-app-essay-prompts",
+      "requestedUrl": "https://admith.vercel.app/blog/common-app-essay-prompts",
+      "status": 200,
+      "finalUrl": "https://admith.vercel.app/blog/common-app-essay-prompts",
+      "title": "Common App Essay Prompts 2026 | AdmitPath",
+      "textLength": 6601,
+      "bodySample": "Skip to main content AdmitPath How It Works For Parents Pricing Blog Sign in Get Started Back to blog Home Blog Common App Essay Prompts (2026–2027): Full List + How to Choose ESSAYS · APR 25, 2026 Common App Essay Prompts (2026–2027): Full",
+      "consoleErrors": [],
+      "pageErrors": [],
+      "failedRequests": [
+        {
+          "url": "https://admith.vercel.app/how-it-works?_rsc=wj75x",
+          "method": "GET",
+          "resourceType": "fetch",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://admith.vercel.app/pricing?_rsc=wj75x",
+          "method": "GET",
+          "resourceType": "fetch",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://admith.vercel.app/parent?_rsc=wj75x",
+          "method": "GET",
+          "resourceType": "fetch",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://admith.vercel.app/counselor?_rsc=wj75x",
+          "method": "GET",
+          "resourceType": "fetch",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://admith.vercel.app/blog?_rsc=wj75x",
+          "method": "GET",
+          "resourceType": "fetch",
+          "failure": "net::ERR_ABORTED"
+        }
+      ],
+      "benignFailedRequests": [
+        {
+          "url": "https://admith.vercel.app/how-it-works?_rsc=wj75x",
+          "method": "GET",
+          "resourceType": "fetch",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://admith.vercel.app/pricing?_rsc=wj75x",
+          "method": "GET",
+          "resourceType": "fetch",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://admith.vercel.app/parent?_rsc=wj75x",
+          "method": "GET",
+          "resourceType": "fetch",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://admith.vercel.app/counselor?_rsc=wj75x",
+          "method": "GET",
+          "resourceType": "fetch",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "https://admith.vercel.app/blog?_rsc=wj75x",
+          "method": "GET",
+          "resourceType": "fetch",
+          "failure": "net::ERR_ABORTED"
+        }
+      ],
+      "badResponses": [],
+      "ok": true,
+      "notes": [],
+      "actionableFailedRequests": []
+    }
+  ]
+}

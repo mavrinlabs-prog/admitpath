@@ -1,0 +1,10 @@
+/* TEAM */
+Name: AdmitPath team
+Contact: maestro.committee@gmail.com
+Site: https://admith.vercel.app
+Location: Osprey, Florida
+
+/* SITE */
+Standards: HTML5, CSS3
+Software: Next.js, React, TypeScript, Prisma, PostgreSQL
+AI: Cerebras, Groq (no OpenAI)

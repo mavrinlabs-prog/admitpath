@@ -1,0 +1,529 @@
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+  // Connection pool tuning for 1M-user scale. These bounds apply to
+  // Prisma's internal connection pool (independent of Neon/Supabase
+  // server-side pooler). ?connection_limit=20&pool_timeout=15 should
+  // be appended to DATABASE_URL in production.
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ---------------------------------------------------------------------------
+// User
+// ---------------------------------------------------------------------------
+
+model User {
+  id        String  @id
+  email     String  @unique
+  name      String?
+  /// Avatar URL synced from Clerk on webhook/sign-in.
+  avatarUrl String?
+
+  // -- Plan & billing --
+  /// "free" | "pro". See lib/trial.ts for gating logic.
+  plan                 String    @default("free")
+  /// Internal/admin accounts (Mithran, astroslayer88) are permanently Pro
+  /// without a Stripe subscription. Seed scripts set this to true.
+  /// Plan-gating code checks this flag to bypass Stripe checks.
+  isInternal           Boolean   @default(false)
+  stripeCustomerId     String?   @unique
+  stripeSubscriptionId String?
+  /// Canonical entitlement provenance: "STRIPE_SUBSCRIPTION" |
+  /// "LEGACY_TRIAL" | "MANUAL_GRANT". Null means Free.
+  entitlementSource    String?
+  /// End of a time-limited entitlement. Legacy trials retain their original
+  /// Stripe trial_end and are never extended by application code.
+  entitlementExpiresAt DateTime?
+
+  // -- Usage counters (free-tier caps enforced by lib/trial.ts) --
+  analysisCount   Int @default(0)
+  trialEssayCount Int @default(0)
+  trialChatCount  Int @default(0)
+
+  // -- Email consent (U3 swarm rule) --
+  emailConsent   Boolean   @default(false)
+  emailConsentAt DateTime?
+
+  // -- Training-data consent (privacy: student essays/profiles must never
+  //    be stored as LLM training examples without explicit opt-in) --
+  trainingConsent   Boolean   @default(false)
+  trainingConsentAt DateTime?
+
+  // -- Deprecated trial marker; cleared by the Pro-trial removal migration --
+  trialStartedAt DateTime?
+
+  // -- Referral tracking --
+  /// User ID of the person who referred this user (set during signup via ?ref= param).
+  referredBy           String?
+  /// Number of successful referral conversions (friends who upgraded to paid).
+  referralCount        Int     @default(0)
+  /// Free months earned via referrals (1 per converted referral).
+  referralMonthsEarned Int     @default(0)
+
+  // -- Profile completion flag (0-100, cached for fast dashboard reads) --
+  /// Cached profile-completion percentage so the dashboard can render a
+  /// progress ring without joining + computing from Profile fields.
+  profileCompletePct Int @default(0)
+
+  // -- Device fingerprinting (one-account-per-device) --
+  /// Device fingerprint hash set on first sign-in. Used to prevent
+  /// multiple accounts from the same browser/device.
+  deviceId String?
+
+  // -- Timestamps --
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  // -- Relations --
+  profile          Profile?
+  colleges         CollegeList[]
+  essays           Essay[]
+  analyses         Analysis[]
+  subscriptions    Subscription[]
+  applications     Application[]
+  oneTimePurchases OneTimePurchase[]
+  entitlements     Entitlement[]
+
+  @@index([email])
+  @@index([plan])
+  @@index([createdAt])
+  @@index([stripeCustomerId])
+}
+
+// ---------------------------------------------------------------------------
+// Entitlement (durable access audit)
+// ---------------------------------------------------------------------------
+
+/// Append-only entitlement provenance. User.entitlementSource and
+/// User.entitlementExpiresAt are the fast current-state snapshot; these rows
+/// preserve who/what granted access and the original expiry.
+model Entitlement {
+  id                   String    @id @default(cuid())
+  userId               String
+  user                 User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan                 String    @default("pro")
+  source               String
+  status               String    @default("ACTIVE")
+  startsAt             DateTime  @default(now())
+  endsAt               DateTime?
+  stripeSubscriptionId String?
+  actor                String?
+  reason               String?   @db.Text
+  metadata             Json?
+  revokedAt            DateTime?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  @@index([userId, status])
+  @@index([source, status])
+  @@index([stripeSubscriptionId])
+  @@index([endsAt])
+}
+
+// ---------------------------------------------------------------------------
+// Subscription
+// ---------------------------------------------------------------------------
+
+model Subscription {
+  id                 String    @id @default(cuid())
+  userId             String
+  user               User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stripeSubId        String    @unique
+  stripePriceId      String
+  stripeCustomerId   String
+  /// Stripe subscription status: "active" | "past_due" | "canceled" | etc.
+  status             String
+  /// Plan slug: "pro".
+  plan               String
+  currentPeriodStart DateTime
+  currentPeriodEnd   DateTime
+  cancelAtPeriodEnd  Boolean   @default(false)
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  deletedAt          DateTime?
+
+  @@index([userId])
+  @@index([status])
+  @@index([stripeCustomerId])
+}
+
+// ---------------------------------------------------------------------------
+// Profile
+// ---------------------------------------------------------------------------
+
+model Profile {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // -- Academics --
+  gpa         Float?
+  weightedGpa Float?
+  satScore    Int?
+  actScore    Int?
+  /// Current grade level (7-12).
+  grade       Int?
+  state       String?
+
+  // -- Extracurriculars & achievements --
+  /// JSON array of { name, role, hoursPerWeek, yearsInvolved }.
+  activities Json?
+  /// JSON array of award description strings.
+  awards     Json?
+  /// JSON array of course name strings (AP/IB/honors).
+  courses    Json?
+
+  // -- Goals --
+  intendedMajor     String?
+  /// JSON array of target college name strings.
+  targetColleges    Json?
+  /// Free-text admissions concern or question.
+  admissionsConcern String? @db.Text
+
+  // -- Financial (powers /money net-price predictor) --
+  /// Annual household income in USD. Optional for free-tier users.
+  householdIncome   Int?
+  /// Number of siblings currently in college (CSS Profile sibling discount).
+  siblingsInCollege Int?
+
+  // -- Timestamps --
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  @@index([createdAt])
+}
+
+// ---------------------------------------------------------------------------
+// Analysis (7-dimension AI scoring)
+// ---------------------------------------------------------------------------
+
+model Analysis {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  /// Analysis type: "profile" | "college_match" | "essay".
+  type String
+
+  /// Raw input payload sent to the AI scorer.
+  input Json
+
+  /// Full result JSON including the 7-dimension scores:
+  /// { academicRigor, leadership, awards, activityDepth, spike,
+  ///   essayQuality, recommendations } (each 0-100) plus overallScore,
+  ///   strengths, weaknesses, and per-college match data.
+  result Json
+
+  /// Denormalized overall score (0-100) for fast sorting/filtering without
+  /// JSON parsing. Null if analysis failed or returned no parseable score.
+  overallScore Float?
+
+  /// Scoring engine version tag (e.g. "v2.1") so we can compare results
+  /// across rubric changes.
+  scoringVersion String?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now()) @updatedAt
+  deletedAt DateTime?
+
+  @@index([userId, deletedAt, createdAt])
+  @@index([userId, type])
+  @@index([createdAt])
+}
+
+// ---------------------------------------------------------------------------
+// CollegeList
+// ---------------------------------------------------------------------------
+
+model CollegeList {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  collegeName String
+  /// Slug from data/colleges.ts (e.g. "harvard"). Allows joining with
+  /// static college data without a FK to a seed table.
+  collegeSlug String?
+  /// "reach" | "target" | "safety" | "undecided".
+  category    String
+  matchScore  Float?
+  notes       String?   @db.Text
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @default(now()) @updatedAt
+  deletedAt   DateTime?
+
+  @@index([userId, deletedAt])
+  @@index([collegeName])
+}
+
+// ---------------------------------------------------------------------------
+// Essay
+// ---------------------------------------------------------------------------
+
+model Essay {
+  id          String         @id @default(cuid())
+  userId      String
+  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  prompt      String         @db.Text
+  content     String         @db.Text
+  /// AI feedback JSON: { scores, overallScore, topStrengths, criticalIssues,
+  /// redFlags, lineEdits, summary }.
+  feedback    Json?
+  wordCount   Int?
+  /// Target college for this essay (free-text or slug).
+  college     String?
+  /// Essay type: "personal_statement" | "supplemental" | "why_us" | "activity" | "other".
+  essayType   String?
+  /// Latest version number -- increments on every snapshot in EssayVersion.
+  /// `1` means the user has scored once; `5` means five drafts saved.
+  version     Int            @default(1)
+  /// Denormalized latest overall score for fast list rendering.
+  latestScore Float?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  deletedAt   DateTime?
+  versions    EssayVersion[]
+
+  @@index([userId, deletedAt])
+  @@index([userId, college])
+  @@index([createdAt])
+}
+
+// ---------------------------------------------------------------------------
+// EssayVersion
+// ---------------------------------------------------------------------------
+
+/// Snapshot of an essay at the moment it was scored. We write one row per
+/// AI feedback request so students can compare drafts ("v3 was 72, v4 is
+/// 81 -- what changed?"). Git-for-essays per the PRD spec; per-save snapshot
+/// is the simplest contract -- no manual "save version" button needed.
+model EssayVersion {
+  id         String   @id @default(cuid())
+  requestKey String?  @unique
+  essayId    String
+  essay      Essay    @relation(fields: [essayId], references: [id], onDelete: Cascade)
+  version    Int
+  content    String   @db.Text
+  wordCount  Int?
+  /// The full feedback JSON for this version -- same shape as Essay.feedback
+  /// (scores, overallScore, topStrengths, criticalIssues, redFlags,
+  /// lineEdits, summary). Stored verbatim so older versions don't drift
+  /// when the rubric weights or output schema evolve.
+  feedback   Json?
+  /// Overall score at this version, denormalized so the version-list UI
+  /// doesn't have to JSON-parse `feedback` to render the score delta line.
+  /// Null if AI returned no parseable score (rare).
+  score      Float?
+  createdAt  DateTime @default(now())
+
+  @@index([essayId, version])
+  @@index([essayId, createdAt])
+}
+
+// ---------------------------------------------------------------------------
+// Application (per-school tracker)
+// ---------------------------------------------------------------------------
+
+/// Per-school application tracker -- the student's Common-App-style status
+/// dashboard. One row per (user, college). Tracks the round chosen
+/// (ED/EA/REA/RD), submission progress, decision outcome, and check-off
+/// state for the four big sub-tasks (essays drafted, recs requested,
+/// transcript sent, FAFSA filed). Notes is free-text for things we don't
+/// model.
+///
+/// We deliberately don't normalize the college -- `collegeSlug` is the
+/// slug from data/colleges.ts (e.g. "harvard"), and the UI joins by slug.
+/// Keeps migrations simple and avoids a foreign-key to a static seed list.
+///
+/// Hard rule: status transitions are append-only via PATCH; we don't
+/// version history rows here. If we ever need an audit trail of decision
+/// changes, that's a separate ApplicationStatusEvent model.
+model Application {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  collegeSlug String /// slug from data/colleges.ts
+  collegeName String /// denormalized for UI without re-resolving slug
+
+  /// Round: "ED" | "EA" | "REA" | "RD" | "RD_2" | "rolling" | null (undecided)
+  applicationRound String?
+
+  /// Status: "not_started" | "in_progress" | "submitted" | "accepted"
+  /// | "waitlisted" | "rejected" | "deferred" | "withdrawn".
+  /// Stored as string so we can add new states without a migration.
+  status String @default("not_started")
+
+  /// Deadline date for this application round.
+  deadline DateTime?
+
+  /// Sub-task checkboxes -- bools rather than nested JSON so the table can
+  /// be queried for "students who haven't sent transcripts" type ops.
+  essaysDrafted  Boolean @default(false)
+  recsRequested  Boolean @default(false)
+  transcriptSent Boolean @default(false)
+  fafsaSubmitted Boolean @default(false)
+
+  decisionDate DateTime?
+  notes        String?   @db.Text
+
+  /// --- Outcome tracking fields ---
+  /// Timestamps for decision outcomes -- set when the student updates status.
+  /// These allow aggregate queries ("how many students got accepted to X").
+  acceptedAt         DateTime?
+  rejectedAt         DateTime?
+  waitlistedAt       DateTime?
+  /// When the student commits / enrolls at this school (post-May-1 decision).
+  enrolledAt         DateTime?
+  /// Financial aid or merit scholarship offered, in USD. Null = not reported.
+  financialAidAmount Float?
+  /// True if this is the school the student committed to attend.
+  enrolled           Boolean   @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, collegeSlug])
+  @@index([userId, status])
+  @@index([collegeSlug])
+  @@index([status])
+  @@index([createdAt])
+}
+
+// ---------------------------------------------------------------------------
+// StripeWebhookEvent (idempotency)
+// ---------------------------------------------------------------------------
+
+/// Idempotency log for inbound Stripe webhooks. Stripe retries failed
+/// deliveries indefinitely, so inserting `event.id` once gives us
+/// at-most-once handler semantics. GC rows older than ~30 days.
+model StripeWebhookEvent {
+  eventId   String   @id
+  type      String
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}
+
+model OneTimePurchase {
+  id                String    @id @default(cuid())
+  userId            String
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  checkoutSessionId String    @unique
+  paymentIntentId   String?   @unique
+  offerSlug         String
+  amountTotal       Int
+  currency          String    @default("usd")
+  status            String    @default("paid")
+  customerId        String?
+  fulfilledAt       DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([userId, createdAt])
+  @@index([offerSlug, status])
+  @@index([customerId])
+}
+
+// ---------------------------------------------------------------------------
+// TrainingExample (LLM fine-tuning data collection)
+// ---------------------------------------------------------------------------
+
+/// Stores LLM input/output pairs for fine-tuning Groq/Llama models.
+/// Collected during Claude-first mode (USE_CLAUDE_PRIMARY=true).
+/// Export via /api/admin/training-data as JSONL.
+model TrainingExample {
+  id                String   @id @default(cuid())
+  route             String
+  tierUsed          Int
+  systemPrompt      String   @db.Text
+  userMessage       String   @db.Text
+  assistantResponse String   @db.Text
+  model             String
+  userId            String?
+  schoolsMentioned  String?
+  responseLength    Int
+  createdAt         DateTime @default(now())
+
+  @@index([route])
+  @@index([createdAt])
+}
+
+// ---------------------------------------------------------------------------
+// Coupon (10,000 single-use promotional codes)
+// ---------------------------------------------------------------------------
+
+/// Single-use coupon codes for promotional campaigns. Each code can either
+/// grant a percentage discount, free months, or directly upgrade the user's plan.
+/// Admin contact: maestro.committee@gmail.com
+model Coupon {
+  code         String    @id
+  /// Percentage discount (0-100). Null if coupon grants a plan instead.
+  discountPct  Int?
+  /// Number of free months granted by this coupon.
+  freeMonths   Int?
+  /// Timestamp when code was redeemed; null = still available.
+  usedAt       DateTime?
+  /// User ID who redeemed this code.
+  usedByUserId String?
+  /// Email or identifier of the intended recipient (optional).
+  issuedTo     String?
+  /// Expiration date. Null = never expires.
+  expiresAt    DateTime?
+  /// Plan to grant on redemption: "pro" | null.
+  planGrant    String?
+  createdAt    DateTime  @default(now())
+
+  @@index([usedAt])
+  @@index([expiresAt])
+  @@index([createdAt])
+}
+
+// ---------------------------------------------------------------------------
+// Referral (cross-app referral system)
+// ---------------------------------------------------------------------------
+
+/// Tracks referral relationships between users. Each user gets a unique
+/// referral_code on signup (first 8 chars of their Clerk user ID). When a
+/// referee upgrades to Pro, BOTH users receive 1 free month via Stripe
+/// subscription credit. Admin contact: maestro.committee@gmail.com
+model Referral {
+  id           String    @id @default(cuid())
+  referrerId   String /// User ID of the person who shared the link
+  refereeId    String /// User ID of the person who signed up via the link
+  referralCode String /// The code used (first 8 chars of referrer's ID)
+  /// "pending" = signed up but not yet upgraded; "credited" = both users received free month
+  status       String    @default("pending")
+  creditedAt   DateTime? /// When the Stripe credits were applied
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@unique([refereeId])
+  @@index([referrerId, status])
+  @@index([referralCode])
+  @@index([status])
+  @@index([createdAt])
+}
+
+// ---------------------------------------------------------------------------
+// Generation (universal AI generation log)
+// ---------------------------------------------------------------------------
+
+/// Every AI generation is logged here for audit, analytics, and billing.
+/// Works across all features: profile analysis, essay feedback, chat, etc.
+model Generation {
+  id        String   @id @default(cuid())
+  userId    String
+  app       String   @default("admitpath")
+  type      String // "analysis" | "essay" | "chat" | "college_match" | etc.
+  payload   Json // request + response summary
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@index([app, createdAt])
+}

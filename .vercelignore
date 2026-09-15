@@ -1,0 +1,19 @@
+# Build artifacts and tooling caches — Vercel rebuilds these.
+.next
+node_modules
+.turbo
+coverage
+
+# Local-only stuff
+.env
+.env.local
+.env.*.local
+.DS_Store
+*.log
+/test-reports
+/tests
+/scripts/test-*
+/scripts/lighthouse-*
+/scripts/build-audit*
+/scripts/ingest
+*.tsbuildinfo

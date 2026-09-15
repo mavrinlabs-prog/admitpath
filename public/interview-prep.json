@@ -1,0 +1,153 @@
+{
+  "categories": [
+    {
+      "name": "Universal Questions",
+      "description": "Asked at nearly every interview — have polished answers ready.",
+      "questions": [
+        {
+          "question": "Tell me about yourself.",
+          "tip": "Not your resume. Lead with what you care about, then connect it to what you do. 60–90 seconds.",
+          "avoid": "Reciting your activity list or starting with 'I was born in...'"
+        },
+        {
+          "question": "Why this school?",
+          "tip": "Name a specific program, professor, or campus resource. Generic praise ('great academics') is a red flag.",
+          "avoid": "Rankings, prestige, or anything you could say about any school."
+        },
+        {
+          "question": "What do you want to study, and why?",
+          "tip": "Connect your interest to a specific experience. Show the path from curiosity → action → deeper question.",
+          "avoid": "Claiming you've 'always known' or being vague about why."
+        },
+        {
+          "question": "What's your favorite extracurricular?",
+          "tip": "Pick one where you can describe a specific challenge you solved. Impact > title.",
+          "avoid": "Listing all of them or choosing one just because it sounds impressive."
+        },
+        {
+          "question": "What do you do for fun?",
+          "tip": "Be genuine. Reading, cooking, hiking — anything that shows you're a real person, not an application machine.",
+          "avoid": "Trying to make your hobbies sound like leadership experiences."
+        },
+        {
+          "question": "Is there anything else you'd like us to know?",
+          "tip": "Use this to address a gap, add context, or reinforce your spike. Don't waste it on 'No, I think we covered everything.'",
+          "avoid": "Repeating something you already said."
+        }
+      ]
+    },
+    {
+      "name": "Academic & Intellectual",
+      "description": "Schools want to see genuine curiosity, not performance.",
+      "questions": [
+        {
+          "question": "What book, article, or idea changed how you think?",
+          "tip": "Pick something specific and explain what shifted. The quality of your reflection matters more than the title.",
+          "avoid": "Picking a book you think sounds smart but didn't actually finish."
+        },
+        {
+          "question": "What's a topic you could talk about for hours?",
+          "tip": "This is your spike question. Go deep — show the interviewer you've genuinely explored it.",
+          "avoid": "Surface-level answers or picking something generic like 'politics.'"
+        },
+        {
+          "question": "What's a class that challenged you?",
+          "tip": "Show intellectual honesty. How did you adapt? What did you learn about how you learn?",
+          "avoid": "Making it sound like you easily overcame it. Struggle is the point."
+        },
+        {
+          "question": "How do you approach a problem you've never seen before?",
+          "tip": "Walk through a real example. Break down your thought process step by step.",
+          "avoid": "Vague generalities like 'I research it and ask for help.'"
+        }
+      ]
+    },
+    {
+      "name": "Community & Impact",
+      "description": "How you show up for others — not just what you've achieved.",
+      "questions": [
+        {
+          "question": "How have you contributed to your community?",
+          "tip": "Community can be your family, school, neighborhood, or online space. Focus on consistent, specific impact.",
+          "avoid": "One-time volunteer events or listing service hours."
+        },
+        {
+          "question": "Tell me about a time you disagreed with someone.",
+          "tip": "Show you can disagree respectfully and learn from it. The resolution matters more than being right.",
+          "avoid": "Making the other person the villain."
+        },
+        {
+          "question": "What would your friends say about you?",
+          "tip": "Be honest and specific. 'She's the one who always has a plan B' is better than 'They'd say I'm hardworking.'",
+          "avoid": "Listing adjectives without evidence."
+        },
+        {
+          "question": "Describe a time you failed.",
+          "tip": "Real failure, real lesson. Admissions wants to see resilience and self-awareness, not a humble-brag.",
+          "avoid": "'I worked too hard' or any failure that's actually a success."
+        }
+      ]
+    },
+    {
+      "name": "School-Specific Deep Dives",
+      "description": "Expect these if the school has a distinctive culture or curriculum.",
+      "questions": [
+        {
+          "question": "How would you take advantage of [school's] open curriculum / core curriculum?",
+          "tip": "Research the actual course catalog. Name 2–3 courses and explain why they interest you.",
+          "avoid": "Not knowing what kind of curriculum the school has."
+        },
+        {
+          "question": "What would you bring to [school's] community?",
+          "tip": "Be specific about what you'd start, join, or change. Connect it to your actual interests and skills.",
+          "avoid": "Generic 'diversity of thought' answers without substance."
+        },
+        {
+          "question": "Why not [rival school]?",
+          "tip": "Show you've thought about fit, not just prestige. Focus on what this school offers that others don't.",
+          "avoid": "Badmouthing other schools."
+        },
+        {
+          "question": "Where do you see yourself in 10 years?",
+          "tip": "Show direction without being rigid. 'I want to work at the intersection of X and Y' is better than a specific job title.",
+          "avoid": "Saying 'I don't know' without any follow-up."
+        }
+      ]
+    },
+    {
+      "name": "Curveball Questions",
+      "description": "Designed to test how you think on your feet. There's no right answer.",
+      "questions": [
+        {
+          "question": "If you could have dinner with anyone, living or dead, who would it be?",
+          "tip": "Pick someone connected to your interests. Explain what you'd ask them and why it matters to you now.",
+          "avoid": "Picking someone just to sound intellectual."
+        },
+        {
+          "question": "What would you do with a free year — no school, no obligations?",
+          "tip": "Your answer reveals priorities. It's okay to include rest alongside projects.",
+          "avoid": "Making it sound like you'd spend the year padding your resume."
+        },
+        {
+          "question": "What's something most people believe that you think is wrong?",
+          "tip": "Pick a genuinely contrarian view you can defend thoughtfully. Show independent thinking.",
+          "avoid": "Controversial for the sake of being controversial."
+        },
+        {
+          "question": "Teach me something in 5 minutes.",
+          "tip": "Pick something you know deeply and can explain simply. The skill is communication, not the topic.",
+          "avoid": "Picking something too complex to explain or too basic to be interesting."
+        }
+      ]
+    }
+  ],
+  "tips": [
+    "Prepare 5–6 anchor stories that cover different dimensions (academic, community, challenge, leadership, passion). Mix and match for any question.",
+    "Research the interviewer if you can — many are alumni who volunteer. Knowing their background helps you ask better questions.",
+    "Prepare 3–4 genuine questions to ask at the end. 'What's something you wish you'd known as a freshman?' is better than anything about rankings.",
+    "Practice out loud, not just in your head. Record yourself and listen back — you'll catch filler words and realize where you're vague.",
+    "Dress one step above your school's dress code. Business casual works everywhere.",
+    "Arrive 5 minutes early. Bring a copy of your activity list for reference (don't read from it).",
+    "Send a brief thank-you email within 24 hours. Mention one specific thing from the conversation."
+  ]
+}
