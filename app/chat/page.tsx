@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
+import { CHAT_LIMITS, chatErrorKind } from "@/lib/chat-contract";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { track } from "@vercel/analytics";
@@ -535,10 +536,22 @@ export default function ChatPage() {
       setInput((current) => restoreFailedCounselorDraft(current, msg));
     };
     try {
+      // Send only role + content for the most recent turns. Older turns and
+      // UI-only fields (timestamps) previously tripped server validation.
+      const payloadMessages = history
+        .filter((m) => (m.role === "user" || m.role === "assistant") && m.content.trim())
+        .slice(-CHAT_LIMITS.maxMessages)
+        .map((m) => ({ role: m.role, content: m.content.slice(0, CHAT_LIMITS.maxChars) }));
+      let originPage: string | null = null;
+      try {
+        const from = new URLSearchParams(window.location.search).get("from");
+        const ref = document.referrer ? new URL(document.referrer) : null;
+        originPage = from ?? (ref && ref.origin === window.location.origin ? ref.pathname : null);
+      } catch { /* optional context */ }
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: history }),
+        body: JSON.stringify({ messages: payloadMessages, page: originPage ?? "/chat" }),
         signal: deadline.signal,
       });
 
@@ -555,27 +568,14 @@ export default function ChatPage() {
         window.location.assign(signInUrl.href);
         return;
       }
-      if (res.status === 403) {
-        setError("upgrade");
+      if (!res.ok) {
+        const body = await res.json().catch(() => null) as { reason?: string; code?: string } | null;
+        const kind = chatErrorKind(res.status, body);
+        setError(kind === "unavailable" ? "something_went_wrong" : kind);
         recoverFailedTurn(false);
         return;
       }
-      if (res.status === 429) {
-        // Check if this is a plan limit (free messages exhausted) vs rate-limit
-        try {
-          const body = await res.json();
-          if (body?.reason === "free_limit_reached") {
-            setError("upgrade");
-          } else {
-            setError("rate_limited");
-          }
-        } catch {
-          setError("rate_limited");
-        }
-        recoverFailedTurn(false);
-        return;
-      }
-      if (!res.ok || !res.body) throw new Error("Chat failed");
+      if (!res.body) throw new Error("Chat failed");
 
       for await (const content of readTextStream(res.body)) {
         if (!assistantAppended) {
@@ -994,11 +994,21 @@ export default function ChatPage() {
                     </p>
                   ) : error === "timed_out" ? (
                     <p className="text-sm" style={{ color: "var(--error)" }}>
-                      The counselor took too long to respond. Your message is back in the composer.
+                      The counselor took too long to respond. Your message is back in the composer.{" "}
+                      <button type="button" className="font-semibold underline" onClick={() => { setError(null); void handleSend(); }}>Try again</button>
+                    </p>
+                  ) : error === "invalid" ? (
+                    <p className="text-sm" style={{ color: "var(--error)" }}>
+                      That message couldn&apos;t be sent. Shorten it or start a new conversation, then try again.
+                    </p>
+                  ) : error === "blocked" ? (
+                    <p className="text-sm" style={{ color: "var(--error)" }}>
+                      A security check blocked this request. Refresh the page and resend your message.
                     </p>
                   ) : (
                     <p className="text-sm" style={{ color: "var(--error)" }}>
-                      Couldn&apos;t reach the counselor. Check your connection and resend the message.
+                      The counselor is temporarily unavailable. Your message is back in the composer.{" "}
+                      <button type="button" className="font-semibold underline" onClick={() => { setError(null); void handleSend(); }}>Try again</button>
                     </p>
                   )}
                 </motion.div>
