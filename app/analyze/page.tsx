@@ -18,6 +18,8 @@ import { ResumeQuickImport } from "@/components/resume-quick-import";
 import { HydrationSafeSelect } from "@/components/ui/hydration-safe-select";
 import { apiErrorMessage } from "@/lib/api-client";
 import { missingAnalysisProfileFields } from "@/lib/profile-readiness";
+import { ProfileReportPreview } from "@/components/landing/ProfileReportPreview";
+import { ANALYZE_FIELD_LABELS, normalizeAnalyzeRequest, type AnalyzeWarning } from "@/lib/analyze-contract";
 
 type Scores = {
   academicRigor: number;
@@ -939,7 +941,7 @@ function FreeUpgradeCard() {
           </p>
           <div className="flex flex-wrap items-center gap-3">
             <Link
-              href="/pricing"
+              href="/checkout/pro"
               className="dl-btn dl-btn-primary inline-flex items-center gap-2 px-5 py-2.5 text-sm"
             >
               <Sparkles className="h-3.5 w-3.5" />
@@ -955,10 +957,40 @@ function FreeUpgradeCard() {
   );
 }
 
+function FieldHint({
+  field,
+  errors,
+  warnings,
+}: {
+  field: string;
+  errors: Record<string, string[]>;
+  warnings: AnalyzeWarning[];
+}) {
+  const message = errors[field]?.[0];
+  const warning = warnings.find((item) => item.field === field || item.field.startsWith(`${field}.`));
+  if (message) {
+    return (
+      <p id={`analyze-${field}-error`} role="alert" className="mt-1 text-[12px] font-medium" style={{ color: "var(--error, #B42318)" }}>
+        {message}
+      </p>
+    );
+  }
+  if (warning) {
+    return (
+      <p className="mt-1 text-[12px]" style={{ color: "var(--dl-text-muted, #5A6275)" }}>
+        {warning.message}
+      </p>
+    );
+  }
+  return null;
+}
+
 export default function AnalyzePage() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
+  const [inputWarnings, setInputWarnings] = useState<AnalyzeWarning[]>([]);
   const [isFreePlan, setIsFreePlan] = useState(true);
   const [resumeReviewing, setResumeReviewing] = useState(false);
   const autoRunStartedRef = useRef(false);
@@ -1058,7 +1090,12 @@ export default function AnalyzePage() {
             window.location.assign(`/sign-in?redirect_url=${encodeURIComponent(returnTo)}`);
             return;
           }
-          const body = await res.json().catch(() => null);
+          const body = await res.json().catch(() => null) as { fieldErrors?: Record<string, string[]> } | null;
+          if (body?.fieldErrors && Object.keys(body.fieldErrors).length > 0) {
+            setFieldErrors(body.fieldErrors);
+            setError(`Your saved profile needs a fix before analysis. ${summarizeFieldErrors(body.fieldErrors)}`);
+            return;
+          }
           setError(apiErrorMessage(body, "Analysis failed. Try running it manually."));
           return;
         }
@@ -1071,57 +1108,71 @@ export default function AnalyzePage() {
       .finally(() => setLoading(false));
   }, []);
 
-  function update(k: string, v: string) { setForm((f) => ({ ...f, [k]: v })); }
+  function update(k: string, v: string) {
+    setForm((f) => ({ ...f, [k]: v }));
+    setFieldErrors((current) => {
+      if (!current[k]) return current;
+      const next = { ...current };
+      delete next[k];
+      return next;
+    });
+  }
+
+  function buildAnalyzePayload() {
+    return {
+      gpa: form.gpa,
+      weightedGpa: form.weightedGpa,
+      satScore: form.satScore,
+      actScore: form.actScore,
+      grade: form.grade,
+      activities: form.activities.split("\n").map((a) => a.trim()).filter(Boolean).map((a) => ({ name: a })),
+      awards: form.awards.split("\n").map((a) => a.trim()).filter(Boolean),
+      courses: form.courses.split("\n").map((a) => a.trim()).filter(Boolean),
+      intendedMajor: form.intendedMajor || undefined,
+      targetColleges: form.targetColleges.split(/[,\n]/).map((s) => s.trim()).filter(Boolean),
+      admissionsConcern: form.admissionsConcern || undefined,
+      essaySnippet: form.essaySnippet || undefined,
+    };
+  }
+
+  function summarizeFieldErrors(errors: Record<string, string[]>): string {
+    const labels = Object.keys(errors).map((key) => ANALYZE_FIELD_LABELS[key.split(".")[0]] ?? key);
+    return labels.length
+      ? `Fix the highlighted field${labels.length > 1 ? "s" : ""}: ${Array.from(new Set(labels)).join(", ")}.`
+      : "Check the highlighted fields and try again.";
+  }
 
   async function handleAnalyze() {
     setLoading(true);
     setError(null);
     setResult(null);
 
-    // Validate before burning a quota slot. Bad numeric input previously made
-    // it all the way to the model and either crashed parsing or returned junk
-    // odds — fail fast with a useful message instead.
-    const gpaNum = parseFloat(form.gpa);
-    if (!form.gpa || !Number.isFinite(gpaNum) || gpaNum < 0 || gpaNum > 5) {
-      setError("Enter a valid unweighted GPA between 0.0 and 5.0.");
+    setFieldErrors({});
+    setInputWarnings([]);
+
+    // Validate with the SAME normalizer the server uses so the form can never
+    // send a payload the API rejects (root cause of the manual-fill 400s).
+    if (!form.gpa.trim()) {
+      const errs = { gpa: ["Enter your unweighted GPA (for example 3.8)."] };
+      setFieldErrors(errs);
+      setError(summarizeFieldErrors(errs));
       setLoading(false);
       return;
     }
-    if (form.satScore) {
-      const sat = parseInt(form.satScore, 10);
-      if (!Number.isFinite(sat) || sat < 400 || sat > 1600) {
-        setError("SAT must be between 400 and 1600 (or leave blank).");
-        setLoading(false);
-        return;
-      }
-    }
-    if (form.actScore) {
-      const act = parseInt(form.actScore, 10);
-      if (!Number.isFinite(act) || act < 1 || act > 36) {
-        setError("ACT must be between 1 and 36 (or leave blank).");
-        setLoading(false);
-        return;
-      }
+    const payload = buildAnalyzePayload();
+    const preflight = normalizeAnalyzeRequest(payload);
+    if (Object.keys(preflight.fieldErrors).length > 0) {
+      setFieldErrors(preflight.fieldErrors);
+      setError(summarizeFieldErrors(preflight.fieldErrors));
+      setLoading(false);
+      return;
     }
 
     try {
       const res = await fetch("/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          gpa: form.gpa ? parseFloat(form.gpa) : undefined,
-          weightedGpa: form.weightedGpa ? parseFloat(form.weightedGpa) : undefined,
-          satScore: form.satScore ? parseInt(form.satScore) : undefined,
-          actScore: form.actScore ? parseInt(form.actScore) : undefined,
-          grade: parseInt(form.grade) || 11,
-          activities: form.activities.split("\n").map((a) => a.trim()).filter(Boolean).map((a) => ({ name: a })),
-          awards: form.awards.split("\n").map((a) => a.trim()).filter(Boolean),
-          courses: form.courses.split("\n").map((a) => a.trim()).filter(Boolean),
-          intendedMajor: form.intendedMajor || undefined,
-          targetColleges: form.targetColleges.split(/[,\n]/).map((s) => s.trim()).filter(Boolean),
-          admissionsConcern: form.admissionsConcern || undefined,
-          essaySnippet: form.essaySnippet || undefined,
-        }),
+        body: JSON.stringify(payload),
       });
 
       if (res.status === 401) {
@@ -1129,20 +1180,38 @@ export default function AnalyzePage() {
         window.location.assign(`/sign-in?redirect_url=${encodeURIComponent(here)}`);
         return;
       }
-      if (res.status === 403) {
-        setError("You've used all 5 Free-plan analyses. Upgrade to Pro to remove that cap.");
-        return;
-      }
-      if (res.status === 429) {
-        setError("Slow down — too many requests. Try again in a minute.");
-        return;
-      }
       if (!res.ok) {
-        const data = await res.json().catch(() => null);
-        setError(apiErrorMessage(data, "Analysis failed. Please try again."));
+        const data = await res.json().catch(() => null) as {
+          reason?: string;
+          code?: string;
+          fieldErrors?: Record<string, string[]>;
+          warnings?: AnalyzeWarning[];
+          requestId?: string;
+        } | null;
+        if (res.status === 400 && data?.fieldErrors && Object.keys(data.fieldErrors).length > 0) {
+          setFieldErrors(data.fieldErrors);
+          setInputWarnings(data.warnings ?? []);
+          setError(summarizeFieldErrors(data.fieldErrors));
+          return;
+        }
+        if (data?.reason === "free_limit_reached") {
+          setError("You've used all 5 Free-plan analyses. Upgrade to Pro to remove that cap.");
+          return;
+        }
+        if (res.status === 429) {
+          setError("Slow down — too many requests. Try again in a minute.");
+          return;
+        }
+        if (res.status === 403) {
+          setError("This request was blocked by a security check. Refresh the page and try again.");
+          return;
+        }
+        const base = apiErrorMessage(data, "Analysis failed. Please try again.");
+        setError(data?.requestId ? `${base} (Reference: ${data.requestId.slice(0, 8)})` : base);
         return;
       }
-      const raw = (await res.json()) as AnalysisResult;
+      const raw = (await res.json()) as AnalysisResult & { inputWarnings?: AnalyzeWarning[] };
+      setInputWarnings(raw.inputWarnings ?? []);
       // Sanitize before render — see safeScores().
       setResult({
         ...raw,
@@ -1229,12 +1298,15 @@ export default function AnalyzePage() {
                     type="number"
                     step="0.01"
                     min="0"
-                    max="4.5"
+                    max="5"
                     className="input-field"
                     placeholder="3.85"
                     value={form.gpa}
-                    onChange={(e) => update("gpa", e.target.value)}
+                    aria-invalid={Boolean(fieldErrors["gpa"])}
+                  aria-describedby={fieldErrors["gpa"] ? "analyze-gpa-error" : undefined}
+                  onChange={(e) => update("gpa", e.target.value)}
                   />
+                <FieldHint field="gpa" errors={fieldErrors} warnings={inputWarnings} />
                 </div>
               </div>
               <div className="grid grid-cols-3 gap-3">
@@ -1244,11 +1316,16 @@ export default function AnalyzePage() {
                     id="analyze-weighted-gpa"
                     type="number"
                     step="0.01"
+                    min="0"
+                    max="6"
                     className="input-field"
                     placeholder="4.20"
                     value={form.weightedGpa}
-                    onChange={(e) => update("weightedGpa", e.target.value)}
+                    aria-invalid={Boolean(fieldErrors["weightedGpa"])}
+                  aria-describedby={fieldErrors["weightedGpa"] ? "analyze-weightedGpa-error" : undefined}
+                  onChange={(e) => update("weightedGpa", e.target.value)}
                   />
+                <FieldHint field="weightedGpa" errors={fieldErrors} warnings={inputWarnings} />
                 </div>
                 <div>
                   <label className="label" htmlFor="analyze-sat">SAT Score</label>
@@ -1260,8 +1337,11 @@ export default function AnalyzePage() {
                     className="input-field"
                     placeholder="1450"
                     value={form.satScore}
-                    onChange={(e) => update("satScore", e.target.value)}
+                    aria-invalid={Boolean(fieldErrors["satScore"])}
+                  aria-describedby={fieldErrors["satScore"] ? "analyze-satScore-error" : undefined}
+                  onChange={(e) => update("satScore", e.target.value)}
                   />
+                <FieldHint field="satScore" errors={fieldErrors} warnings={inputWarnings} />
                 </div>
                 <div>
                   <label className="label" htmlFor="analyze-act">ACT Score</label>
@@ -1273,8 +1353,11 @@ export default function AnalyzePage() {
                     className="input-field"
                     placeholder="32"
                     value={form.actScore}
-                    onChange={(e) => update("actScore", e.target.value)}
+                    aria-invalid={Boolean(fieldErrors["actScore"])}
+                  aria-describedby={fieldErrors["actScore"] ? "analyze-actScore-error" : undefined}
+                  onChange={(e) => update("actScore", e.target.value)}
                   />
+                <FieldHint field="actScore" errors={fieldErrors} warnings={inputWarnings} />
                 </div>
               </div>
               <div>
@@ -1284,8 +1367,11 @@ export default function AnalyzePage() {
                   className="input-field h-20 resize-none text-sm"
                   placeholder={"AP Calculus BC\nAP Computer Science A\nIB English HL"}
                   value={form.courses}
-                  onChange={(e) => update("courses", e.target.value)}
+                  aria-invalid={Boolean(fieldErrors["courses"])}
+                aria-describedby={fieldErrors["courses"] ? "analyze-courses-error" : undefined}
+                onChange={(e) => update("courses", e.target.value)}
                 />
+              <FieldHint field="courses" errors={fieldErrors} warnings={inputWarnings} />
               </div>
             </div>
 
@@ -1304,8 +1390,11 @@ export default function AnalyzePage() {
                   className="input-field h-24 resize-none text-sm"
                   placeholder={"Varsity soccer captain, 15h/wk\nNHS president\nResearch intern at UCF"}
                   value={form.activities}
-                  onChange={(e) => update("activities", e.target.value)}
+                  aria-invalid={Boolean(fieldErrors["activities"])}
+                aria-describedby={fieldErrors["activities"] ? "analyze-activities-error" : undefined}
+                onChange={(e) => update("activities", e.target.value)}
                 />
+              <FieldHint field="activities" errors={fieldErrors} warnings={inputWarnings} />
               </div>
               <div>
                 <label className="label" htmlFor="analyze-awards">Awards / Honors (one per line)</label>
@@ -1314,8 +1403,11 @@ export default function AnalyzePage() {
                   className="input-field h-16 resize-none text-sm"
                   placeholder={"National Merit Semifinalist\nState DECA placer"}
                   value={form.awards}
-                  onChange={(e) => update("awards", e.target.value)}
+                  aria-invalid={Boolean(fieldErrors["awards"])}
+                aria-describedby={fieldErrors["awards"] ? "analyze-awards-error" : undefined}
+                onChange={(e) => update("awards", e.target.value)}
                 />
+              <FieldHint field="awards" errors={fieldErrors} warnings={inputWarnings} />
               </div>
             </div>
 
@@ -1336,8 +1428,11 @@ export default function AnalyzePage() {
                     className="input-field"
                     placeholder="Computer Science"
                     value={form.intendedMajor}
-                    onChange={(e) => update("intendedMajor", e.target.value)}
+                    aria-invalid={Boolean(fieldErrors["intendedMajor"])}
+                  aria-describedby={fieldErrors["intendedMajor"] ? "analyze-intendedMajor-error" : undefined}
+                  onChange={(e) => update("intendedMajor", e.target.value)}
                   />
+                <FieldHint field="intendedMajor" errors={fieldErrors} warnings={inputWarnings} />
                 </div>
                 <div>
                   <label className="label" htmlFor="analyze-targets">Target colleges</label>
@@ -1347,8 +1442,11 @@ export default function AnalyzePage() {
                     className="input-field"
                     placeholder="Harvard, MIT, UCLA"
                     value={form.targetColleges}
-                    onChange={(e) => update("targetColleges", e.target.value)}
+                    aria-invalid={Boolean(fieldErrors["targetColleges"])}
+                  aria-describedby={fieldErrors["targetColleges"] ? "analyze-targetColleges-error" : undefined}
+                  onChange={(e) => update("targetColleges", e.target.value)}
                   />
+                <FieldHint field="targetColleges" errors={fieldErrors} warnings={inputWarnings} />
                 </div>
               </div>
               <div>
@@ -1393,7 +1491,7 @@ export default function AnalyzePage() {
                     {(error.includes("Pro") || error.includes("Upgrade")) && (
                       <>
                         {" "}
-                        <Link href="/pricing" className="font-bold underline">
+                        <Link href="/checkout/pro" className="font-bold underline">
                           See plans →
                         </Link>
                       </>
@@ -1458,6 +1556,18 @@ export default function AnalyzePage() {
                   <div>
                     <AISourceChip>based on your profile inputs above</AISourceChip>
                   </div>
+                  {(result as AnalysisResult & { fallback?: { used?: boolean } }).fallback?.used && (
+                    <p role="status" className="rounded-xl border px-4 py-3 text-[13px] leading-relaxed" style={{ borderColor: "rgba(217,119,6,0.3)", background: "rgba(217,119,6,0.06)", color: "var(--dl-text-secondary, #454B5E)" }}>
+                      Our AI reviewer was busy, so this report uses AdmitPath&apos;s calibrated rubric scoring. It still counts every field you entered. Run it again later for the full written commentary.
+                    </p>
+                  )}
+                  {inputWarnings.length > 0 && (
+                    <ul className="rounded-xl border px-4 py-3 text-[12px] leading-relaxed" style={{ borderColor: "rgba(74,111,165,0.18)", color: "var(--dl-text-secondary, #454B5E)" }}>
+                      {inputWarnings.slice(0, 4).map((warning) => (
+                        <li key={`${warning.field}-${warning.message}`}>{ANALYZE_FIELD_LABELS[warning.field.split(".")[0]] ?? warning.field}: {warning.message}</li>
+                      ))}
+                    </ul>
+                  )}
                   {/* Reset — lets the user iterate on inputs without a hard
                       page refresh (which would otherwise lose the form state). */}
                   <div className="flex justify-end">
@@ -2454,7 +2564,7 @@ export default function AnalyzePage() {
                     </p>
 
                     <Link
-                      href="/pricing"
+                      href="/checkout/pro"
                       className="dl-btn dl-btn-primary dl-btn-sm w-full justify-center"
                     >
                       <Sparkles className="h-3.5 w-3.5" />
@@ -2502,7 +2612,7 @@ export default function AnalyzePage() {
                           />
                         </BlurredGate>
                         <Link
-                          href="/pricing"
+                          href="/checkout/pro"
                           className="dl-btn dl-btn-primary dl-btn-lg w-full justify-center"
                         >
                           <Sparkles className="h-4 w-4" />
@@ -2589,6 +2699,12 @@ export default function AnalyzePage() {
                         </div>
                       ))}
                     </div>
+                  </div>
+                  <div className="mt-5">
+                    <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.12em]" style={{ color: "var(--dl-text-muted, #5A6275)" }}>
+                      What your report looks like (example)
+                    </p>
+                    <ProfileReportPreview compact showUrlBar={false} className="mx-auto" />
                   </div>
                 </motion.div>
               )}
