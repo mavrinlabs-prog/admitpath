@@ -14,6 +14,7 @@ import {
 import { sanitizeUserInput, validateAIOutput, buildResponseMeta, buildNextSteps } from "@/lib/api-quality";
 import { z } from "zod";
 import { normalizeInterviewFeedback } from "@/lib/interview-quality";
+import { requireFeature } from "@/lib/entitlements-server";
 
 const interviewSchema = z.object({
   question: z.string().min(5).max(500),
@@ -24,7 +25,7 @@ const interviewSchema = z.object({
 });
 
 export async function POST(req: Request) {
-  const authed = await requireUser();
+  const authed = await requireFeature("interviewPractice");
   if ("response" in authed) return authed.response;
   const { userId, user } = authed;
 

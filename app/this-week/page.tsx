@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   description:
     "Weekly admissions deadlines, scholarship alerts, tips, and news curated for college applicants. Stay ahead of the admissions cycle.",
   alternates: { canonical: `${BASE}/this-week` },
-  robots: { index: true, follow: true },
+  robots: { index: false, follow: false },
   openGraph: {
     title: "This Week in Admissions — Deadlines & Tips",
     description: "Weekly admissions deadlines, scholarship alerts, and actionable tips for college applicants.",

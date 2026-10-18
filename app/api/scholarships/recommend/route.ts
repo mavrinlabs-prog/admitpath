@@ -6,6 +6,7 @@ import {
   type StudentSignals,
 } from "@/lib/scholarship-matcher";
 import { SCHOLARSHIPS } from "@/data/scholarships-db";
+import { requireFeature } from "@/lib/entitlements-server";
 
 /**
  * Personalized scholarship matcher.
@@ -25,7 +26,7 @@ import { SCHOLARSHIPS } from "@/data/scholarships-db";
  */
 export async function GET() {
   try {
-  const authed = await requireUser();
+  const authed = await requireFeature("scholarshipMatches");
   if ("response" in authed) return authed.response;
   const { userId } = authed;
 

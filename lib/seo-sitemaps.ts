@@ -104,7 +104,6 @@ const CORE_PATHS: Array<[string, MetadataRoute.Sitemap[number]["changeFrequency"
   ["/timeline", "monthly", 0.8],
   ["/tools", "monthly", 0.8],
   ["/transfer-college-strategy", "monthly", 0.7],
-  ["/what-if", "monthly", 0.7],
 ];
 
 export function getSitemapEntries(section: SitemapSection): MetadataRoute.Sitemap {

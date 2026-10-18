@@ -1,3 +1,4 @@
+import { getEntitlements } from "@/lib/entitlements";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
@@ -70,6 +71,9 @@ export async function GET() {
         trialChatCount: true,
         stripeSubscriptionId: true,
         isInternal: true,
+        entitlementSource: true,
+        entitlementExpiresAt: true,
+        trialStartedAt: true,
       },
     });
 
@@ -126,7 +130,9 @@ export async function GET() {
       trialChatCount: user.trialChatCount,
       stripeSubscriptionId: user.stripeSubscriptionId,
       isInternal: user.isInternal,
-    },
+      entitlementSource: user.entitlementSource,
+      entitlementExpiresAt: user.entitlementExpiresAt,
+    } as Parameters<typeof getFreePlanStatus>[0],
     collegeCount
   );
 
@@ -137,6 +143,7 @@ export async function GET() {
     plan: eff,
     effectivePlan: eff,
     email: user.email,
+    entitlements: getEntitlements(user).features.map((f) => ({ key: f.key, unlocked: f.unlocked, access: f.access })),
     analysisCount: user.analysisCount,
     freeUsage: status,
     },

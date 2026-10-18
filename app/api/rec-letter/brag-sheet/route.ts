@@ -14,6 +14,7 @@ import { NextResponse } from "next/server";
 import { prisma, withRetry } from "@/lib/prisma";
 import { requireUser } from "@/lib/api-helpers";
 import { buildBragSheet, type BragSheetInput } from "@/lib/rec-letter";
+import { requireFeature } from "@/lib/entitlements-server";
 
 const MAX_ITEMS = 5;
 
@@ -70,7 +71,7 @@ function topTargets(raw: unknown): string[] {
 
 export async function GET() {
   try {
-  const authed = await requireUser();
+  const authed = await requireFeature("recLetters");
   if ("response" in authed) return authed.response;
   const { userId, user } = authed;
 

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ProFeatureGate } from "@/components/pro-feature-gate";
 
 export const metadata: Metadata = {
   title: "Share Your Outcomes",
@@ -6,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function OutcomesLayout({ children }: { children: React.ReactNode }) {
-  return children;
+  return <ProFeatureGate feature="outcomes">{children}</ProFeatureGate>;
 }

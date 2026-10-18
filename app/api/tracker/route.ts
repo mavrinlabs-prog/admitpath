@@ -16,6 +16,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { findCollege } from "@/data/colleges";
 import { requireUser, parseJsonBody } from "@/lib/api-helpers";
+import { requireFeature } from "@/lib/entitlements-server";
 
 const ROUND_VALUES = ["ED", "EA", "REA", "RD", "RD_2", "rolling"] as const;
 
@@ -25,7 +26,7 @@ const addSchema = z.object({
 });
 
 export async function GET() {
-  const authed = await requireUser();
+  const authed = await requireFeature("tracker");
   if ("response" in authed) return authed.response;
   const { userId } = authed;
 
@@ -43,7 +44,7 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  const authed = await requireUser();
+  const authed = await requireFeature("tracker");
   if ("response" in authed) return authed.response;
   const { userId } = authed;
 

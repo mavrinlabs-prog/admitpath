@@ -18,9 +18,10 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/api-helpers";
 import { selectRecommenders, type CourseHint } from "@/lib/rec-letter";
+import { requireFeature } from "@/lib/entitlements-server";
 
 export async function GET() {
-  const authed = await requireUser();
+  const authed = await requireFeature("recLetters");
   if ("response" in authed) return authed.response;
   const { userId } = authed;
 

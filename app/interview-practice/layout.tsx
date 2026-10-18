@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { PaywallGate } from "@/components/paywall-gate";
+import { ProFeatureGate } from "@/components/pro-feature-gate";
 import { AppNav } from "@/components/app-nav";
 
 export const metadata: Metadata = {
@@ -12,9 +12,9 @@ export const metadata: Metadata = {
 
 export default function InterviewPracticeLayout({ children }: { children: React.ReactNode }) {
   return (
-    <PaywallGate feature="AI interview practice" limitFeature="chat">
+    <ProFeatureGate feature="interviewPractice">
       <AppNav />
       {children}
-    </PaywallGate>
+    </ProFeatureGate>
   );
 }

@@ -13,6 +13,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { requireUser, parseJsonBody } from "@/lib/api-helpers";
+import { requireFeature } from "@/lib/entitlements-server";
 
 const surveySchema = z.object({
   committedSchool: z.string().min(1).max(200),
@@ -21,9 +22,9 @@ const surveySchema = z.object({
 });
 
 export async function POST(req: Request) {
-  let authed: Awaited<ReturnType<typeof requireUser>>;
+  let authed: Awaited<ReturnType<typeof requireFeature>>;
   try {
-    authed = await requireUser();
+    authed = await requireFeature("outcomes");
   } catch (err) {
     console.error("DB unavailable (requireUser):", err);
     return NextResponse.json(
