@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { parseResumeLocally } from "@/lib/resume-local-parser";
 
 export const provenanceSchema = z.enum([
   "MANUAL",
@@ -268,88 +269,18 @@ export function auditResumeExtraction(extraction: ResumeExtraction, text: string
   });
 }
 
-function uniqueText(values: string[]): string[] {
-  const seen = new Set<string>();
-  return values.filter((value) => {
-    const key = value.trim().toLowerCase();
-    if (!key || seen.has(key)) return false;
-    seen.add(key);
-    return true;
-  });
-}
-
-/** Conservative local extraction used when the external resume parser is slow. */
+/** Conservative local extraction used when the external resume parser is unavailable. */
 export function buildLocalResumeFallback(text: string): ResumeExtraction {
-  const gpaMatch = text.match(/\bgpa\s*[:=-]?\s*([0-5](?:\.\d{1,2})?)/i);
-  const gradeMatch = text.match(/\bgrade(?:\s+level)?\s*[:=-]?\s*(7|8|9|10|11|12)\b/i);
-  const satMatch = text.match(/\bsat(?:\s+score)?\s*[:=-]?\s*(\d{3,4})\b/i);
-  const actMatch = text.match(/\bact(?:\s+score)?\s*[:=-]?\s*(\d{1,2})\b/i);
-  const clauses = uniqueText(
-    text.split(/[.;\n]+/).map((value) => value.replace(/\s+/g, " ").trim()).filter(Boolean),
-  );
-
-  const courseNames = uniqueText(Array.from(
-    text.matchAll(/\b(AP|IB|Honors|Dual Enrollment)\s+([^,.;\n]{2,60}?)(?=\s+and\s+(?:AP|IB|Honors|Dual Enrollment)\s+|[,.;\n]|$)/gi),
-    (match) => `${match[1]} ${match[2]}`.replace(/\s+/g, " ").trim(),
-  ));
-
-  const leadershipActivities = clauses.flatMap((clause) => {
-    const match = clause.match(/\b(president|captain|founder|co-founder|vice president|editor|director|chair|lead)\s+(?:of\s+)?(.{2,100})/i);
-    if (!match) return [];
-    const name = match[2].replace(/\bfor\s+(?:the\s+)?(?:past\s+)?\w+\s+years?\b.*$/i, "").trim();
-    const yearsMatch = clause.match(/\b(\d+(?:\.\d+)?)\s+years?\b/i);
-    return [{
-      name,
-      role: match[1],
-      yearsInvolved: yearsMatch ? Number(yearsMatch[1]) : null,
-      impact: clause,
-      provenance: "RESUME_EXTRACTED" as const,
-    }];
-  });
-  const leadershipNames = new Set(leadershipActivities.map((activity) => activity.name.toLowerCase()));
-  const otherActivities = clauses
-    .filter((clause) => /\b(volunteer|tutor|research|intern|project|club|team|work|job|caregiv)/i.test(clause))
-    .filter((clause) => !courseNames.some((course) => clause.toLowerCase() === course.toLowerCase()))
-    .filter((clause) => !Array.from(leadershipNames).some((name) => clause.toLowerCase().includes(name)))
-    .slice(0, 20)
-    .map((clause) => ({
-      name: clause.slice(0, 200),
-      role: null,
-      impact: clause,
-      provenance: "RESUME_EXTRACTED" as const,
-    }));
-
-  const awardClauses = clauses.filter((clause) =>
-    /\b(award|finalist|semifinalist|winner|honou?r|scholar|medal)\b/i.test(clause),
-  );
-
+  const local = parseResumeLocally(text);
   return resumeExtractionSchema.parse({
-    academic: {
-      gpa: gpaMatch ? Number(gpaMatch[1]) : null,
-      weightedGpa: null,
-      satScore: satMatch ? Number(satMatch[1]) : null,
-      actScore: actMatch ? Number(actMatch[1]) : null,
-      grade: gradeMatch ? Number(gradeMatch[1]) : null,
-      state: null,
-      intendedMajor: null,
-    },
-    activities: [...leadershipActivities, ...otherActivities],
-    awards: awardClauses.map((name) => ({
-      name: name.slice(0, 200),
-      level: /\bnational|international\b/i.test(name)
-        ? "National"
-        : /\bstate\b/i.test(name)
-          ? "State"
-          : /\bregional\b/i.test(name)
-            ? "Regional"
-            : "Other",
-      provenance: "RESUME_EXTRACTED",
+    academic: local.academic,
+    activities: local.activities.map((activity) => ({
+      ...activity,
+      provenance: "RESUME_EXTRACTED" as const,
     })),
-    courses: courseNames.map((name) => ({
-      name,
-      type: name.match(/^(AP|IB|Honors|Dual Enrollment)/i)?.[1] ?? "Other",
-    })),
-    extractionNotes: "The AI parser was unavailable, so these fields were extracted locally. Review every field before saving; unstructured details may remain in the original text.",
+    awards: local.awards.map((award) => ({ ...award, provenance: "RESUME_EXTRACTED" as const })),
+    courses: local.courses,
+    extractionNotes: "Extracted with AdmitPath's built-in parser because the AI parser was unavailable. Review every field before saving.",
     _fallback: { used: true, reason: "provider_unavailable" },
   });
 }
