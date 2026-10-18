@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import Link from "next/link";
 import { motion, MotionConfig } from "framer-motion";
 import {
@@ -8,6 +7,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { analytics } from "@/lib/analytics";
+import { ProfileReportPreview } from "@/components/landing/ProfileReportPreview";
 
 /**
  * Hero — Discovery Labs `.dl-hero` pixel-clone (rebrand 2026-05-05).
@@ -121,79 +121,7 @@ export function HeroSection({ signedIn = false }: { signedIn?: boolean }) {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
         >
-          <div className="dl-preview-card" role="img" aria-label="Example AdmitPath profile score showing 7 dimensions scored 0 to 100">
-            <div className="dl-preview-header">
-              <span className="dl-preview-dot" style={{ background: "#FF5F57" }} />
-              <span className="dl-preview-dot" style={{ background: "#FEBC2E" }} />
-              <span className="dl-preview-dot" style={{ background: "#28C840" }} />
-              <span
-                style={{
-                  marginLeft: "auto",
-                  fontSize: 11,
-                  color: "var(--dl-text-muted)",
-                  fontFamily: "var(--dl-font-mono)",
-                }}
-              >
-                admith.vercel.app/analyze
-              </span>
-            </div>
-            <div className="dl-preview-body">
-              {/* Editorial-style header */}
-              <div style={{ marginBottom: 16, paddingBottom: 12, borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
-                <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--dl-text-muted)", marginBottom: 6 }}>
-                  Profile Report
-                </p>
-                <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between" }}>
-                  <p style={{ fontSize: 15, color: "var(--dl-text-primary)", fontWeight: 600, letterSpacing: "-0.01em" }}>
-                    Maya R. <span style={{ fontWeight: 400, color: "var(--dl-text-muted)", fontSize: 12 }}>Junior, GA</span>
-                  </p>
-                  <p style={{ fontSize: 24, fontWeight: 800, color: "var(--dl-text-primary)", letterSpacing: "-0.03em", lineHeight: 1 }}>
-                    81<span style={{ fontSize: 12, fontWeight: 500, color: "var(--dl-text-muted)" }}>/100</span>
-                  </p>
-                </div>
-              </div>
-
-              {/* Score table - editorial, no radial charts */}
-              <div style={{ display: "grid", gridTemplateColumns: "1fr auto", rowGap: 8, columnGap: 16 }}>
-                {[
-                  { label: "Academic Rigor", score: 88 },
-                  { label: "Leadership", score: 74 },
-                  { label: "Awards", score: 91 },
-                  { label: "Activity Depth", score: 67 },
-                  { label: "Spike", score: 82 },
-                  { label: "Essay Quality", score: 79 },
-                  { label: "Recommendations", score: 85 },
-                ].map((s) => (
-                  <React.Fragment key={s.label}>
-                    <span style={{ fontSize: 12, color: s.score < 70 ? "var(--dl-brand)" : "var(--dl-text-secondary)", fontWeight: s.score < 70 ? 600 : 400 }}>
-                      {s.label}
-                    </span>
-                    <span style={{ fontSize: 13, fontWeight: 700, color: s.score < 70 ? "var(--dl-brand)" : "var(--dl-text-primary)", fontFamily: "var(--dl-font-mono)", textAlign: "right" }}>
-                      {s.score}
-                    </span>
-                  </React.Fragment>
-                ))}
-              </div>
-
-              {/* Insight callout */}
-              <div
-                style={{
-                  marginTop: 14,
-                  padding: "10px 12px",
-                  borderRadius: 8,
-                  background: "rgba(74,111,165,0.05)",
-                  borderLeft: "3px solid var(--dl-brand)",
-                }}
-              >
-                <p style={{ fontSize: 11, fontWeight: 700, color: "var(--dl-brand)", marginBottom: 2, letterSpacing: "0.04em", textTransform: "uppercase" }}>
-                  Priority gap
-                </p>
-                <p style={{ fontSize: 12, color: "var(--dl-text-secondary)", lineHeight: 1.45 }}>
-                  Activity Depth at 67 is your biggest opportunity. Focus on sustained commitment over breadth.
-                </p>
-              </div>
-            </div>
-          </div>
+          <ProfileReportPreview className="mx-auto" />
         </motion.div>
       </div>
 
