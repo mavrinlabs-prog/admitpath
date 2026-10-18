@@ -1,49 +1,31 @@
 import { NextResponse } from "next/server";
 import { getClientIp, rateLimitWindow } from "@/lib/rate-limit";
-import {
-  sendSchoolInquiryConfirmation,
-  sendSchoolInquiryNotification,
-} from "@/lib/email";
+import { formDataToInquiry, validateSchoolInquiry } from "@/lib/school-inquiry";
+import { saveSchoolInquiry } from "@/lib/school-inquiry-server";
 
 export const runtime = "nodejs";
 
+/** No-JavaScript fallback for the inquiry form (classic form POST + 303). */
 export async function POST(req: Request) {
   const ip = getClientIp(req);
-  if (!(await rateLimitWindow(`school-inquiry-form:${ip}`, 3, 600_000)).allowed) {
-    return NextResponse.redirect(new URL("/for-schools?inquiry=rate-limited", req.url), 303);
-  }
-
   let form: FormData;
   try {
     form = await req.formData();
   } catch {
-    return NextResponse.redirect(new URL("/for-schools?inquiry=invalid", req.url), 303);
+    return NextResponse.redirect(new URL("/for-schools?inquiry=invalid#inquiry", req.url), 303);
   }
-  const email = String(form.get("email") ?? "").trim().slice(0, 254);
-  const schoolName = String(form.get("schoolName") ?? "").trim().slice(0, 300);
-  const studentCount = Math.max(0, Math.min(100000, Number(form.get("studentCount")) || 0));
+  const raw = formDataToInquiry(form);
+  const back = typeof raw.sourcePage === "string" && /^\/[A-Za-z0-9/_-]{0,120}$/.test(raw.sourcePage)
+    ? raw.sourcePage
+    : "/for-schools";
 
-  if (!/^\S+@\S+\.\S+$/.test(email) || !schoolName) {
-    return NextResponse.redirect(new URL("/for-schools?inquiry=invalid", req.url), 303);
+  if (!(await rateLimitWindow(`school-inquiry:${ip}`, 5, 600_000)).allowed) {
+    return NextResponse.redirect(new URL(`${back}?inquiry=rate-limited#inquiry`, req.url), 303);
   }
-
-  const inquiry = {
-    name: "School counselor",
-    email,
-    schoolName,
-    role: "counselor",
-    studentCount,
-    message: "Submitted from the counselor pricing form.",
-  };
-
-  const [notification] = await Promise.allSettled([
-    sendSchoolInquiryNotification(inquiry),
-    sendSchoolInquiryConfirmation(email, inquiry.name),
-  ]);
-
-  if (notification.status === "rejected" || notification.value.error) {
-    return NextResponse.redirect(new URL("/for-schools?inquiry=failed", req.url), 303);
+  const validation = validateSchoolInquiry(raw);
+  if (!validation.ok) {
+    return NextResponse.redirect(new URL(`${back}?inquiry=invalid#inquiry`, req.url), 303);
   }
-
-  return NextResponse.redirect(new URL("/for-schools?inquiry=sent", req.url), 303);
+  const saved = await saveSchoolInquiry(validation.data, req);
+  return NextResponse.redirect(new URL(`${back}?inquiry=${saved.ok ? "sent" : "failed"}#inquiry`, req.url), 303);
 }

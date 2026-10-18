@@ -107,8 +107,8 @@ const AUDIENCES: Record<string, AudienceData> = {
         detail: "Counselors can share the public resources or recommend that students evaluate the Free plan. Centralized counselor reporting is not generally available.",
       },
     ],
-    cta: "School Partnership Information",
-    ctaHref: "/for-schools",
+    cta: "Request counselor pricing",
+    ctaHref: "/for-counselors#inquiry",
   },
   international: {
     slug: "international",
