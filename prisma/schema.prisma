@@ -73,6 +73,15 @@ model User {
   /// Device fingerprint hash set on first sign-in. Used to prevent
   /// multiple accounts from the same browser/device.
   deviceId String?
+  /// Canonical email for duplicate-account checks (lowercased; Gmail dots and
+  /// +aliases removed). Never shown to other users.
+  normalizedEmail String?
+  /// SHA-256(IP + server salt) captured at sign-up. Raw IPs are never stored.
+  signupIpHash    String?
+  /// Anti-abuse heuristic output: { score, flags[], checkedAt }. Admin-only.
+  abuseSignals    Json?
+  /// "clear" | "review" | "blocked" — admin review state for abuse flags.
+  abuseReviewStatus String? @default("clear")
 
   // -- Timestamps --
   createdAt DateTime  @default(now())
@@ -93,6 +102,9 @@ model User {
   @@index([plan])
   @@index([createdAt])
   @@index([stripeCustomerId])
+  @@index([normalizedEmail])
+  @@index([deviceId])
+  @@index([signupIpHash])
 }
 
 // ---------------------------------------------------------------------------
@@ -500,10 +512,30 @@ model Referral {
   /// "pending" = signed up but not yet upgraded; "credited" = both users received free month
   status       String    @default("pending")
   creditedAt   DateTime? /// When the Stripe credits were applied
+  /// Referee's one-time Stripe promotion code (50% off first Pro invoice).
+  refereeCouponId      String?
+  refereePromoCodeId   String?
+  refereePromoCode     String?
+  refereeDiscountPct   Int       @default(50)
+  checkoutSessionId    String?
+  checkoutStartedAt    DateTime?
+  redeemedAt           DateTime?
+  /// Referrer reward: single-use Stripe promotion code generated on conversion.
+  rewardCouponId       String?
+  rewardPromoCodeId    String?
+  rewardCode           String?
+  /// "none" | "generated" | "emailed" | "stored_manual_send" | "failed"
+  rewardStatus         String    @default("none")
+  rewardGeneratedAt    DateTime?
+  rewardEmailedAt      DateTime?
+  /// Why the referral was blocked by anti-abuse checks (self/duplicate/device).
+  blockedReason        String?
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 
   @@unique([refereeId])
+  @@index([refereePromoCodeId])
+  @@index([rewardStatus])
   @@index([referrerId, status])
   @@index([referralCode])
   @@index([status])
@@ -526,4 +558,36 @@ model Generation {
 
   @@index([userId, createdAt])
   @@index([app, createdAt])
+}
+
+// ---------------------------------------------------------------------------
+// SchoolInquiry (school / district / counselor sales inquiries)
+// ---------------------------------------------------------------------------
+
+/// Every school/counselor contact form submission. Saved BEFORE any email is
+/// attempted so a missing email provider never loses an inquiry. Admin view:
+/// /admin/inquiries.
+model SchoolInquiry {
+  id             String   @id @default(cuid())
+  name           String
+  email          String
+  schoolName     String
+  role           String
+  phone          String?
+  studentCount   Int?
+  timeline       String?
+  needs          Json?
+  message        String?  @db.Text
+  audience       String   @default("school")
+  sourcePage     String
+  status         String   @default("new")
+  emailDelivered Boolean  @default(false)
+  ipHash         String?
+  userAgent      String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([createdAt])
+  @@index([status])
+  @@index([email])
 }
