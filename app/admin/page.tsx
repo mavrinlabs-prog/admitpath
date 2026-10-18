@@ -1,20 +1,21 @@
 import { prisma } from "@/lib/prisma";
 import { requireAdminPage } from "@/lib/admin-auth";
 import Link from "next/link";
-import { Users, Zap, Tag, Share2 } from "lucide-react";
+import { Users, Zap, Tag, Share2, School } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminDashboard() {
   await requireAdminPage();
 
-  const [userCount, proCount, genCount, couponUsed, couponTotal, referralCount] = await Promise.all([
+  const [userCount, proCount, genCount, couponUsed, couponTotal, referralCount, inquiryCount] = await Promise.all([
     prisma.user.count({ where: { deletedAt: null } }),
     prisma.user.count({ where: { plan: "pro", deletedAt: null } }),
     prisma.generation.count(),
     prisma.coupon.count({ where: { usedAt: { not: null } } }),
     prisma.coupon.count(),
     prisma.referral.count(),
+    prisma.schoolInquiry.count().catch(() => 0),
   ]);
 
   const cards = [
@@ -22,6 +23,7 @@ export default async function AdminDashboard() {
     { href: "/admin/generations", icon: Zap, label: "Generations", value: `${genCount} total` },
     { href: "/admin/coupons", icon: Tag, label: "Coupons", value: `${couponUsed} used / ${couponTotal} total` },
     { href: "/admin/referrals", icon: Share2, label: "Referrals", value: `${referralCount} total` },
+    { href: "/admin/inquiries", icon: School, label: "School inquiries", value: `${inquiryCount} total` },
   ];
 
   return (
