@@ -9,6 +9,7 @@ import {
   ScatterChart, Mic, FileText,
 } from "lucide-react";
 import { MarketingNav, MarketingCTA } from "@/components/marketing";
+import { PRO_FEATURES } from "@/lib/entitlements";
 import { ScrollReveal, StaggerContainer } from "@/components/scroll-reveal";
 import { SUPPLEMENTAL_ESSAYS } from "@/data/supplemental-essays";
 import { COLLEGES } from "@/data/colleges";
@@ -49,6 +50,9 @@ type Tool = {
   category: string;
   icon: typeof Calculator;
 };
+
+// Plan requirements come from the shared entitlements registry.
+const PRO_HREFS = new Set(PRO_FEATURES.map((feature) => feature.href));
 
 const TOOLS: Tool[] = [
   {
@@ -534,7 +538,7 @@ export default function ToolsPage() {
                       <span
                         className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-transform duration-200 ease-out group-hover:scale-110"
                         style={{
-                          background: "linear-gradient(135deg, #E8EFF8, #D5E0EE)",
+                          background: "rgba(74,111,165,0.10)",
                           color: "#4A6FA5",
                         }}
                         aria-hidden
@@ -547,6 +551,11 @@ export default function ToolsPage() {
                           style={{ color: "var(--dl-text-primary, #1B2030)", fontFamily: "var(--font-inter)" }}
                         >
                           <span className="flex-1">{t.name}</span>
+                          {PRO_HREFS.has(t.href) && (
+                            <span className="rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider" style={{ background: "rgba(74,111,165,0.10)", color: "#2E4A6E" }}>
+                              Pro
+                            </span>
+                          )}
                           <ArrowRight className="h-3.5 w-3.5 shrink-0 opacity-0 -translate-x-1 transition-all duration-200 group-hover:opacity-60 group-hover:translate-x-0" />
                         </h3>
                         <p className="text-sm leading-relaxed" style={{ color: "var(--dl-text-secondary, #454B5E)" }}>

@@ -70,8 +70,12 @@ function checkCsrfOrigin(req: NextRequest): NextResponse | null {
 export function proxy(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
   if (pathname === "/worksheets" || pathname.startsWith("/worksheets/")) {
+    // /worksheets was migrated to /tools. Specific worksheet slugs are mapped
+    // in next.config.js redirects (which run first); anything else lands on
+    // the /tools hub instead of a non-existent /tools/<slug>.
     const target = req.nextUrl.clone();
-    target.pathname = pathname.replace(/^\/worksheets/, "/tools");
+    target.pathname = "/tools";
+    target.search = "";
     return applySecurityHeaders(NextResponse.redirect(target, 308));
   }
 

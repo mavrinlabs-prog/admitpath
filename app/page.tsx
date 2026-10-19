@@ -99,7 +99,7 @@ const homepageJsonLd = {
           name: "What is AdmitPath?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "AdmitPath is an AI college counseling platform that scores your application across 7 dimensions — academic rigor, leadership, awards, activity depth, spike, essay quality, and recommendations — using available Common Data Set (CDS) admissions data where available. It includes structured admissions worksheets, college profiles, supplemental essay guides, and Florida-specific guidance.",
+            text: "AdmitPath is an AI college counseling platform that scores your application across 7 dimensions — academic rigor, leadership, awards, activity depth, spike, essay quality, and recommendations — using available Common Data Set (CDS) admissions data where available. It includes planning tools, college profiles, supplemental essay guides, and Florida-specific guidance.",
           },
         },
         {
@@ -115,7 +115,7 @@ const homepageJsonLd = {
           name: "Is AdmitPath better than a private college counselor?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "AdmitPath provides structured, worksheet-driven planning informed by published Common Data Set factors. It can supplement a qualified school or private counselor, but it does not replace a counselor's judgment or guarantee comparable outcomes.",
+            text: "AdmitPath provides structured, tool-driven planning informed by published Common Data Set factors. It can supplement a qualified school or private counselor, but it does not replace a counselor's judgment or guarantee comparable outcomes.",
           },
         },
         {
@@ -139,7 +139,7 @@ const homepageJsonLd = {
           name: "Does AdmitPath help with college essays?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "Yes. AdmitPath provides essay feedback across 6 dimensions: voice authenticity, narrative structure, self-reflection depth, specificity, emotional resonance, and admissions alignment. It also includes a topic finder, revision checklist, Common App prompt guides, supplemental-essay guidance, and a brainstorm worksheet.",
+            text: "Yes. AdmitPath provides essay feedback across 6 dimensions: voice authenticity, narrative structure, self-reflection depth, specificity, emotional resonance, and admissions alignment. It also includes a topic finder, revision checklist, Common App prompt guides, supplemental-essay guidance, and an essay topic finder.",
           },
         },
         {
