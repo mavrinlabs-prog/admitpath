@@ -1,0 +1,235 @@
+App,Route,Purpose,Public_Or_Protected,Expected_User,Status,Notes
+AdmitPath,/,Landing page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/about,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/accelerated-degree-programs,Content/app page,Public,Visitor,Not in sitemap; not crawled,Page
+AdmitPath,/acceptance-rate/[slug],Content/app page,Public,Visitor,Dynamic route — sampled via sitemap crawl,Page
+AdmitPath,/accessibility,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/admin,Admin,Protected (ADMIN_EMAILS),Admin,Local 200,Page
+AdmitPath,/admin/coupons,Admin,Protected (ADMIN_EMAILS),Admin,Not in sitemap; not crawled,Page
+AdmitPath,/admin/generations,Admin,Protected (ADMIN_EMAILS),Admin,Not in sitemap; not crawled,Page
+AdmitPath,/admin/inquiries,Admin inquiry list (new),Protected (ADMIN_EMAILS),Admin,Local 200,Page
+AdmitPath,/admin/referrals,Admin,Protected (ADMIN_EMAILS),Admin,Not in sitemap; not crawled,Page
+AdmitPath,/admin/users,Admin,Protected (ADMIN_EMAILS),Admin,Not in sitemap; not crawled,Page
+AdmitPath,/admissions-jargon-decoder,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/admissions-statistics-2026,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/admits-wall,Content/app page,Public,Visitor,Not in sitemap; not crawled,Page
+AdmitPath,/aid-comparison,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/analyze,Content/app page,Protected (session),Signed-in student,Local 200; Prod 200,Page
+AdmitPath,/api/account/delete,API,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/account/export,API,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/account/training-consent,API,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/admin/backfill-trial-stamps,API,Protected (secret/admin),System/admin,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/admin/generations,API,Protected (secret/admin),System/admin,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/admin/reset-db,API,Protected (secret/admin),System/admin,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/admin/training-data,API,Protected (secret/admin),System/admin,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/analyze,7-dimension analysis,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/auth/google,API,Public,Visitor,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/auth/google/callback,API,Public,Visitor,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/auth/signout,API,Public,Visitor,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/auth/status,API,Public,Visitor,Local 200,API
+AdmitPath,/api/billing/sync,API,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/chat,AI counselor stream,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/college-fit,API,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/colleges,API,Public,Visitor,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/colleges/[id],API,Public,Visitor,Dynamic route — sampled via sitemap crawl,API
+AdmitPath,/api/colleges/search,API,Public,Visitor,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/competitions/recommend,API,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/counselor-widget,API,Public,Visitor,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/coupons,API,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/cron/audit/hourly,Cron job (bearer secret),Protected (secret/admin),System/admin,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/cron/backup-reminder,Cron job (bearer secret),Protected (secret/admin),System/admin,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/cron/daily-emails,Cron job (bearer secret),Protected (secret/admin),System/admin,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/cron/wakeup-brief,Cron job (bearer secret),Protected (secret/admin),System/admin,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/cron/weekly-progress,Cron job (bearer secret),Protected (secret/admin),System/admin,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/deadlines/ics,API,Public,Visitor,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/essay,Essay feedback + draft autosave,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/essay/[id]/diff,API,Protected (session),Signed-in student,Dynamic route — sampled via sitemap crawl,API
+AdmitPath,/api/essay/[id]/versions,API,Protected (session),Signed-in student,Dynamic route — sampled via sitemap crawl,API
+AdmitPath,/api/essay/[id]/versions/[version],API,Protected (session),Signed-in student,Dynamic route — sampled via sitemap crawl,API
+AdmitPath,/api/essay/supplemental,API,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/essay/topics,API,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/essay/why-us,API,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/health,API,Public,Visitor,Local 200,API
+AdmitPath,/api/interview,API,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/log-client-error,API,Public,Visitor,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/me,API,Protected (session),Signed-in student,Local 200,API
+AdmitPath,/api/newsletter,API,Public,Visitor,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/og,API,Public,Visitor,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/profile,API,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/profile/extract-file,API,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/profile/parse-resume,API,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/rec-letter/brag-sheet,API,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/rec-letter/recommenders,API,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/referrals,API,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/sat-feedback,API,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/scholarships/recommend,API,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/school-inquiry,Save school inquiry (JSON),Public,Visitor,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/school-inquiry-form,Save school inquiry (no-JS form),Public,Visitor,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/share,API,Public,Visitor,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/status,Public status JSON (new),Public,Visitor,Local 200,API
+AdmitPath,/api/stripe/checkout,API,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/stripe/create-checkout,API,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/stripe/create-portal,API,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/stripe/one-time-checkout,API,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/stripe/webhook,Legacy alias of Stripe webhook,Public,Visitor,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/summer-programs/recommend,API,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/tracker,API,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/tracker/[id],API,Protected (session),Signed-in student,Dynamic route — sampled via sitemap crawl,API
+AdmitPath,/api/tracker/survey,API,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/tracking/events,API,Public,Visitor,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/trial/start,API,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/unsubscribe,API,Public,Visitor,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/version,API,Public,Visitor,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/webhooks/clerk,API,Public,Visitor,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/api/webhooks/stripe,Stripe webhook (signature verified),Public,Visitor,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath,/appeal-letter,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/application-component-weighting,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/billing,Content/app page,Protected (session),Signed-in student,Not in sitemap; not crawled,Page
+AdmitPath,/billing/receipts/[id],Content/app page,Protected (session),Signed-in student,Dynamic route — sampled via sitemap crawl,Page
+AdmitPath,/billing/success,Content/app page,Protected (session),Signed-in student,Not in sitemap; not crawled,Page
+AdmitPath,/blog,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/blog/[slug],Content/app page,Public,Visitor,Dynamic route — sampled via sitemap crawl,Page
+AdmitPath,/blog/feed.xml,Content/app page,Public,Visitor,Not in sitemap; not crawled,Route handler
+AdmitPath,/calculator,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/chat,Content/app page,Protected (session),Signed-in student,Local 200; Prod 200,Page
+AdmitPath,/checkout/pro,Direct Stripe checkout for Pro (new),Public entry -> auth,Visitor/student,Local 303; Prod 404,Route handler
+AdmitPath,/choose-a-major,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/college,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/college-acceptance-letter-decoder,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/college-admissions-framework-2026,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/college-application-checklist,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/college-application-timeline-2026,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/college-decision-comparison-guide,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/college-decision-day,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/college-essay-examples,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/college-essay-revision-checklist,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/college-essay-topic-finder,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/college-list-builder,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/college-rankings-explained,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/college-rejection-recovery,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/college-rejection-recovery-checklist,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/college-research-strategy,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/college-tour-checklist,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/college/[slug],Content/app page,Public,Visitor,Dynamic route — sampled via sitemap crawl,Page
+AdmitPath,/college/[slug]/why,Content/app page,Public,Visitor,Dynamic route — sampled via sitemap crawl,Page
+AdmitPath,/colleges,Content/app page,Protected (session),Signed-in student,Not in sitemap; not crawled,Page
+AdmitPath,/colleges/[slug],Content/app page,Protected (session),Signed-in student,Dynamic route — sampled via sitemap crawl,Page
+AdmitPath,/colleges/[slug]/[subpage],Content/app page,Protected (session),Signed-in student,Dynamic route — sampled via sitemap crawl,Page
+AdmitPath,/colleges/[slug]/essays,Content/app page,Protected (session),Signed-in student,Dynamic route — sampled via sitemap crawl,Page
+AdmitPath,/compare,Content/app page,Public,Visitor,Not in sitemap; not crawled,Page
+AdmitPath,/compare-scores,Content/app page,Public,Visitor,Not in sitemap; not crawled,Page
+AdmitPath,/compare/[slug],Content/app page,Public,Visitor,Dynamic route — sampled via sitemap crawl,Page
+AdmitPath,/competitions,Content/app page,Protected (Pro),Pro student,Local 200,Page
+AdmitPath,/contact,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/cookie-policy,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/counselor,Redirect -> /for-counselors,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/counselor-toolkit,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/creators,Content/app page,Public,Visitor,Not in sitemap; not crawled,Page
+AdmitPath,/dashboard,Content/app page,Protected (session),Signed-in student,Local 200; Prod 200,Page
+AdmitPath,/data/2026-admissions-trends,Content/app page,Public,Visitor,Not in sitemap; not crawled,Page
+AdmitPath,/data/common-app-trends,Content/app page,Public,Visitor,Not in sitemap; not crawled,Page
+AdmitPath,/data/essay-angle-study,Content/app page,Public,Visitor,Not in sitemap; not crawled,Page
+AdmitPath,/data/florida-admit-rates,Content/app page,Public,Visitor,Not in sitemap; not crawled,Page
+AdmitPath,/data/state-admissions-difficulty,Content/app page,Public,Visitor,Not in sitemap; not crawled,Page
+AdmitPath,/deadlines,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/decision-matrix,Content/app page,Public,Visitor,Not in sitemap; not crawled,Page
+AdmitPath,/diverse-college-list,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/essays,Content/app page,Protected (session),Signed-in student,Local 200; Prod 200,Page
+AdmitPath,/essays/[id]/versions,Content/app page,Protected (session),Signed-in student,Dynamic route — sampled via sitemap crawl,Page
+AdmitPath,/essays/topics,Content/app page,Protected (session),Signed-in student,Not in sitemap; not crawled,Page
+AdmitPath,/fafsa-checklist,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/faq,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/financial-aid-appeal-guide,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/florida/[slug],Content/app page,Public,Visitor,Dynamic route — sampled via sitemap crawl,Page
+AdmitPath,/florida/admissions-guide,Content/app page,Public,Visitor,Local 200,Page
+AdmitPath,/for-counselors,Counselor pricing + inquiry form (new),Public,Visitor,Local 200; Prod 404,Page
+AdmitPath,/for-schools,School/district pricing + inquiry form,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/for/[audience],Content/app page,Public,Visitor,Dynamic route — sampled via sitemap crawl,Page
+AdmitPath,/glossary,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/grad-school,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/grade/[grade],Content/app page,Public,Visitor,Dynamic route — sampled via sitemap crawl,Page
+AdmitPath,/guides,Content/app page,Public,Visitor,Local 200,Page
+AdmitPath,/guides/[slug],Content/app page,Public,Visitor,Dynamic route — sampled via sitemap crawl,Page
+AdmitPath,/help,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/honors-college-explained,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/how-it-works,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/how-to-get-into/[slug],Content/app page,Public,Visitor,Dynamic route — sampled via sitemap crawl,Page
+AdmitPath,/how-to-pick-a-counselor,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/icon-512.png,Content/app page,Public,Visitor,Not in sitemap; not crawled,Route handler
+AdmitPath,/international,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/interview-practice,Content/app page,Protected (Pro),Pro student,Local 200,Page
+AdmitPath,/majors/[slug]/colleges,Content/app page,Public,Visitor,Dynamic route — sampled via sitemap crawl,Page
+AdmitPath,/merit-match,Content/app page,Public,Visitor,Not in sitemap; not crawled,Page
+AdmitPath,/methodology,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/money,Content/app page,Public,Visitor,Not in sitemap; not crawled,Page
+AdmitPath,/need-blind-vs-need-aware-schools,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/net-price,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/offers,Content/app page,Public,Visitor,Not in sitemap; not crawled,Page
+AdmitPath,/offers/orders,Content/app page,Protected (session),Signed-in student,Not in sitemap; not crawled,Page
+AdmitPath,/offers/success,Content/app page,Protected (session),Signed-in student,Not in sitemap; not crawled,Page
+AdmitPath,/outcomes,Content/app page,Protected (Pro),Pro student,Local 200,Page
+AdmitPath,/parent,Content/app page,Protected (Pro),Pro student,Local 200,Page
+AdmitPath,/peer-profiles,Content/app page,Public,Visitor,Not in sitemap; not crawled,Page
+AdmitPath,/personal-statement-guide,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/press,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/pricing,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/pricing-comparison,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/pricing-faq,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/privacy,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/profile,Content/app page,Protected (session),Signed-in student,Not in sitemap; not crawled,Page
+AdmitPath,/profile/create,Content/app page,Protected (session),Signed-in student,Not in sitemap; not crawled,Page
+AdmitPath,/profile/import,Content/app page,Protected (session),Signed-in student,Not in sitemap; not crawled,Page
+AdmitPath,/quiz,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/r/[code],Referral link capture -> sign-up -> checkout,Public,Visitor,Dynamic route — sampled via sitemap crawl,Route handler
+AdmitPath,/rec-letters,Content/app page,Protected (Pro),Pro student,Local 200,Page
+AdmitPath,/refer,Content/app page,Protected (session),Signed-in student,Local 200; Prod 200,Page
+AdmitPath,/resources,Resources hub,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/resources/common-app-essay,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/resources/competitions,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/resources/demonstrated-interest,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/resources/financial-aid,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/resources/interview-prep,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/resources/rec-letters,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/resources/scholarships,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/resources/summer-programs,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/resources/supplemental-essays,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/roi,Content/app page,Public,Visitor,Not in sitemap; not crawled,Page
+AdmitPath,/scattergram/[slug],Content/app page,Public,Visitor,Dynamic route — sampled via sitemap crawl,Page
+AdmitPath,/scholarship-application-guide,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/scholarship-match,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/scholarships,Content/app page,Protected (Pro),Pro student,Local 200,Page
+AdmitPath,/scholarships-by-category,Content/app page,Protected (session),Signed-in student,Local 200; Prod 200,Page
+AdmitPath,/scholarships/[slug],Content/app page,Public,Visitor,Dynamic route — sampled via sitemap crawl,Page
+AdmitPath,/schools,Redirect -> /for-schools,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/security,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/settings,Content/app page,Protected (session),Signed-in student,Not in sitemap; not crawled,Page
+AdmitPath,/sign-in/[[...sign-in]],Content/app page,Public,Visitor,Dynamic route — sampled via sitemap crawl,Page
+AdmitPath,/sign-up/[[...sign-up]],Content/app page,Public,Visitor,Dynamic route — sampled via sitemap crawl,Page
+AdmitPath,/site-map,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/sitemap,Content/app page,Public,Visitor,Not in sitemap; not crawled,Page
+AdmitPath,/sitemap.xml,Content/app page,Public,Visitor,Local 200,Route handler
+AdmitPath,/sitemaps/[section],Content/app page,Public,Visitor,Dynamic route — sampled via sitemap crawl,Route handler
+AdmitPath,/start-trial,Content/app page,Public,Visitor,Not in sitemap; not crawled,Page
+AdmitPath,/states,Content/app page,Public,Visitor,Local 200,Page
+AdmitPath,/states/[state],Content/app page,Public,Visitor,Dynamic route — sampled via sitemap crawl,Page
+AdmitPath,/states/[state]/[subpage],Content/app page,Public,Visitor,Dynamic route — sampled via sitemap crawl,Page
+AdmitPath,/status,System status (new),Public,Visitor,Local 200; Prod 404,Page
+AdmitPath,/summer,Content/app page,Protected (Pro),Pro student,Local 200,Page
+AdmitPath,/summer-experience-strategy,Content/app page,Protected (session),Signed-in student,Local 200; Prod 200,Page
+AdmitPath,/supplemental/[slug],Content/app page,Public,Visitor,Dynamic route — sampled via sitemap crawl,Page
+AdmitPath,/terms,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/test-optional-schools-2026,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/test-prep-guide,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/this-week,Content/app page,Protected (Pro),Pro student,Local 200; Prod 200,Page
+AdmitPath,/timeline,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/tools,Tools hub,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/tools/[slug],Content/app page,Public,Visitor,Dynamic route — sampled via sitemap crawl,Page
+AdmitPath,/tracker,Content/app page,Protected (Pro),Pro student,Local 200; Prod 200,Page
+AdmitPath,/transfer-college-strategy,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath,/undermatch,Content/app page,Public,Visitor,Not in sitemap; not crawled,Page
+AdmitPath,/unsubscribed,Content/app page,Public,Visitor,Not in sitemap; not crawled,Page
+AdmitPath,/vs-college-counselor,Content/app page,Public,Visitor,Not in sitemap; not crawled,Page
+AdmitPath,/vs/[slug],Content/app page,Public,Visitor,Dynamic route — sampled via sitemap crawl,Page
+AdmitPath,/what-if,Content/app page,Protected (Pro),Pro student,Local 200; Prod 200,Page
+AdmitPath,/why-admitpath,Content/app page,Public,Visitor,Not in sitemap; not crawled,Page
+AdmitPath,/worksheets/*,Removed pages; 308 redirect to mapped tool or /tools,Public,Visitor,Local 308,app/worksheets deleted
