@@ -21,6 +21,7 @@ import {
   CreditCard,
   ClipboardList,
   Mic,
+  Wrench,
   FileText as FileTextIcon,
   ArrowRight,
   Brain,
@@ -30,6 +31,7 @@ import { CopyReferralButton } from "@/components/CopyReferralButton";
 import { TrialUsageBar } from "@/components/TrialUsageBar";
 import { buildReferralUrl } from "@/lib/site-url";
 import { tryGenerateReferralCode } from "@/lib/referral";
+import { PRO_FEATURES } from "@/lib/entitlements";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Dashboard", robots: { index: false, follow: false } };
@@ -399,6 +401,14 @@ export default async function DashboardPage() {
       plusOnly: false,
     },
     {
+      href: "/tools",
+      label: "Tools",
+      desc: "Calculators, checklists, decision matrix, and planning tools.",
+      done: false,
+      icon: Wrench,
+      plusOnly: false,
+    },
+    {
       href: "/billing",
       label: "Plan & billing",
       desc: "Manage subscription, invoices, and your current usage.",
@@ -488,13 +498,12 @@ export default async function DashboardPage() {
     },
   ];
 
-  // Sort: free features first, Pro-only features at the bottom (unless user is paid)
-  const tools = isPaid
-    ? allTools
-    : [
-        ...allTools.filter(t => !t.plusOnly),
-        ...allTools.filter(t => t.plusOnly),
-      ];
+  // Core workspace first; Pro features render in their own section lower on
+  // the page. Lock state comes from the shared entitlements registry.
+  const proHrefs = new Set(PRO_FEATURES.map((feature) => feature.href));
+  const normalizedTools = allTools.map((tool) => ({ ...tool, plusOnly: proHrefs.has(tool.href) }));
+  const coreTools = normalizedTools.filter((tool) => !tool.plusOnly);
+  const proTools = normalizedTools.filter((tool) => tool.plusOnly);
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "var(--dl-bg-root, #D5DCE8)" }}>
@@ -756,179 +765,6 @@ export default async function DashboardPage() {
           </section>
         )}
 
-        {/* Free-tier usage + upgrade nudge — persistent subtle reminders */}
-        {!isPaid && (
-          <>
-            {/* Usage tracker bar */}
-            <section
-              className="mb-6 border p-5"
-              style={{
-                background: "rgba(255,255,255,0.45)",
-                backdropFilter: "blur(12px)",
-                WebkitBackdropFilter: "blur(12px)",
-                borderColor: "rgba(74,111,165,0.12)",
-                borderRadius: "14px",
-              }}
-            >
-              <div className="flex items-center justify-between mb-3">
-                <p
-                  className="text-[11px] font-semibold uppercase tracking-[0.18em]"
-                  style={{ color: "var(--dl-text-secondary, #454B5E)" }}
-                >
-                  Free plan usage
-                </p>
-                <Link
-                  href="/checkout/pro"
-                  className="text-[11px] font-bold uppercase tracking-wider transition-colors hover:opacity-80"
-                  style={{ color: "#4A6FA5" }}
-                >
-                  Remove Free-plan caps
-                </Link>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div className="rounded-xl border p-3" style={{ borderColor: "rgba(0,0,0,0.06)", background: "rgba(255,255,255,0.5)" }}>
-                  <div className="flex items-baseline justify-between mb-1.5">
-                    <span className="text-[12px] font-medium" style={{ color: "var(--dl-text-secondary, #454B5E)" }}>Analyses</span>
-                    <span className="text-[12px] font-bold tabular-nums" style={{ color: safeUser.analysisCount >= 5 ? "#EF4444" : "#4A6FA5" }}>
-                      {safeUser.analysisCount} / 5
-                    </span>
-                  </div>
-                  <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(0,0,0,0.06)" }}>
-                    <div
-                      className="h-full rounded-full transition-all"
-                      style={{
-                        width: `${Math.min(100, (safeUser.analysisCount / 5) * 100)}%`,
-                        background: safeUser.analysisCount >= 5 ? "#EF4444" : "#4A6FA5",
-                      }}
-                    />
-                  </div>
-                </div>
-                <div className="rounded-xl border p-3" style={{ borderColor: "rgba(0,0,0,0.06)", background: "rgba(255,255,255,0.5)" }}>
-                  <div className="flex items-baseline justify-between mb-1.5">
-                    <span className="text-[12px] font-medium" style={{ color: "var(--dl-text-secondary, #454B5E)" }}>Essays</span>
-                    <span className="text-[12px] font-bold tabular-nums" style={{ color: essayCount >= 5 ? "#EF4444" : "#4A6FA5" }}>
-                      {essayCount} / 5
-                    </span>
-                  </div>
-                  <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(0,0,0,0.06)" }}>
-                    <div
-                      className="h-full rounded-full transition-all"
-                      style={{
-                        width: `${Math.min(100, (essayCount / 5) * 100)}%`,
-                        background: essayCount >= 5 ? "#EF4444" : "#4A6FA5",
-                      }}
-                    />
-                  </div>
-                </div>
-                <div className="rounded-xl border p-3" style={{ borderColor: "rgba(0,0,0,0.06)", background: "rgba(255,255,255,0.5)" }}>
-                  <div className="flex items-baseline justify-between mb-1.5">
-                    <span className="text-[12px] font-medium" style={{ color: "var(--dl-text-secondary, #454B5E)" }}>Schools</span>
-                    <span className="text-[12px] font-bold tabular-nums" style={{ color: collegeCount >= 8 ? "#EF4444" : "#4A6FA5" }}>
-                      {collegeCount} / 8
-                    </span>
-                  </div>
-                  <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(0,0,0,0.06)" }}>
-                    <div
-                      className="h-full rounded-full transition-all"
-                      style={{
-                        width: `${Math.min(100, (collegeCount / 8) * 100)}%`,
-                        background: collegeCount >= 8 ? "#EF4444" : "#4A6FA5",
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            {/* Dimension teaser — what they're missing */}
-            {hasAnalysis && (
-              <section
-                className="mb-6 border p-5"
-                style={{
-                  background: "linear-gradient(135deg, rgba(74,111,165,0.06), rgba(30,51,82,0.03))",
-                  backdropFilter: "blur(12px)",
-                  WebkitBackdropFilter: "blur(12px)",
-                  borderColor: "rgba(74,111,165,0.15)",
-                  borderRadius: "14px",
-                }}
-              >
-                <div className="flex items-start gap-4">
-                  <div
-                    className="flex h-10 w-10 items-center justify-center rounded-xl shrink-0"
-                    style={{ background: "rgba(74,111,165,0.12)", color: "#4A6FA5" }}
-                  >
-                    <ScanSearch className="h-5 w-5" strokeWidth={1.75} />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p
-                      className="text-[15px] font-bold leading-snug mb-1"
-                      style={{ color: "var(--dl-text-primary, #1B2030)" }}
-                    >
-                      Your free analysis covers the basics. Upgrade for the full 7-dimension breakdown.
-                    </p>
-                    <p className="text-[13px] leading-relaxed mb-3" style={{ color: "var(--dl-text-secondary, #454B5E)" }}>
-                      Paid plans unlock detailed scores across all seven dimensions, a complete roadmap,
-                      and school-specific odds. The students who improve fastest see the full picture.
-                    </p>
-                    <Link
-                      href="/checkout/pro"
-                      className="inline-flex items-center gap-1.5 text-[13px] font-semibold transition-colors hover:opacity-80"
-                      style={{ color: "#4A6FA5" }}
-                    >
-                      Unlock all 7 dimensions <ArrowRight className="h-3.5 w-3.5" strokeWidth={2} />
-                    </Link>
-                  </div>
-                </div>
-              </section>
-            )}
-
-            {/* Upgrade CTA card */}
-            <section
-              className="mb-12 border p-6"
-              style={{
-                background: "rgba(255,255,255,0.45)",
-                backdropFilter: "blur(12px)",
-                WebkitBackdropFilter: "blur(12px)",
-                borderColor: "rgba(0,0,0,0.06)",
-                borderRadius: "14px",
-              }}
-            >
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-8">
-                <div className="min-w-0">
-                  <p
-                    className="mt-2 text-[17px] leading-snug"
-                    style={{
-                      color: "var(--dl-text-primary, #1B2030)",
-                      fontFamily: "var(--font-inter)",
-                      fontWeight: 600,
-                    }}
-                  >
-                    Remove the Free-plan analysis cap and unlock full dimension scores and planning details.
-                  </p>
-                  <p
-                    className="mt-1 text-[14px] leading-relaxed"
-                    style={{ color: "var(--dl-text-secondary, #454B5E)", fontFamily: "var(--font-inter)" }}
-                  >
-                    Monthly access to the current Pro tools, subject to service availability and abuse safeguards.
-                  </p>
-                  <p
-                    className="mt-2 text-[12px] font-medium"
-                    style={{ color: "var(--dl-text-muted, #5A6275)" }}
-                  >
-                    Stripe-secured
-                  </p>
-                </div>
-                <Link
-                  href="/checkout/pro"
-                  className="dl-btn dl-btn-primary shrink-0"
-                >
-                  Upgrade now &rarr;
-                </Link>
-              </div>
-            </section>
-          </>
-        )}
-
         {/* Profile completion */}
         <section
           className="mb-12 border p-6"
@@ -1023,7 +859,7 @@ export default async function DashboardPage() {
             Workspace
           </p>
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {tools.map((t) => {
+            {coreTools.map((t) => {
               const isLocked = !isPaid && t.plusOnly;
               const Icon = t.icon;
               const isNextStep = !t.done && !isLocked && t.href === "/profile/create" && !hasProfile;
@@ -1108,112 +944,6 @@ export default async function DashboardPage() {
             })}
           </div>
         </section>
-
-        {/* Pro Preview — blurred insight cards for free users */}
-        {!isPaid && (
-          <section
-            className="mb-14 border p-6"
-            style={{
-              background: "linear-gradient(135deg, rgba(30,51,82,0.04), rgba(74,111,165,0.03))",
-              backdropFilter: "blur(12px)",
-              WebkitBackdropFilter: "blur(12px)",
-              borderColor: "rgba(30,51,82,0.12)",
-              borderRadius: "14px",
-            }}
-          >
-            <div className="mb-5 flex items-center justify-between">
-              <div>
-                <p
-                  className="text-[11px] uppercase"
-                  style={{ color: "#4A6FA5", fontWeight: 700, letterSpacing: "0.12em" }}
-                >
-                  With Pro, you&apos;d also see
-                </p>
-                <p className="mt-1 text-[13px]" style={{ color: "var(--dl-text-secondary, #454B5E)" }}>
-                  Insights that Pro members use to strengthen their applications
-                </p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-              {[
-                {
-                  title: "Weekly Score Trend",
-                  insight: "Your profile score increased 8 points over the last 3 weeks. Academic Rigor drove most of the gain. Leadership is your next highest-ROI dimension.",
-                  label: "Score Analytics",
-                },
-                {
-                  title: "School-Specific Gaps",
-                  insight: "For MIT, your spike score needs to be 20+ points higher. Students admitted to MIT average 85+ in Activity Depth. Your current 62 puts you below the competitive range.",
-                  label: "Gap Analysis",
-                },
-                {
-                  title: "Deadline Countdown",
-                  insight: "Early Action deadlines for 3 of your target schools are in 87 days. Your essay is not yet scored and your recommendation letters aren't tracked.",
-                  label: "Timeline Intelligence",
-                },
-              ].map((card) => (
-                <div
-                  key={card.title}
-                  className="relative overflow-hidden rounded-xl border p-5"
-                  style={{ borderColor: "rgba(0,0,0,0.06)", background: "rgba(255,255,255,0.5)" }}
-                >
-                  <p
-                    className="text-[10px] font-bold uppercase tracking-wider mb-2"
-                    style={{ color: "#4A6FA5" }}
-                  >
-                    {card.label}
-                  </p>
-                  <p
-                    className="text-[15px] font-bold leading-snug mb-2"
-                    style={{ color: "var(--dl-text-primary, #1B2030)", fontFamily: "var(--font-inter)" }}
-                  >
-                    {card.title}
-                  </p>
-                  <p
-                    className="text-[12px] leading-relaxed"
-                    style={{
-                      color: "var(--dl-text-secondary, #454B5E)",
-                      filter: "blur(4px)",
-                      WebkitFilter: "blur(4px)",
-                      userSelect: "none",
-                    }}
-                  >
-                    {card.insight}
-                  </p>
-                  <div
-                    className="absolute inset-0 flex items-center justify-center"
-                    style={{ background: "rgba(255,255,255,0.08)" }}
-                  >
-                    <span
-                      className="rounded-full px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider"
-                      style={{ background: "rgba(74,111,165,0.12)", color: "#4A6FA5", border: "1px solid rgba(74,111,165,0.15)" }}
-                    >
-                      Pro
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <p className="text-[12px] font-semibold" style={{ color: "var(--dl-text-primary, #1B2030)" }}>
-                  Analyses without the Free-plan cap, full dimension breakdowns, and progress history help you iterate.
-                </p>
-                <p className="text-[11px] mt-1" style={{ color: "var(--dl-text-muted, #5A6275)" }}>
-                  Upgrade to remove the Free-plan analysis cap
-                </p>
-              </div>
-              <Link
-                href="/checkout/pro"
-                className="dl-btn dl-btn-primary dl-btn-sm shrink-0"
-              >
-                Unlock for $19.99/mo &rarr;
-              </Link>
-            </div>
-          </section>
-        )}
 
         {/* Recent analyses */}
         <section>
@@ -1421,6 +1151,380 @@ export default async function DashboardPage() {
             &rarr;
           </Link>
         </section>
+
+        {/* Pro features — moved below the student's core work (owner request) */}
+        <section className="mb-14">
+          <p
+            className="mb-5 text-[11px] uppercase"
+            style={{ color: "#4A6FA5", fontWeight: 700, letterSpacing: "0.12em" }}
+          >
+            {isPaid ? "Pro features · unlocked" : "Pro features · locked on Free"}
+          </p>
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {proTools.map((t) => {
+              const isLocked = !isPaid && t.plusOnly;
+              const Icon = t.icon;
+              const isNextStep = !t.done && !isLocked && t.href === "/profile/create" && !hasProfile;
+              return (
+                <Link
+                  key={t.href}
+                  href={isLocked ? `/checkout/pro?from=${encodeURIComponent(t.href)}` : t.href}
+                  className="dl-card-hover relative border p-6 transition-all duration-200 hover:border-[rgba(74,111,165,0.15)] hover:shadow-[0_2px_12px_rgba(74,111,165,0.08)]"
+                  style={{
+                    background: isNextStep
+                      ? "rgba(74,111,165,0.06)"
+                      : isLocked
+                        ? "rgba(255,255,255,0.30)"
+                        : "rgba(255,255,255,0.45)",
+                    backdropFilter: "blur(12px)",
+                    WebkitBackdropFilter: "blur(12px)",
+                    borderColor: isNextStep
+                      ? "rgba(74,111,165,0.18)"
+                      : "rgba(0,0,0,0.06)",
+                    borderRadius: "14px",
+                    opacity: isLocked ? 0.7 : 1,
+                  }}
+                >
+                  {isLocked && (
+                    <span
+                      className="absolute right-4 top-4 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider"
+                      style={{
+                        color: "#4A6FA5",
+                        background: "rgba(74,111,165,0.08)",
+                        border: "1px solid rgba(74,111,165,0.15)",
+                      }}
+                    >
+                      Pro
+                    </span>
+                  )}
+                  <div className="mb-3 flex items-center gap-3">
+                    <span
+                      className="inline-flex h-9 w-9 items-center justify-center rounded-lg"
+                      style={{
+                        background: isNextStep ? "rgba(74,111,165,0.12)" : "rgba(74,111,165,0.06)",
+                        color: "#4A6FA5",
+                      }}
+                    >
+                      <Icon className="h-[18px] w-[18px]" strokeWidth={1.75} />
+                    </span>
+                    {t.done && (
+                      <span
+                        className="rounded-full px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider"
+                        style={{ color: "var(--success, #16A34A)", background: "var(--success-bg, rgba(22,163,74,0.1))" }}
+                      >
+                        Done
+                      </span>
+                    )}
+                    {isNextStep && (
+                      <span
+                        className="rounded-full px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider"
+                        style={{ color: "#4A6FA5", background: "rgba(74,111,165,0.1)" }}
+                      >
+                        Start here
+                      </span>
+                    )}
+                  </div>
+                  <p
+                    className="text-[18px] leading-tight"
+                    style={{
+                      color: isLocked ? "var(--dl-text-secondary, #454B5E)" : "#1B2030",
+                      fontFamily: "var(--font-inter)",
+                      fontWeight: 700,
+                      letterSpacing: "-0.02em",
+                    }}
+                  >
+                    {t.label}
+                  </p>
+                  <p
+                    className="mt-1.5 text-[13.5px] leading-relaxed"
+                    style={{ color: "var(--dl-text-secondary, #454B5E)", fontFamily: "var(--font-inter)" }}
+                  >
+                    {t.desc}
+                  </p>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* Free-tier usage + upgrade nudge — persistent subtle reminders */}
+        {!isPaid && (
+          <>
+            {/* Usage tracker bar */}
+            <section
+              className="mb-6 border p-5"
+              style={{
+                background: "rgba(255,255,255,0.45)",
+                backdropFilter: "blur(12px)",
+                WebkitBackdropFilter: "blur(12px)",
+                borderColor: "rgba(74,111,165,0.12)",
+                borderRadius: "14px",
+              }}
+            >
+              <div className="flex items-center justify-between mb-3">
+                <p
+                  className="text-[11px] font-semibold uppercase tracking-[0.18em]"
+                  style={{ color: "var(--dl-text-secondary, #454B5E)" }}
+                >
+                  Free plan usage
+                </p>
+                <Link
+                  href="/checkout/pro"
+                  className="text-[11px] font-bold uppercase tracking-wider transition-colors hover:opacity-80"
+                  style={{ color: "#4A6FA5" }}
+                >
+                  Remove Free-plan caps
+                </Link>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="rounded-xl border p-3" style={{ borderColor: "rgba(0,0,0,0.06)", background: "rgba(255,255,255,0.5)" }}>
+                  <div className="flex items-baseline justify-between mb-1.5">
+                    <span className="text-[12px] font-medium" style={{ color: "var(--dl-text-secondary, #454B5E)" }}>Analyses</span>
+                    <span className="text-[12px] font-bold tabular-nums" style={{ color: safeUser.analysisCount >= 5 ? "#EF4444" : "#4A6FA5" }}>
+                      {safeUser.analysisCount} / 5
+                    </span>
+                  </div>
+                  <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(0,0,0,0.06)" }}>
+                    <div
+                      className="h-full rounded-full transition-all"
+                      style={{
+                        width: `${Math.min(100, (safeUser.analysisCount / 5) * 100)}%`,
+                        background: safeUser.analysisCount >= 5 ? "#EF4444" : "#4A6FA5",
+                      }}
+                    />
+                  </div>
+                </div>
+                <div className="rounded-xl border p-3" style={{ borderColor: "rgba(0,0,0,0.06)", background: "rgba(255,255,255,0.5)" }}>
+                  <div className="flex items-baseline justify-between mb-1.5">
+                    <span className="text-[12px] font-medium" style={{ color: "var(--dl-text-secondary, #454B5E)" }}>Essays</span>
+                    <span className="text-[12px] font-bold tabular-nums" style={{ color: essayCount >= 5 ? "#EF4444" : "#4A6FA5" }}>
+                      {essayCount} / 5
+                    </span>
+                  </div>
+                  <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(0,0,0,0.06)" }}>
+                    <div
+                      className="h-full rounded-full transition-all"
+                      style={{
+                        width: `${Math.min(100, (essayCount / 5) * 100)}%`,
+                        background: essayCount >= 5 ? "#EF4444" : "#4A6FA5",
+                      }}
+                    />
+                  </div>
+                </div>
+                <div className="rounded-xl border p-3" style={{ borderColor: "rgba(0,0,0,0.06)", background: "rgba(255,255,255,0.5)" }}>
+                  <div className="flex items-baseline justify-between mb-1.5">
+                    <span className="text-[12px] font-medium" style={{ color: "var(--dl-text-secondary, #454B5E)" }}>Schools</span>
+                    <span className="text-[12px] font-bold tabular-nums" style={{ color: collegeCount >= 8 ? "#EF4444" : "#4A6FA5" }}>
+                      {collegeCount} / 8
+                    </span>
+                  </div>
+                  <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(0,0,0,0.06)" }}>
+                    <div
+                      className="h-full rounded-full transition-all"
+                      style={{
+                        width: `${Math.min(100, (collegeCount / 8) * 100)}%`,
+                        background: collegeCount >= 8 ? "#EF4444" : "#4A6FA5",
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Dimension teaser — what they're missing */}
+            {hasAnalysis && (
+              <section
+                className="mb-6 border p-5"
+                style={{
+                  background: "linear-gradient(135deg, rgba(74,111,165,0.06), rgba(30,51,82,0.03))",
+                  backdropFilter: "blur(12px)",
+                  WebkitBackdropFilter: "blur(12px)",
+                  borderColor: "rgba(74,111,165,0.15)",
+                  borderRadius: "14px",
+                }}
+              >
+                <div className="flex items-start gap-4">
+                  <div
+                    className="flex h-10 w-10 items-center justify-center rounded-xl shrink-0"
+                    style={{ background: "rgba(74,111,165,0.12)", color: "#4A6FA5" }}
+                  >
+                    <ScanSearch className="h-5 w-5" strokeWidth={1.75} />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p
+                      className="text-[15px] font-bold leading-snug mb-1"
+                      style={{ color: "var(--dl-text-primary, #1B2030)" }}
+                    >
+                      Your free analysis covers the basics. Upgrade for the full 7-dimension breakdown.
+                    </p>
+                    <p className="text-[13px] leading-relaxed mb-3" style={{ color: "var(--dl-text-secondary, #454B5E)" }}>
+                      Paid plans unlock detailed scores across all seven dimensions, a complete roadmap,
+                      and school-specific odds. The students who improve fastest see the full picture.
+                    </p>
+                    <Link
+                      href="/checkout/pro"
+                      className="inline-flex items-center gap-1.5 text-[13px] font-semibold transition-colors hover:opacity-80"
+                      style={{ color: "#4A6FA5" }}
+                    >
+                      Unlock all 7 dimensions <ArrowRight className="h-3.5 w-3.5" strokeWidth={2} />
+                    </Link>
+                  </div>
+                </div>
+              </section>
+            )}
+
+            {/* Upgrade CTA card */}
+            <section
+              className="mb-12 border p-6"
+              style={{
+                background: "rgba(255,255,255,0.45)",
+                backdropFilter: "blur(12px)",
+                WebkitBackdropFilter: "blur(12px)",
+                borderColor: "rgba(0,0,0,0.06)",
+                borderRadius: "14px",
+              }}
+            >
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-8">
+                <div className="min-w-0">
+                  <p
+                    className="mt-2 text-[17px] leading-snug"
+                    style={{
+                      color: "var(--dl-text-primary, #1B2030)",
+                      fontFamily: "var(--font-inter)",
+                      fontWeight: 600,
+                    }}
+                  >
+                    Remove the Free-plan analysis cap and unlock full dimension scores and planning details.
+                  </p>
+                  <p
+                    className="mt-1 text-[14px] leading-relaxed"
+                    style={{ color: "var(--dl-text-secondary, #454B5E)", fontFamily: "var(--font-inter)" }}
+                  >
+                    Monthly access to the current Pro tools, subject to service availability and abuse safeguards.
+                  </p>
+                  <p
+                    className="mt-2 text-[12px] font-medium"
+                    style={{ color: "var(--dl-text-muted, #5A6275)" }}
+                  >
+                    Stripe-secured
+                  </p>
+                </div>
+                <Link
+                  href="/checkout/pro"
+                  className="dl-btn dl-btn-primary shrink-0"
+                >
+                  Upgrade now &rarr;
+                </Link>
+              </div>
+            </section>
+          </>
+        )}
+
+        {/* Pro Preview — blurred insight cards for free users */}
+        {!isPaid && (
+          <section
+            className="mb-14 border p-6"
+            style={{
+              background: "linear-gradient(135deg, rgba(30,51,82,0.04), rgba(74,111,165,0.03))",
+              backdropFilter: "blur(12px)",
+              WebkitBackdropFilter: "blur(12px)",
+              borderColor: "rgba(30,51,82,0.12)",
+              borderRadius: "14px",
+            }}
+          >
+            <div className="mb-5 flex items-center justify-between">
+              <div>
+                <p
+                  className="text-[11px] uppercase"
+                  style={{ color: "#4A6FA5", fontWeight: 700, letterSpacing: "0.12em" }}
+                >
+                  With Pro, you&apos;d also see
+                </p>
+                <p className="mt-1 text-[13px]" style={{ color: "var(--dl-text-secondary, #454B5E)" }}>
+                  Insights that Pro members use to strengthen their applications
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+              {[
+                {
+                  title: "Weekly Score Trend",
+                  insight: "Your profile score increased 8 points over the last 3 weeks. Academic Rigor drove most of the gain. Leadership is your next highest-ROI dimension.",
+                  label: "Score Analytics",
+                },
+                {
+                  title: "School-Specific Gaps",
+                  insight: "For MIT, your spike score needs to be 20+ points higher. Students admitted to MIT average 85+ in Activity Depth. Your current 62 puts you below the competitive range.",
+                  label: "Gap Analysis",
+                },
+                {
+                  title: "Deadline Countdown",
+                  insight: "Early Action deadlines for 3 of your target schools are in 87 days. Your essay is not yet scored and your recommendation letters aren't tracked.",
+                  label: "Timeline Intelligence",
+                },
+              ].map((card) => (
+                <div
+                  key={card.title}
+                  className="relative overflow-hidden rounded-xl border p-5"
+                  style={{ borderColor: "rgba(0,0,0,0.06)", background: "rgba(255,255,255,0.5)" }}
+                >
+                  <p
+                    className="text-[10px] font-bold uppercase tracking-wider mb-2"
+                    style={{ color: "#4A6FA5" }}
+                  >
+                    {card.label}
+                  </p>
+                  <p
+                    className="text-[15px] font-bold leading-snug mb-2"
+                    style={{ color: "var(--dl-text-primary, #1B2030)", fontFamily: "var(--font-inter)" }}
+                  >
+                    {card.title}
+                  </p>
+                  <p
+                    className="text-[12px] leading-relaxed"
+                    style={{
+                      color: "var(--dl-text-secondary, #454B5E)",
+                      filter: "blur(4px)",
+                      WebkitFilter: "blur(4px)",
+                      userSelect: "none",
+                    }}
+                  >
+                    {card.insight}
+                  </p>
+                  <div
+                    className="absolute inset-0 flex items-center justify-center"
+                    style={{ background: "rgba(255,255,255,0.08)" }}
+                  >
+                    <span
+                      className="rounded-full px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider"
+                      style={{ background: "rgba(74,111,165,0.12)", color: "#4A6FA5", border: "1px solid rgba(74,111,165,0.15)" }}
+                    >
+                      Pro
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="text-[12px] font-semibold" style={{ color: "var(--dl-text-primary, #1B2030)" }}>
+                  Analyses without the Free-plan cap, full dimension breakdowns, and progress history help you iterate.
+                </p>
+                <p className="text-[11px] mt-1" style={{ color: "var(--dl-text-muted, #5A6275)" }}>
+                  Upgrade to remove the Free-plan analysis cap
+                </p>
+              </div>
+              <Link
+                href="/checkout/pro"
+                className="dl-btn dl-btn-primary dl-btn-sm shrink-0"
+              >
+                Unlock for $19.99/mo &rarr;
+              </Link>
+            </div>
+          </section>
+        )}
 
         {/* Referral program — invite a friend, get a free month */}
         <section
