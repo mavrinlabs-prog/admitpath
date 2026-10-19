@@ -25,7 +25,7 @@ const CURRENT_TOOLS = [
 /**
  * Shared page body for /for-schools and /for-counselors. School and district
  * pricing is quote-based (custom pricing and custom access codes); there is no
- * free pilot. Every CTA leads to the inquiry form, which saves to the
+ * no-cost trial for organizations. Every CTA leads to the inquiry form, which saves to the
  * SchoolInquiry table and is visible at /admin/inquiries.
  */
 export function InstitutionPage({
