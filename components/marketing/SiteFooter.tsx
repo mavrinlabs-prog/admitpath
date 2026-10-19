@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { LogoMark } from "@/components/admitpath-logo";
 import { StatusIndicator } from "./StatusIndicator";
 import { AUDIENCE_LINKS } from "./nav-links";
 
@@ -25,6 +26,7 @@ export function SiteFooter() {
               prefetch={false}
               className="mb-4 inline-flex items-center gap-2.5 transition-transform duration-200 ease-out hover:scale-[1.02]"
             >
+              <LogoMark size={26} />
               <span className="text-base font-bold text-white">AdmitPath</span>
             </Link>
             <p
