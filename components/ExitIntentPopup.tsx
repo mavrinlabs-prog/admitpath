@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ArrowRight, AlertTriangle } from "lucide-react";
+import { POPUP_STORAGE, readNumber, safeStorage, shouldShowPopup, writeValue } from "@/lib/popup-policy";
 
 /**
  * ExitIntentPopup — captures leaving visitors with a high-conversion popup.
@@ -11,62 +12,70 @@ import { X, ArrowRight, AlertTriangle } from "lucide-react";
  * Desktop: Detects mouse leaving the viewport (mouseleave on document).
  * Mobile: intentionally disabled; scroll gestures are too ambiguous.
  *
- * Shows at most once every 30 days and only after meaningful engagement.
+ * Trigger rules live in lib/popup-policy.ts (time on page AND scroll depth,
+ * or desktop exit intent; once per session; once per 7 days; 30 days after a
+ * dismissal; never for signed-in users or on auth/checkout/legal pages).
  * system glassmorphism overlay pattern.
  */
-export function ExitIntentPopup() {
+export function ExitIntentPopup({ signedIn = false }: { signedIn?: boolean }) {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
-    const storageKey = "ap_exit_shown_at";
-    const lastShown = Number(localStorage.getItem(storageKey) ?? 0);
-    if (Date.now() - lastShown < 30 * 24 * 60 * 60 * 1000) return;
+    if (signedIn) return;
+    const local = safeStorage("local");
+    const session = safeStorage("session");
+    const startedAt = Date.now();
+    let maxScroll = 0;
+    let decided = false;
+    const isDesktop = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 
-    let engaged = false;
-    let maxScrollDepth = 0;
-
-    // Desktop: mouse leaves viewport toward top (toward address bar / tabs)
-    function handleMouseLeave(e: MouseEvent) {
-      if (engaged && e.clientY <= 5) {
-        triggerPopup();
+    const evaluate = (exitIntent: boolean) => {
+      if (decided) return;
+      const decision = shouldShowPopup({
+        pathname: window.location.pathname,
+        signedIn,
+        secondsOnPage: (Date.now() - startedAt) / 1000,
+        scrollDepth: maxScroll,
+        exitIntent,
+        isDesktop,
+        now: Date.now(),
+        lastShownAt: readNumber(local, POPUP_STORAGE.lastShown),
+        dismissedAt: readNumber(local, POPUP_STORAGE.dismissed),
+        shownThisSession: readNumber(session, POPUP_STORAGE.session) !== null,
+      });
+      if (!decision.show) {
+        if (["signed_in", "suppressed_page", "session_cap", "dismissed", "frequency_cap"].includes(decision.reason)) decided = true;
+        return;
       }
-    }
+      decided = true;
+      writeValue(local, POPUP_STORAGE.lastShown, String(Date.now()));
+      writeValue(session, POPUP_STORAGE.session, String(Date.now()));
+      setShow(true);
+    };
 
     function handleScroll() {
       const scrollable = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-      maxScrollDepth = Math.max(maxScrollDepth, window.scrollY / scrollable);
-      if (maxScrollDepth >= 0.5) engaged = true;
+      maxScroll = Math.max(maxScroll, window.scrollY / scrollable);
+    }
+    function handleMouseLeave(e: MouseEvent) {
+      if (e.clientY <= 5) evaluate(true);
     }
 
-    function triggerPopup() {
-      if (Date.now() - Number(localStorage.getItem(storageKey) ?? 0) < 30 * 24 * 60 * 60 * 1000) return;
-      localStorage.setItem(storageKey, String(Date.now()));
-      setShow(true);
-      // Clean up listeners after triggering
-      document.removeEventListener("mouseleave", handleMouseLeave);
-      window.removeEventListener("scroll", handleScroll);
-    }
-
-    const engagementTimer = setTimeout(() => { engaged = true; }, 45_000);
-    // Exit intent is a desktop-only signal; touch scrolling should never open it.
-    const timer = setTimeout(() => {
-      if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
-        document.addEventListener("mouseleave", handleMouseLeave);
-      }
-      window.addEventListener("scroll", handleScroll, { passive: true });
-    }, 10_000);
-
+    evaluate(false); // resolves caps/suppression immediately; never shows on first paint
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    if (isDesktop) document.addEventListener("mouseleave", handleMouseLeave);
+    const interval = setInterval(() => evaluate(false), 5_000);
     return () => {
-      clearTimeout(timer);
-      clearTimeout(engagementTimer);
-      document.removeEventListener("mouseleave", handleMouseLeave);
+      clearInterval(interval);
       window.removeEventListener("scroll", handleScroll);
+      document.removeEventListener("mouseleave", handleMouseLeave);
     };
-  }, []);
+  }, [signedIn]);
 
   const modalRef = useRef<HTMLDivElement>(null);
 
   const dismiss = useCallback(() => {
+    writeValue(safeStorage("local"), POPUP_STORAGE.dismissed, String(Date.now()));
     setShow(false);
   }, []);
 
@@ -175,7 +184,7 @@ export function ExitIntentPopup() {
                 letterSpacing: "-0.02em",
               }}
             >
-              Your college application has weak spots
+              See where your application stands
             </h2>
             <p
               className="text-center text-sm mb-6"

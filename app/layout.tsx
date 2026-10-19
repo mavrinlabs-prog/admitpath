@@ -367,7 +367,6 @@ const jsonLd = {
         "https://twitter.com/admitpath",
         "https://www.linkedin.com/company/admitpath",
         "https://github.com/admitpath",
-        "https://competeai.app",
       ],
     },
     {

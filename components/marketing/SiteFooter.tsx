@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { StatusIndicator } from "./StatusIndicator";
+import { AUDIENCE_LINKS } from "./nav-links";
 
 /**
  * Shared site footer -- dark background (#1B2030), white text, links to all
@@ -29,7 +31,7 @@ export function SiteFooter() {
               className="max-w-[220px] text-sm"
               style={{ color: "rgba(255,255,255,0.75)" }}
             >
-              The 7-dimension profile score, calibrated to real T20 admit rates.
+              AI college planning calibrated to published Common Data Set admissions factors.
             </p>
             <p
               className="mt-4 text-xs"
@@ -115,8 +117,9 @@ export function SiteFooter() {
               { href: "/about", label: "About" },
               { href: "/pricing", label: "Pricing" },
               { href: "/methodology", label: "Methodology" },
-              { href: "/for-schools", label: "For schools" },
-              { href: "/counselor-toolkit", label: "For counselors" },
+              ...AUDIENCE_LINKS.map((link) => ({ href: link.href, label: `For ${link.label.toLowerCase()}` })),
+              { href: "/counselor-toolkit", label: "Counselor toolkit" },
+              { href: "/status", label: "System status" },
               { href: "/pricing-comparison", label: "Plan comparison" },
               { href: "/press", label: "Press" },
               { href: "/contact", label: "Contact" },
@@ -137,9 +140,6 @@ export function SiteFooter() {
                 {label}
               </Link>
             ))}
-            {/* Cross-product flywheel links (SEO entity boost).
-                Per SEO playbook: "Both sites can link to each other from author
-                bio + footer — same entity boost." */}
           </div>
         </div>
 
@@ -158,17 +158,7 @@ export function SiteFooter() {
               maestro.committee@gmail.com
             </a>
           </p>
-          <p
-            className="flex items-center gap-2 text-xs"
-            style={{ color: "rgba(255,255,255,0.6)" }}
-          >
-            <span
-              className="inline-block h-1.5 w-1.5 rounded-full"
-              style={{ background: "#4DA67A" }}
-              aria-hidden
-            />
-            Support available
-          </p>
+          <StatusIndicator />
         </div>
       </div>
     </footer>

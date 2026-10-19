@@ -124,7 +124,7 @@ export function MobileNav({ signedIn = false }: { signedIn?: boolean }) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -12 }}
             transition={{ duration: 0.25, ease: [0.2, 0.8, 0.2, 1] }}
-            className="absolute top-16 left-0 right-0 z-50 px-5 py-5 flex flex-col gap-1"
+            className="absolute top-16 left-0 right-0 z-50 px-5 py-5 flex flex-col gap-1 max-h-[calc(100vh-4rem)] overflow-y-auto"
             style={{
               background: "rgba(255, 255, 255, 0.60)",
               backdropFilter: "blur(16px)",
@@ -135,9 +135,10 @@ export function MobileNav({ signedIn = false }: { signedIn?: boolean }) {
           >
             {[
               { href: "#how-it-works", label: "How it works" },
-              { href: "#parents", label: "For parents" },
               { href: "/for-schools", label: "For schools" },
-              { href: "/counselor", label: "For counselors" },
+              { href: "/for-counselors", label: "For counselors" },
+              { href: "/for/students", label: "For students" },
+              { href: "/for/parents", label: "For parents" },
               { href: "/tools", label: "Tools" },
               { href: "/pricing", label: "Pricing" },
               { href: "/blog", label: "Blog" },
@@ -177,7 +178,7 @@ export function MobileNav({ signedIn = false }: { signedIn?: boolean }) {
             ))}
             <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25, delay: 0.15 }}>
               <Link href={signedIn ? "/dashboard" : "/sign-up"} prefetch={false} className="dl-btn dl-btn-primary dl-btn-lg mt-2 w-full justify-center" onClick={() => setOpen(false)}>
-                {signedIn ? "Open dashboard" : "Sign up free"} <ArrowRight className="h-3.5 w-3.5" />
+                {signedIn ? "Dashboard" : "Get started"} <ArrowRight className="h-3.5 w-3.5" />
               </Link>
             </motion.div>
           </motion.div>
