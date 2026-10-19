@@ -735,7 +735,7 @@ export default function ChatPage() {
                 </span>
               ) : planLabel === "Free" ? (
                 <Link
-                  href="/pricing"
+                  href="/checkout/pro?from=%2Fchat"
                   className="text-[10px] font-semibold underline"
                   style={{ color: "#4A6FA5" }}
                 >
@@ -974,10 +974,10 @@ export default function ChatPage() {
                       </p>
                       <div className="flex flex-col gap-2">
                         <Link
-                          href="/pricing"
+                          href="/checkout/pro?from=%2Fchat"
                           className="dl-btn dl-btn-primary py-2.5 px-5 text-xs w-full justify-center"
                         >
-                          View plans
+                          Upgrade to Pro — $19.99/mo
                         </Link>
                         <Link
                           href="/pricing"

@@ -145,7 +145,7 @@ export function redirectToSignIn(): void {
  */
 export function redirectToUpgrade(err: ApiError): void {
   if (typeof window === "undefined") return;
-  window.location.href = err.upgrade || "/pricing";
+  window.location.href = err.upgrade || "/checkout/pro";
 }
 
 export function isApiError(e: unknown): e is ApiError {

@@ -688,7 +688,7 @@ export default function EssaysPage() {
                 {(error.includes("Pro") || error.includes("Upgrade")) ? (
                   <span>
                     {error}{" "}
-                    <Link href="/pricing" className="font-bold underline">
+                    <Link href="/checkout/pro" className="font-bold underline">
                       See plans →
                     </Link>
                   </span>
@@ -1225,7 +1225,7 @@ export default function EssaysPage() {
                     </p>
 
                     <Link
-                      href="/pricing"
+                      href="/checkout/pro"
                       className="dl-btn dl-btn-primary dl-btn-sm w-full justify-center"
                     >
                       <Sparkles className="h-3.5 w-3.5" />

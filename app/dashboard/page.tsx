@@ -778,7 +778,7 @@ export default async function DashboardPage() {
                   Free plan usage
                 </p>
                 <Link
-                  href="/pricing"
+                  href="/checkout/pro"
                   className="text-[11px] font-bold uppercase tracking-wider transition-colors hover:opacity-80"
                   style={{ color: "#4A6FA5" }}
                 >
@@ -871,7 +871,7 @@ export default async function DashboardPage() {
                       and school-specific odds. The students who improve fastest see the full picture.
                     </p>
                     <Link
-                      href="/pricing"
+                      href="/checkout/pro"
                       className="inline-flex items-center gap-1.5 text-[13px] font-semibold transition-colors hover:opacity-80"
                       style={{ color: "#4A6FA5" }}
                     >
@@ -919,7 +919,7 @@ export default async function DashboardPage() {
                   </p>
                 </div>
                 <Link
-                  href="/pricing"
+                  href="/checkout/pro"
                   className="dl-btn dl-btn-primary shrink-0"
                 >
                   Upgrade now &rarr;
@@ -1030,7 +1030,7 @@ export default async function DashboardPage() {
               return (
                 <Link
                   key={t.href}
-                  href={isLocked ? "/pricing" : t.href}
+                  href={isLocked ? `/checkout/pro?from=${encodeURIComponent(t.href)}` : t.href}
                   className="dl-card-hover relative border p-6 transition-all duration-200 hover:border-[rgba(74,111,165,0.15)] hover:shadow-[0_2px_12px_rgba(74,111,165,0.08)]"
                   style={{
                     background: isNextStep
@@ -1206,7 +1206,7 @@ export default async function DashboardPage() {
                 </p>
               </div>
               <Link
-                href="/pricing"
+                href="/checkout/pro"
                 className="dl-btn dl-btn-primary dl-btn-sm shrink-0"
               >
                 Unlock for $19.99/mo &rarr;

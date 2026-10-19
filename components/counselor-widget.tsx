@@ -120,8 +120,8 @@ export function CounselorWidget() {
           if (typeof window === "undefined") return;
           const upgradeUrl = buildSameOriginCounselorUrl(
             window.location.href,
-            data.upgrade ?? "/pricing",
-            "/pricing",
+            data.upgrade ?? "/checkout/pro",
+            "/checkout/pro",
           );
           window.location.assign(upgradeUrl.href);
         }, 1200);

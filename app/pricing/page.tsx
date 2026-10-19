@@ -119,6 +119,18 @@ function PricingContent() {
 
   // Fire pricing_view once on mount. No PII — just the optional plan hint
   // from the query string so we can attribute funnel entrances.
+  const checkoutStatus = searchParams?.get("checkout") ?? null;
+  useEffect(() => {
+    if (!checkoutStatus) return;
+    const messages: Record<string, string> = {
+      unavailable: "Checkout is temporarily unavailable. Please try again shortly or contact support.",
+      error: "We couldn't start checkout. Please try again.",
+      "rate-limited": "Too many checkout attempts. Please wait a minute and try again.",
+    };
+    if (messages[checkoutStatus]) toast.error(messages[checkoutStatus]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [checkoutStatus]);
+
   useEffect(() => {
     track("pricing_view", { plan: defaultPlan ?? "none" });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -132,8 +144,8 @@ function PricingContent() {
       body: JSON.stringify({ planId }),
     });
     if (res.status === 401) {
-      const dest = encodeURIComponent(`/pricing?plan=${planId}`);
-      router.push(`/sign-up?redirect=${dest}`);
+      // Not signed in: create an account, then go straight to Stripe checkout.
+      router.push(`/sign-up?redirect_url=${encodeURIComponent("/checkout/pro")}`);
       return;
     }
     const data = (await res.json()) as { url?: string; error?: string };
