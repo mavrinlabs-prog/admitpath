@@ -22,7 +22,7 @@ describe("essay contract (reported /api/essay 400)", () => {
   it("still rejects empty essays with a clear message", () => {
     const r = essaySubmissionSchema.safeParse({ prompt: "p", content: "short" });
     expect(r.success).toBe(false);
-    if (!r.success) expect(r.error.flatten().fieldErrors.content?.[0]).toMatch(/at least 10/);
+    if (!r.success) expect((r.error.flatten().fieldErrors as Record<string, string[] | undefined>).content?.[0]).toMatch(/at least 10/);
   });
   it("generates request keys accepted by the schema", () => {
     const key = newEssayRequestKey();
