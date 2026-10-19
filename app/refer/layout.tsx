@@ -13,9 +13,9 @@ export const metadata: Metadata = {
     description:
       "Share AdmitPath with friends and classmates applying to college.",
     url: `${BASE}/refer`,
-    images: [{ url: `${BASE}/api/og?title=Refer+a+Friend&subtitle=Give+a+free+month.+Get+a+free+month.`, width: 1200, height: 630, alt: "Refer a Friend to AdmitPath" }],
+    images: [{ url: `${BASE}/api/og?title=Refer+a+Friend&subtitle=Give+50%25+off.+Get+a+reward.`, width: 1200, height: 630, alt: "Refer a Friend to AdmitPath" }],
   },
-  twitter: { card: "summary_large_image", site: "@admitpath", title: "Refer a Friend — AdmitPath", description: "Share AdmitPath with friends applying to college.", images: [`${BASE}/api/og?title=Refer+a+Friend&subtitle=Give+a+free+month.+Get+a+free+month.`] },
+  twitter: { card: "summary_large_image", site: "@admitpath", title: "Refer a Friend — AdmitPath", description: "Share AdmitPath with friends applying to college.", images: [`${BASE}/api/og?title=Refer+a+Friend&subtitle=Give+50%25+off.+Get+a+reward.`] },
 };
 
 export default function ReferLayout({ children }: { children: React.ReactNode }) {

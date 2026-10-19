@@ -29,7 +29,7 @@ import {
 import { CopyReferralButton } from "@/components/CopyReferralButton";
 import { TrialUsageBar } from "@/components/TrialUsageBar";
 import { buildReferralUrl } from "@/lib/site-url";
-import { generateReferralCode } from "@/lib/referral";
+import { tryGenerateReferralCode } from "@/lib/referral";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Dashboard", robots: { index: false, follow: false } };
@@ -328,6 +328,9 @@ export default async function DashboardPage() {
       scores: aScores,
     };
   });
+
+  const referralCodeForUser = tryGenerateReferralCode(userId);
+  const referralUrl = referralCodeForUser ? buildReferralUrl(referralCodeForUser) : null;
 
   // Force profile completion — if user has no profile, redirect to create one
   if (!hasProfile) {
@@ -1456,22 +1459,22 @@ export default async function DashboardPage() {
                   letterSpacing: "-0.02em",
                 }}
               >
-                Invite a friend, get a free month
+                Give 50% off, get a reward
               </p>
               <p
                 className="mt-2 text-[14px] leading-relaxed"
                 style={{ color: "var(--dl-text-secondary, #454B5E)", fontFamily: "var(--font-inter)" }}
               >
-                For every friend who upgrades to a paid plan, you get <strong>1 free month</strong> added to your subscription.
-                Your friend gets <strong>1 free month</strong> too. No limit on how many months you can earn.
+                Friends who join with your link get <strong>50% off their first month of Pro</strong>, applied automatically at checkout.
+                When they upgrade, you receive a single-use reward code (up to 12).
               </p>
 
               {/* How it works steps */}
               <div className="mt-4 flex flex-wrap gap-4">
                 {[
                   { step: "1", text: "Share your unique link" },
-                  { step: "2", text: "Friend signs up and upgrades" },
-                  { step: "3", text: "You both get 1 free month" },
+                  { step: "2", text: "Friend gets 50% off Pro" },
+                  { step: "3", text: "You get a reward code" },
                 ].map((item) => (
                   <div key={item.step} className="flex items-center gap-2">
                     <span
@@ -1503,16 +1506,16 @@ export default async function DashboardPage() {
                   className="text-[13px] tabular-nums select-all"
                   style={{ color: "var(--dl-brand, #4A6FA5)", fontFamily: "var(--font-jetbrains-mono)" }}
                 >
-                  {buildReferralUrl(generateReferralCode(userId)).replace(/^https?:\/\//, "")}
+                  {referralUrl ? referralUrl.replace(/^https?:\/\//, "") : "Referral links are temporarily unavailable"}
                 </code>
-                <CopyReferralButton url={buildReferralUrl(generateReferralCode(userId))} />
+                {referralUrl && <CopyReferralButton url={referralUrl} />}
               </div>
               {/* Copy link is the only share action */}
               <p
                 className="text-[11px] mt-1"
                 style={{ color: "var(--dl-text-muted, #5A6275)" }}
               >
-                Earn up to 12 referral months. Qualifying upgrades receive one month of credit.
+                One discount per new account. Self-referrals and duplicate accounts are not eligible.
               </p>
             </div>
           </div>

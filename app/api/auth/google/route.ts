@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getAppBaseUrl } from "@/lib/app-url";
 import { rateLimitWindow, getClientIp } from "@/lib/rate-limit";
 import { safeRelativeRedirect } from "@/lib/safe-redirect";
+import { isValidReferralCode } from "@/lib/referral-code";
 
 function cleanEnv(value: string | undefined): string | undefined {
   return value?.replace(/^\uFEFF/, "").trim() || undefined;
@@ -45,6 +46,12 @@ export async function GET(req: NextRequest) {
   const returnTo = safeRelativeRedirect(req.nextUrl.searchParams.get("redirect_url"));
   if (returnTo) response.cookies.set("oauth_return_to", returnTo, cookieOptions);
   else response.cookies.delete("oauth_return_to");
+  // Referral attribution survives even if the /r/CODE cookie was dropped:
+  // sign-up forwards ?ref=CODE here and we persist it for the callback.
+  const ref = req.nextUrl.searchParams.get("ref");
+  if (ref && isValidReferralCode(ref)) {
+    response.cookies.set("ref", ref, { ...cookieOptions, maxAge: 60 * 60 * 24 * 30 });
+  }
   response.cookies.set(
     "oauth_email_consent",
     req.nextUrl.searchParams.get("email_consent") === "1" ? "1" : "0",

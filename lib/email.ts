@@ -1012,7 +1012,7 @@ export async function sendReferralInviteEmail(
   <li><strong>College matching</strong> using published Common Data Set admit rates</li>
   <li><strong>100% free to start</strong> — no time limit</li>
 </ul>
-<p style="margin: 0;">When you upgrade to Pro, both you and ${senderName} get a free month.</p>`,
+<p style="margin: 0;">Sign up with ${senderName}'s link and get 50% off your first month of Pro.</p>`,
       cta: { label: "Get your free score", href: `${APP_URL}/?ref=invite` },
     }),
   });
@@ -1196,5 +1196,28 @@ export async function sendGroqExhaustionAlert() {
     to: ALERT_EMAIL,
     subject: "[ALERT] AdmitPath: All Groq keys exhausted",
     html: `<p>All GROQ_API_KEY_1..30 keys have failed with 401 or 429. Action required: rotate keys at console.groq.com and update Vercel env vars.</p><p>Time: ${new Date().toISOString()}</p>`,
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Referral reward (referrer). Only called when RESEND_API_KEY is configured;
+// otherwise the code is stored on the Referral row for manual send by admin.
+// ---------------------------------------------------------------------------
+
+export async function sendReferralRewardEmail(to: string, firstName: string, code: string, rewardDescription: string) {
+  const resend = getResendClient();
+  const safeName = escapeHtml(firstName || "there");
+  const safeCode = escapeHtml(code);
+  return resend.emails.send({
+    from: FROM,
+    to,
+    subject: "Your AdmitPath referral reward code",
+    html: renderEmail({
+      heading: `${safeName}, your friend joined AdmitPath Pro.`,
+      intro: `<p style="margin: 0 0 12px 0;">Thanks for the referral. Here is your single-use reward code (${escapeHtml(rewardDescription)}):</p>
+<p style="margin: 0 0 16px 0; font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 700; letter-spacing: 0.06em; color: #1B2030;">${safeCode}</p>
+<p style="margin: 0;">Enter it at checkout, or reply to this email and we will apply it to your current subscription.</p>`,
+      cta: { label: "Open billing", href: `${APP_URL}/billing` },
+    }),
   });
 }

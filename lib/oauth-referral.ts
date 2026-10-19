@@ -13,9 +13,8 @@ export async function recordOAuthReferral(
   recorder: ReferralRecorder = recordReferral,
 ): Promise<OAuthReferralResult> {
   if (!referralCode) return { status: "ignored", reason: "missing" };
-  if (!referralUserId(referralCode)) return { status: "ignored", reason: "invalid" };
-
   try {
+    if (!referralUserId(referralCode)) return { status: "ignored", reason: "invalid" };
     const result = await recorder(refereeId, referralCode);
     return result.success
       ? { status: "recorded" }

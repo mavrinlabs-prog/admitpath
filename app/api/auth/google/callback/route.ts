@@ -5,6 +5,16 @@ import { SESSION_MAX_AGE_SECONDS, encodeSessionCookie, parseSessionCookieValue, 
 import { safeRelativeRedirect } from "@/lib/safe-redirect";
 import { getAppBaseUrl } from "@/lib/app-url";
 import { recordOAuthReferral } from "@/lib/oauth-referral";
+import {
+  DEVICE_COOKIE,
+  DEVICE_COOKIE_MAX_AGE,
+  assessSignup,
+  getRequestIp,
+  hashDeviceToken,
+  hashIp,
+  newDeviceToken,
+  normalizeEmail,
+} from "@/lib/abuse-signals";
 
 /** Strip UTF-8 BOM and whitespace that can leak from env var editors */
 function cleanEnv(value: string | undefined): string | undefined {
@@ -135,6 +145,8 @@ export async function GET(req: NextRequest) {
 
     // Upsert user in DB and determine redirect.
     // Prevent multiple accounts: if email already exists, sign into THAT account.
+    const existingDeviceToken = cookieStore.get(DEVICE_COOKIE)?.value;
+    const deviceToken = existingDeviceToken && existingDeviceToken.length >= 16 ? existingDeviceToken : newDeviceToken();
     let destination = returnTo ?? "/dashboard";
     let resolvedUserId: string;
     try {
@@ -172,6 +184,62 @@ export async function GET(req: NextRequest) {
         },
       });
 
+      // Privacy-respecting anti-abuse signals (no fingerprinting, no MAC
+      // addresses): normalized email, httpOnly device token hash, salted IP
+      // hash. Accounts are only flagged for admin review, never auto-deleted.
+      try {
+        const deviceHash = hashDeviceToken(deviceToken);
+        const ipHash = hashIp(getRequestIp(req.headers));
+        const normalized = normalizeEmail(emailLower);
+        if (!existingByEmail) {
+          const [matches, recentFromIp] = await Promise.all([
+            prisma.user.findMany({
+              where: {
+                id: { not: userId },
+                deletedAt: null,
+                OR: [
+                  { normalizedEmail: normalized },
+                  ...(deviceHash ? [{ deviceId: deviceHash }] : []),
+                  ...(ipHash ? [{ signupIpHash: ipHash }] : []),
+                ],
+              },
+              select: { id: true, email: true, name: true, deviceId: true, signupIpHash: true, stripeCustomerId: true, abuseReviewStatus: true },
+              take: 10,
+            }),
+            ipHash
+              ? prisma.user.count({ where: { signupIpHash: ipHash, createdAt: { gte: new Date(Date.now() - 24 * 60 * 60 * 1000) } } })
+              : Promise.resolve(0),
+          ]);
+          const assessment = assessSignup(
+            { id: userId, email: emailLower, name: userName, deviceHash, ipHash },
+            matches.map((m) => ({ id: m.id, email: m.email, name: m.name, deviceHash: m.deviceId, ipHash: m.signupIpHash, stripeCustomerId: m.stripeCustomerId, abuseReviewStatus: m.abuseReviewStatus })),
+            recentFromIp,
+          );
+          await prisma.user.update({
+            where: { id: userId },
+            data: {
+              normalizedEmail: normalized,
+              deviceId: deviceHash,
+              signupIpHash: ipHash,
+              abuseSignals: { score: assessment.score, flags: assessment.flags, checkedAt: new Date().toISOString() },
+              abuseReviewStatus: assessment.decision === "allow" ? "clear" : "review",
+            },
+          });
+        } else if (!existingByEmail.normalizedEmail || !existingByEmail.deviceId) {
+          await prisma.user.update({
+            where: { id: userId },
+            data: {
+              normalizedEmail: existingByEmail.normalizedEmail ?? normalized,
+              deviceId: existingByEmail.deviceId ?? deviceHash,
+            },
+          });
+        }
+      } catch (signalErr) {
+        console.warn("[auth/google/callback] abuse signal capture skipped", {
+          name: signalErr instanceof Error ? signalErr.name : "UnknownError",
+        });
+      }
+
       if (!existingByEmail && referralCode) {
         const referralResult = await recordOAuthReferral(userId, referralCode);
         if (referralResult.status === "failed") {
@@ -184,7 +252,10 @@ export async function GET(req: NextRequest) {
         where: { userId },
         select: { id: true },
       });
-      if (!profile) {
+      // Go Pro / referral sign-ups continue straight to Stripe Checkout;
+      // the profile can be completed after payment.
+      const goingToCheckout = Boolean(returnTo?.startsWith("/checkout/"));
+      if (!profile && !goingToCheckout) {
         destination = returnTo
           ? `/profile/create?redirect_url=${encodeURIComponent(returnTo)}`
           : "/profile/create";
@@ -212,6 +283,9 @@ export async function GET(req: NextRequest) {
     };
     cookieStore.set("session", sessionData, sessionOptions);
     cookieStore.set("session_user", sessionData, sessionOptions);
+    if (deviceToken !== existingDeviceToken) {
+      cookieStore.set(DEVICE_COOKIE, deviceToken, { ...sessionOptions, maxAge: DEVICE_COOKIE_MAX_AGE });
+    }
 
     return NextResponse.redirect(new URL(destination, baseUrl));
   } catch (err) {

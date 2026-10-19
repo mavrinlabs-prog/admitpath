@@ -23,6 +23,9 @@ export async function GET(
   destination.pathname = "/sign-up";
   destination.search = "";
   destination.searchParams.set("ref", code);
+  // Referral flow: create account, then go straight to Stripe Checkout with
+  // the one-time 50% code pre-applied (see lib/referral.ts).
+  destination.searchParams.set("redirect_url", "/checkout/pro");
 
   const response = NextResponse.redirect(destination, 307);
   response.headers.set("Cache-Control", "private, no-store, max-age=0");
