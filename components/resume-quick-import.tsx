@@ -75,12 +75,12 @@ function EditableField({
 }
 
 const CONTEXT_COPY: Record<string, { cta: string; benefit: string }> = {
-  analyze: { cta: "Paste resume to auto-fill your profile", benefit: "Get an accurate 7-dimension score without typing everything" },
+  analyze: { cta: "Upload or paste your resume to auto-fill", benefit: "PDF, DOCX, or TXT — we extract GPA, scores, activities, awards, and courses for you to review" },
   essay: { cta: "Paste resume for better essay feedback", benefit: "The AI uses your activities and awards to give personalized advice" },
   chat: { cta: "Paste resume so the counselor knows you", benefit: "Get advice based on YOUR profile, not generic tips" },
   colleges: { cta: "Paste resume to find your best-fit schools", benefit: "We match schools to your actual stats and activities" },
   dashboard: { cta: "Paste your resume to get started fast", benefit: "Skip the 7-step form — we extract everything in seconds" },
-  general: { cta: "Paste your resume to auto-fill", benefit: "AI extracts GPA, scores, activities, awards, and courses" },
+  general: { cta: "Upload or paste your resume to auto-fill", benefit: "AI extracts GPA, scores, activities, awards, and courses" },
 };
 
 export function ResumeQuickImport({ onImported, onReviewStateChange, context = "general" }: ResumeQuickImportProps) {
@@ -392,7 +392,7 @@ export function ResumeQuickImport({ onImported, onReviewStateChange, context = "
                 <div className="flex items-center gap-2">
                   <FileText className="h-4 w-4" style={{ color: "#4A6FA5" }} />
                   <span className="text-sm font-semibold" style={{ color: "var(--dl-text-primary, #1B2030)" }}>
-                    Paste your resume
+                    Upload or paste your resume
                   </span>
                 </div>
                 <button
@@ -412,6 +412,27 @@ export function ResumeQuickImport({ onImported, onReviewStateChange, context = "
                 onChange={(e) => setText(e.target.value)}
                 autoFocus
               />
+
+              {parsing && (
+                <div role="status" aria-live="polite" className="mt-3 rounded-lg border px-3 py-2.5" style={{ borderColor: "rgba(74,111,165,0.25)", background: "rgba(74,111,165,0.06)" }}>
+                  <p className="text-xs font-semibold" style={{ color: "var(--dl-text-primary, #1B2030)" }}>
+                    Extraction in progress — {PROGRESS_LABELS[progress].toLowerCase()}…
+                  </p>
+                  <ol className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-[11px]" aria-label="Extraction steps">
+                    {(["uploading", "reading", "extracting", "reviewing"] as const).map((step) => {
+                      const order = ["uploading", "reading", "extracting", "reviewing"];
+                      const current = order.indexOf(progress);
+                      const index = order.indexOf(step);
+                      const state = index < current ? "done" : index === current ? "active" : "todo";
+                      return (
+                        <li key={step} style={{ color: state === "todo" ? "var(--dl-text-muted, #8890A5)" : "#2E4A6E", fontWeight: state === "active" ? 700 : 500 }}>
+                          {state === "done" ? "✓ " : state === "active" ? "• " : ""}{PROGRESS_LABELS[step]}
+                        </li>
+                      );
+                    })}
+                  </ol>
+                </div>
+              )}
 
               {/* File upload for PDF/DOCX/TXT */}
               <div className="mt-2 flex items-center gap-2">

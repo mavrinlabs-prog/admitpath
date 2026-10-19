@@ -5,18 +5,20 @@ import { useMemo, useState, type ReactNode } from "react";
 type Props = {
   children: ReactNode;
   returnTo?: string | null;
+  referralCode?: string | null;
   collectEmailConsent?: boolean;
 };
 
-export function GoogleOAuthButton({ children, returnTo, collectEmailConsent = false }: Props) {
+export function GoogleOAuthButton({ children, returnTo, referralCode, collectEmailConsent = false }: Props) {
   const [emailConsent, setEmailConsent] = useState(false);
   const href = useMemo(() => {
     const params = new URLSearchParams();
     if (returnTo) params.set("redirect_url", returnTo);
+    if (referralCode) params.set("ref", referralCode);
     if (collectEmailConsent && emailConsent) params.set("email_consent", "1");
     const query = params.toString();
     return query ? `/api/auth/google?${query}` : "/api/auth/google";
-  }, [collectEmailConsent, emailConsent, returnTo]);
+  }, [collectEmailConsent, emailConsent, returnTo, referralCode]);
 
   return (
     <>

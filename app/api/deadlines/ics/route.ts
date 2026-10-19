@@ -97,7 +97,7 @@ export async function GET(req: Request) {
       if (!dt) return;
       events.push(
         buildEvent({
-          uid: `${d.slug}-${label.toLowerCase().replace(/\s+/g, "-")}-${dt}@admitpath.vercel.app`,
+          uid: `${d.slug}-${label.toLowerCase().replace(/\s+/g, "-")}-${dt}@admith.vercel.app`,
           date: dt,
           summary: `${d.school} — ${label}`,
           description: `${label} deadline for ${d.school}. ${d.supplements} supplement essay${d.supplements === 1 ? "" : "s"}. View profile: ${profileUrl}`,

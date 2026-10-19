@@ -10,7 +10,7 @@ const faqCategories = [
     questions: [
       {
         q: "How do I start using AdmitPath?",
-        a: "Sign up free at admitpath.com. The free plan includes 5 college analyses, 5 essay reviews, 5 AI counselor chats, and 8 college profiles.",
+        a: "Sign up free at admith.vercel.app/sign-up. The free plan includes 5 college analyses, 5 essay reviews, 5 AI counselor chats, and 8 college profiles.",
       },
       {
         q: "What does AdmitPath do?",
@@ -122,7 +122,7 @@ export default function HelpPage() {
             "@context": "https://schema.org",
             "@type": "FAQPage",
             name: "AdmitPath Help Center",
-            url: "https://admitpath.com/help",
+            url: `${(process.env.NEXT_PUBLIC_APP_URL ?? "https://admith.vercel.app").replace(/\/+$/, "")}/help`,
             mainEntity: faqCategories.flatMap((cat) =>
               cat.questions.map((faq) => ({
                 "@type": "Question",

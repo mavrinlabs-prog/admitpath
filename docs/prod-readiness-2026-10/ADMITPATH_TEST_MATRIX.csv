@@ -1,0 +1,29 @@
+App,Route,User_Type,Test,Expected,Result,Evidence,Console_Errors,Network_Errors,Server_Logs,DB_Verified,Status
+AdmitPath,/api/analyze,Free (local session),35 activities + weighted GPA 5.6 (reported 400),200 with warning,"Before fix 400; after 200 (rubric fallback, 1 warning)",local curl,n/a,none,none,Analysis row created,Pass
+AdmitPath,/api/analyze,Free,GPA 94 (percent scale),400 with gpa field message,400 fieldErrors.gpa '0–5 scale',local curl,n/a,none,validation log,n/a,Pass
+AdmitPath,/api/essay PATCH,Free,Autosave 9k chars + 800-char prompt (reported 400),200 saved,Before 400; after 200 {saved:true},local curl,n/a,none,none,Essay row,Pass
+AdmitPath,/api/essay POST,Free,Long supplemental prompt + hex request key,200 feedback,"200 (fallback scoring, no AI keys)",local curl,n/a,none,none,EssayVersion,Pass
+AdmitPath,/api/chat,Free,"45-message history with 4,500-char replies (reported 'couldn't reach')",200 stream,Before 400; after 200 rule-based reply using profile context,local curl,n/a,none,none,Generation,Pass
+AdmitPath,/api/chat,Free,Cross-site POST,403,403,local curl,n/a,none,none,n/a,Pass
+AdmitPath,/api/profile/extract-file,Free,Upload DOCX and PDF resume,200 text,200 both,local curl,n/a,none,none,n/a,Pass
+AdmitPath,/api/profile/parse-resume,Free,Parse resume (no AI keys -> local parser),Fields in correct slots,GPA/wGPA/SAT/ACT/grade/school/state/major; 3 activities; awards not in courses,local curl + unit test,n/a,none,none,n/a,Pass
+AdmitPath,/tracker,Free,Open Pro page,Locked gate with checkout CTA,Gate rendered,local curl,n/a,none,none,n/a,Pass
+AdmitPath,"/api/tracker, /api/scholarships/recommend",Free,Call Pro API,403 + upgradeUrl /checkout/pro,403,local curl,n/a,none,none,n/a,Pass
+AdmitPath,/checkout/pro,Visitor,Click Go Pro signed out,303 -> /sign-up?redirect_url=/checkout/pro,303 as expected,local curl,n/a,none,none,n/a,Pass
+AdmitPath,/checkout/pro,Free,Click Go Pro signed in (no Stripe keys),303 -> /pricing?checkout=unavailable with toast,303 as expected; log 'Stripe not configured',local curl,n/a,none,expected warning,n/a,Pass (Stripe hosted checkout needs keys)
+AdmitPath,/r/[code],Visitor,Valid referral link,307 -> /sign-up?ref=..&redirect_url=/checkout/pro + ref cookie,307 as expected,local curl,n/a,none,none,n/a,Pass
+AdmitPath,/r/invalid,Visitor,Invalid code,307 -> / (no crash),307 -> /,local + prod curl,n/a,none,none,n/a,Pass
+AdmitPath,referral record,Unit,Self-referral / duplicate / one-time / tamper,Rejected / blocked / once,Pass,vitest,n/a,n/a,n/a,Referral (mocked),Pass
+AdmitPath,/api/webhooks/stripe,System,Missing / invalid signature,400 before DB,"400 (unit test, secret set); local server without secret returns 500 'misconfigured'",vitest + curl,n/a,n/a,n/a,n/a,Pass
+AdmitPath,/api/auth/google/callback,Visitor,State mismatch / missing,Redirect error=invalid_state,Pass,vitest,n/a,n/a,n/a,n/a,Pass
+AdmitPath,/api/school-inquiry,Visitor,Empty submission,400 with per-field messages,400 all 7 fields,local curl,n/a,none,none,n/a,Pass
+AdmitPath,/api/school-inquiry,Visitor,Valid submission,200 ok + DB row,200; row visible in /admin/inquiries; email dry-run logged,local curl,n/a,none,dry-run info,SchoolInquiry,Pass
+AdmitPath,/api/school-inquiry-form,Visitor (no JS),Form POST,303 -> ?inquiry=sent,303 sent; row saved,local curl,n/a,none,none,SchoolInquiry,Pass
+AdmitPath,"/admin/inquiries, /admin/users",Admin,View inquiries and plan/feature state,Lists rows; effective plan + Pro features unlocked,Pass,local curl,n/a,none,none,SchoolInquiry/User,Pass
+AdmitPath,/admin,Free,Non-admin access,404,not-found rendered,local curl,n/a,none,none,n/a,Pass
+AdmitPath,Popup policy,Unit,First paint / engaged / exit intent / signed-in / caps,Per policy,Pass (6 tests),vitest,n/a,n/a,n/a,n/a,Pass
+AdmitPath,Entitlements,Unit,"free->pro->free, manual grant, expired trial, free usage limit",Per registry,Pass (8 tests),vitest,n/a,n/a,n/a,n/a,Pass
+AdmitPath,Sitemap + touched routes,Visitor,GET 836 paths on production build,200/3xx,"831x200, 3x308, 1x307, 1x303, 0 errors",local crawl,n/a,not captured (curl),clean,n/a,Pass
+AdmitPath,Production baseline,Visitor,GET 94 core/touched paths on admith.vercel.app (before deploy),200,"89x200; 404 for new routes (/checkout/pro, /for-counselors, /status) as expected pre-deploy",prod curl (GET only),n/a,n/a,n/a,n/a,Baseline
+AdmitPath,Landing nav,Visitor,"Single CTA, schools/counselors, Tools, audience submenu",Present,Verified in markup,local curl,n/a,not captured,n/a,n/a,Pass (visual check pending)
+AdmitPath,375px layout,Visitor,Mobile layout,No horizontal scroll,Not visually checked this session,—,—,—,—,—,Not run

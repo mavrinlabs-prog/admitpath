@@ -130,6 +130,15 @@ const SECTIONS = [
 ];
 
 type Section = (typeof SECTIONS)[number];
+
+// Grouped so students can scan by goal instead of a flat 11-card wall.
+const GROUPS: Array<{ id: string; title: string; description: string; hrefs: string[] }> = [
+  { id: "essays", title: "Essays", description: "Prompts, what readers reward, and pitfalls.", hrefs: ["/resources/common-app-essay", "/resources/supplemental-essays"] },
+  { id: "opportunities", title: "Opportunities", description: "Programs, scholarships, and competitions with filters.", hrefs: ["/resources/summer-programs", "/resources/scholarships", "/resources/competitions"] },
+  { id: "strategy", title: "Application strategy", description: "Interviews, recommendations, and demonstrated interest.", hrefs: ["/resources/interview-prep", "/resources/rec-letters", "/resources/demonstrated-interest"] },
+  { id: "money", title: "Paying for college", description: "Aid forms, timelines, and merit money.", hrefs: ["/resources/financial-aid"] },
+  { id: "situations", title: "Special situations", description: "Guidance for applicants outside the US.", hrefs: ["/international"] },
+];
 function sectionCta(s: Section): string {
   if ("cta" in s && s.cta) return s.cta;
   if ("count" in s && typeof s.count === "number") return `Browse ${s.count} entries`;
@@ -195,37 +204,75 @@ export default function ResourcesPage() {
           </p>
         </div>
 
-        {/* Cards */}
-        <div className="stagger-children grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {SECTIONS.map((s) => {
-            const Icon = s.icon;
+        {/* Quick jump */}
+        <nav aria-label="Resource categories" className="mb-10 flex flex-wrap justify-center gap-2">
+          {GROUPS.map((group) => (
+            <a
+              key={group.id}
+              href={`#${group.id}`}
+              className="rounded-full border px-3.5 py-1.5 text-[13px] font-medium transition-colors hover:bg-[rgba(74,111,165,0.08)]"
+              style={{ borderColor: "rgba(74,111,165,0.2)", color: "#2E4A6E", background: "rgba(255,255,255,0.5)" }}
+            >
+              {group.title}
+            </a>
+          ))}
+          <Link
+            href="/tools"
+            className="rounded-full border px-3.5 py-1.5 text-[13px] font-semibold"
+            style={{ borderColor: "rgba(74,111,165,0.3)", color: "#FFFFFF", background: "#4A6FA5" }}
+          >
+            Calculators &amp; tools
+          </Link>
+        </nav>
+
+        <div className="space-y-12">
+          {GROUPS.map((group) => {
+            const cards = group.hrefs
+              .map((href) => SECTIONS.find((section) => section.href === href))
+              .filter((section): section is Section => Boolean(section));
             return (
-              <Link
-                key={s.href}
-                href={s.href}
-                className="dl-card-hover group flex h-full flex-col rounded-lg border p-6"
-                style={{ background: "rgba(255,255,255,0.45)", backdropFilter: "blur(12px)", borderColor: "rgba(0,0,0,0.06)" }}
-              >
-                <div
-                  className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-lg"
-                  style={{ background: "rgba(74,111,165,0.08)" }}
-                >
-                  <Icon className="h-5 w-5" style={{ color: "#4A6FA5" }} />
+              <section key={group.id} id={group.id} aria-labelledby={`${group.id}-heading`} className="scroll-mt-24">
+                <div className="mb-4 flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
+                  <h2 id={`${group.id}-heading`} className="text-[20px] font-bold" style={{ color: "var(--dl-text-primary, #1B2030)", letterSpacing: "-0.01em" }}>
+                    {group.title}
+                  </h2>
+                  <p className="text-[13px]" style={{ color: "var(--dl-text-muted, #5A6275)" }}>{group.description}</p>
                 </div>
-                <h2
-                  className="text-[17px] font-semibold mb-1"
-                  style={{ color: "var(--dl-text-primary, #1B2030)", fontFamily: "var(--font-instrument-sans)" }}
-                >
-                  {s.title}
-                </h2>
-                <p className="text-[13px] leading-relaxed mb-3" style={{ color: "var(--dl-text-secondary, #454B5E)" }}>
-                  {s.desc}
-                </p>
-                <span className="mt-auto flex items-center gap-1 pt-1 text-[12px] font-semibold" style={{ color: "#4A6FA5" }}>
-                  {sectionCta(s)}
-                  <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
-                </span>
-              </Link>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {cards.map((s) => {
+                    const Icon = s.icon;
+                    return (
+                      <Link
+                        key={s.href}
+                        href={s.href}
+                        className="dl-card-hover group flex h-full flex-col rounded-xl border p-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4A6FA5]"
+                        style={{ background: "rgba(255,255,255,0.55)", borderColor: "rgba(0,0,0,0.06)" }}
+                      >
+                        <div className="mb-3 flex items-center justify-between">
+                          <span className="inline-flex h-10 w-10 items-center justify-center rounded-lg" style={{ background: "rgba(74,111,165,0.10)" }}>
+                            <Icon className="h-5 w-5" style={{ color: "#4A6FA5" }} aria-hidden />
+                          </span>
+                          {"count" in s && typeof s.count === "number" && (
+                            <span className="rounded-full px-2 py-0.5 text-[11px] font-bold tabular-nums" style={{ background: "rgba(74,111,165,0.08)", color: "#2E4A6E" }}>
+                              {s.count}
+                            </span>
+                          )}
+                        </div>
+                        <h3 className="mb-1 text-[16px] font-semibold" style={{ color: "var(--dl-text-primary, #1B2030)" }}>
+                          {s.title}
+                        </h3>
+                        <p className="mb-3 text-[13px] leading-relaxed" style={{ color: "var(--dl-text-secondary, #454B5E)" }}>
+                          {s.desc}
+                        </p>
+                        <span className="mt-auto flex items-center gap-1 pt-1 text-[12px] font-semibold" style={{ color: "#2E4A6E" }}>
+                          {sectionCta(s)}
+                          <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" aria-hidden />
+                        </span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </section>
             );
           })}
         </div>
@@ -237,7 +284,7 @@ export default function ResourcesPage() {
           </p>
           <Link
             href="/sign-up"
-            className="btn-primary inline-flex h-11 items-center gap-2 px-6 text-sm"
+            className="dl-btn dl-btn-primary dl-btn-lg"
           >
             Create your free profile
             <ArrowRight className="h-3.5 w-3.5" />

@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { stripe, resolvePlan } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
-import { sendPaymentConfirmationEmail, sendPaymentFailedEmail, sendWinBackEmail } from "@/lib/email";
-import { creditReferral } from "@/lib/referral";
+import { sendPaymentConfirmationEmail, sendPaymentFailedEmail, sendReferralRewardEmail, sendWinBackEmail } from "@/lib/email";
+import { completeReferral } from "@/lib/referral";
 import { markOneTimePurchaseStatus, persistOneTimePurchase } from "@/lib/one-time-purchases";
 import {
   ENTITLEMENT_SOURCE,
@@ -407,9 +407,11 @@ export async function POST(req: Request) {
           userId, planId, subscriptionId,
         });
 
-        // Referral credit: if this user was referred, credit both parties
-        await creditReferral(userId).catch((err) => {
-          console.error("[stripe/webhook] referral credit failed:", String(err));
+        // Referral: mark the referee's referral redeemed (once) and generate
+        // the referrer's single-use reward code (emailed if Resend is set,
+        // otherwise stored for manual send from /admin/referrals).
+        await completeReferral(stripe, userId, { sendEmail: sendReferralRewardEmail }).catch((err) => {
+          console.error("[stripe/webhook] referral completion failed:", String(err));
         });
       } catch (err) {
         console.error("[stripe/webhook] checkout.session.completed DB failed:", String(err));

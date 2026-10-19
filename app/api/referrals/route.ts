@@ -15,19 +15,28 @@ import { buildReferralUrl } from "@/lib/site-url";
 // GET /api/referrals — referral stats for authenticated user
 // ---------------------------------------------------------------------------
 
-export async function GET() {
+export async function GET(req: Request) {
   const r = await requireUser({ select: { id: true } });
   if ("response" in r) {
     return r.response;
   }
 
   const stats = await getReferralStats(r.userId);
+  if (!stats.referralCode) {
+    return NextResponse.json(
+      { error: "Referral links are temporarily unavailable.", code: "REFERRAL_NOT_CONFIGURED" },
+      { status: 503 },
+    );
+  }
 
   return NextResponse.json({
     referralCode: stats.referralCode,
-    referralUrl: buildReferralUrl(stats.referralCode),
+    referralUrl: buildReferralUrl(stats.referralCode, new URL(req.url).origin),
     referralCount: stats.totalReferred,
-    referralMonthsEarned: stats.freeMonthsEarned,
+    referralRedeemed: stats.totalRedeemed,
+    // Kept for older clients: number of rewards earned.
+    referralMonthsEarned: stats.totalRedeemed,
+    rewards: stats.rewards,
   });
 }
 
@@ -51,7 +60,7 @@ export async function POST(req: Request) {
 
   if (!result.success) {
     const status = result.error === "Invalid referral code" ? 404
-      : result.error === "Cannot refer yourself" ? 400
+      : result.error === "Cannot refer yourself" || result.error === "Referral not eligible" ? 400
       : 409;
     return NextResponse.json({ error: result.error }, { status });
   }

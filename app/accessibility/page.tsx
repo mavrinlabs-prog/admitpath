@@ -1,3 +1,4 @@
+// LEGAL REVIEW NEEDED (2026-10-18): do not claim WCAG conformance without an audit.
 import type { Metadata } from "next";
 import { MarketingLayout } from "@/components/marketing/MarketingLayout";
 import { buildPageSchema } from "@/lib/seo-config";
@@ -63,6 +64,8 @@ export default function AccessibilityPage() {
           <li>ARIA labels on interactive elements</li>
           <li>Responsive design that works across screen sizes</li>
           <li>Focus indicators visible on all interactive elements</li>
+          <li>Animations (including the school-logo carousel and popups) respect the &ldquo;reduce motion&rdquo; system setting</li>
+          <li>Form errors are announced and shown next to the field they refer to</li>
         </ul>
 
         <h2 style={{ color: "var(--dl-text-primary)" }}>Known Limitations</h2>
@@ -88,7 +91,7 @@ export default function AccessibilityPage() {
         </p>
 
         <p className="mt-8 text-xs" style={{ color: "var(--dl-text-muted)" }}>
-          Last updated: May 2026
+          Last updated: October 18, 2026
         </p>
       </div>
     </MarketingLayout>

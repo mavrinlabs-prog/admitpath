@@ -8,6 +8,7 @@ import { ArrowLeft, BarChart3, PenLine, GraduationCap, ShieldCheck } from "lucid
 import { LogoMark } from "@/components/admitpath-logo";
 import { safeRelativeRedirect } from "@/lib/safe-redirect";
 import { GoogleOAuthButton } from "@/components/google-oauth-button";
+import { isValidReferralCode } from "@/lib/referral-code";
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://admith.vercel.app";
 
@@ -53,7 +54,7 @@ export const metadata: Metadata = {
 export default async function SignUpPage({
   searchParams,
 }: {
-  searchParams: Promise<{ redirect?: string; redirect_url?: string; forceRedirectUrl?: string }>;
+  searchParams: Promise<{ redirect?: string; redirect_url?: string; forceRedirectUrl?: string; ref?: string; plan?: string }>;
 }) {
   const sp = await searchParams;
   // Open-redirect guard: only allow same-origin absolute paths. The `//` /
@@ -62,7 +63,11 @@ export default async function SignUpPage({
   // `/\evil.com` would otherwise resolve to `//evil.com` and bounce off-site.
   const candidate =
     sp.forceRedirectUrl ?? sp.redirect_url ?? sp.redirect ?? "";
-  const forceRedirect = safeRelativeRedirect(candidate);
+  const referralCode = sp.ref && isValidReferralCode(sp.ref) ? sp.ref : null;
+  // "Start Pro" links (?plan=pro) and referral links continue straight to
+  // Stripe Checkout after the account is created.
+  const forceRedirect = safeRelativeRedirect(candidate)
+    ?? (sp.plan === "pro" || referralCode ? "/checkout/pro" : null);
   const signInHref = forceRedirect
     ? `/sign-in?redirect_url=${encodeURIComponent(forceRedirect)}`
     : "/sign-in";
@@ -167,7 +172,17 @@ export default async function SignUpPage({
         >
           <h2 className="text-xl font-extrabold tracking-tight mb-1" style={{ color: "var(--dl-text-primary, #1B2030)" }}>Create your account</h2>
           <p className="text-sm mb-6" style={{ color: "var(--dl-text-muted, #8890A5)" }}>Get started in under 5 minutes</p>
-          <GoogleOAuthButton returnTo={forceRedirect} collectEmailConsent>
+          {referralCode && (
+            <p role="status" className="mb-4 rounded-lg border px-3 py-2.5 text-[13px] leading-relaxed" style={{ borderColor: "rgba(77,166,122,0.3)", background: "rgba(77,166,122,0.08)", color: "var(--dl-text-primary, #1B2030)" }}>
+              <strong>You were invited.</strong> Create your account and your one-time <strong>50% off</strong> first month of Pro is applied automatically at checkout.
+            </p>
+          )}
+          {!referralCode && forceRedirect === "/checkout/pro" && (
+            <p className="mb-4 text-[13px]" style={{ color: "var(--dl-text-secondary, #454B5E)" }}>
+              After you create your account you&apos;ll go straight to secure Stripe checkout for Pro ($19.99/mo).
+            </p>
+          )}
+          <GoogleOAuthButton returnTo={forceRedirect} referralCode={referralCode} collectEmailConsent>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
               <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>

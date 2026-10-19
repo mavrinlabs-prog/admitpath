@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Clock, ArrowRight, BookOpen } from "lucide-react";
 import { ARTICLES } from "@/data/articles";
-import { MarketingNav } from "@/components/marketing";
+import { MarketingNav, SiteFooter } from "@/components/marketing";
 
 export const revalidate = 86400;
 
@@ -161,7 +161,7 @@ export default function BlogIndex() {
               <div
                 className="h-56 lg:h-full min-h-[240px] flex items-end p-8"
                 style={{
-                  background: "linear-gradient(135deg, #1E3352 0%, #4A6FA5 50%, #7A99C9 100%)",
+                  background: "linear-gradient(135deg, var(--dl-brand-deep, #1E3352) 0%, var(--dl-brand-dark, #2E4A6E) 55%, var(--dl-brand, #4A6FA5) 100%)",
                 }}
               >
                 <div>
@@ -181,7 +181,8 @@ export default function BlogIndex() {
               <div className="p-8 flex flex-col justify-between">
                 <div>
                   <span
-                    className="badge-primary text-[10px] mb-4 inline-block"
+                    className="mb-4 inline-block rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase"
+                    style={{ background: "rgba(74,111,165,0.08)", color: "#2E4A6E", letterSpacing: "0.04em" }}
                   >
                     {tagFromKeyword(featured.primaryKeyword)}
                   </span>
@@ -210,7 +211,7 @@ export default function BlogIndex() {
         {/* Grid — remaining articles */}
         {rest.length > 0 && (
           <section>
-            <h2 className="text-lg font-semibold mb-6" style={{ color: "var(--dl-text-primary, #1B2030)", fontFamily: "var(--font-instrument-sans)" }}>
+            <h2 className="text-lg font-semibold mb-6" style={{ color: "var(--dl-text-primary, #1B2030)", fontFamily: "var(--font-inter)" }}>
               All articles
             </h2>
             <div className="stagger-children grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -239,14 +240,14 @@ export default function BlogIndex() {
                       </span>
                       <span
                         className="text-[11px]"
-                        style={{ color: "var(--dl-text-muted, #5A6275)", fontFamily: "var(--font-instrument-sans)" }}
+                        style={{ color: "var(--dl-text-muted, #5A6275)", fontFamily: "var(--font-inter)" }}
                       >
                         {formatArticleDate(a.publishedAt)}
                       </span>
                     </div>
                     <h3
                       className="font-bold text-base leading-snug mb-2.5 transition-colors group-hover:text-[#4A6FA5]"
-                      style={{ color: "var(--dl-text-primary, #1B2030)", fontFamily: "var(--font-instrument-sans)" }}
+                      style={{ color: "var(--dl-text-primary, #1B2030)", fontFamily: "var(--font-inter)" }}
                     >
                       {a.h1}
                     </h3>
@@ -274,8 +275,8 @@ export default function BlogIndex() {
         <div
           className="mt-20 rounded-3xl p-10 text-center"
           style={{
-            background: "linear-gradient(135deg, #E8EFF8, #D5E0EE)",
-            border: "1px solid rgba(74,111,165,0.2)",
+            background: "rgba(255,255,255,0.55)",
+            border: "1px solid var(--dl-border, rgba(0,0,0,0.06))",
           }}
         >
           <p className="section-label">Ready to go further?</p>
@@ -288,12 +289,13 @@ export default function BlogIndex() {
           <p className="text-base mb-7 max-w-md mx-auto" style={{ color: "var(--dl-text-secondary, #454B5E)" }}>
             Get your 7-dimension profile score and a personalized action plan based on your actual application.
           </p>
-          <Link href="/sign-up" className="btn-primary px-8 py-3.5 text-sm">
+          <Link href="/sign-up" className="dl-btn dl-btn-primary dl-btn-lg">
             Analyze my profile
             <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
       </main>
+      <SiteFooter />
     </div>
   );
 }

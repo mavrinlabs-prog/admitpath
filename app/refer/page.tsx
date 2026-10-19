@@ -103,14 +103,15 @@ export default function ReferPage() {
               letterSpacing: "-0.03em",
             }}
           >
-            Give a free month. Get a free month.
+            Give 50% off. Get a reward.
           </h1>
           <p
             className="text-lg max-w-xl mx-auto"
             style={{ color: "var(--dl-text-secondary, #454B5E)" }}
           >
-            Share AdmitPath with your friends. A qualifying upgrade credits one
-            month to each account, up to 12 earned referral months.
+            Friends who sign up with your link get 50% off their first month of
+            Pro, applied automatically at checkout. When they upgrade, you get a
+            single-use reward code (up to 12). Self-referrals are not eligible.
           </p>
         </div>
 
@@ -196,7 +197,7 @@ export default function ReferPage() {
                   {stats.referralMonthsEarned}
                 </p>
                 <p className="text-xs mt-1" style={{ color: "var(--dl-text-muted, #5A6275)" }}>
-                  Free months earned
+                  Rewards earned
                 </p>
               </div>
             </div>
@@ -221,7 +222,7 @@ export default function ReferPage() {
             {[
               { step: "1", title: "Share your link", desc: "Send it to friends via text, social media, or email." },
               { step: "2", title: "They sign up free", desc: "Your friend creates a free AdmitPath account using your link." },
-              { step: "3", title: "You both earn rewards", desc: "When they upgrade to Pro, you both get a free month." },
+              { step: "3", title: "You earn a reward", desc: "When they upgrade to Pro with their 50% discount, you receive a single-use reward code." },
             ].map((item) => (
               <div key={item.step} className="flex items-center gap-4">
                 <div

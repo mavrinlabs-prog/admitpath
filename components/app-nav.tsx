@@ -8,7 +8,8 @@ import {
   BarChart3,
   PenLine,
   GraduationCap,
-  MessageCircle,
+  Compass,
+  Wrench,
   CreditCard,
   Menu,
   X,
@@ -42,7 +43,10 @@ const tabs = [
   { href: "/analyze", label: "Analyze", icon: BarChart3 },
   { href: "/essays", label: "Essays", icon: PenLine },
   { href: "/colleges", label: "Colleges", icon: GraduationCap },
-  { href: "/chat", label: "Counselor", icon: MessageCircle },
+  // Counselor uses a neutral compass icon — the chat-bubble icon was removed
+  // from the menu per owner request; chat stays reachable here and on the dashboard.
+  { href: "/chat", label: "Counselor", icon: Compass },
+  { href: "/tools", label: "Tools", icon: Wrench },
   { href: "/resources", label: "Resources", icon: BookOpen },
   { href: "/blog", label: "Blog", icon: Newspaper },
   { href: "/settings", label: "Settings", icon: Settings },

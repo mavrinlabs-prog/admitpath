@@ -5,14 +5,14 @@ const BASE = (process.env.NEXT_PUBLIC_APP_URL ?? "https://admith.vercel.app")
   .replace(/\/+$/, "");
 
 export const metadata: Metadata = {
-  title: { absolute: "School Partnership Inquiries | AdmitPath" },
+  title: { absolute: "AdmitPath for Schools & Districts | Custom Pricing" },
   description:
-    "Review AdmitPath's current student-facing planning tools and contact the team to discuss a scoped school evaluation.",
+    "College-planning tools for every student. Custom, quote-based pricing for schools and districts — request a quote.",
   alternates: { canonical: `${BASE}/for-schools` },
   robots: { index: true, follow: true },
   openGraph: {
-    title: "School Partnership Inquiries | AdmitPath",
-    description: "Discuss school requirements, privacy review, accessibility, and a possible scoped evaluation.",
+    title: "AdmitPath for Schools & Districts",
+    description: "Custom, quote-based pricing for schools and districts.",
     url: `${BASE}/for-schools`,
     type: "website",
     locale: "en_US",
@@ -25,8 +25,8 @@ const schema = {
   "@type": "WebPage",
   "@id": `${BASE}/for-schools#page`,
   url: `${BASE}/for-schools`,
-  name: "School Partnership Inquiries",
-  description: "Information for schools considering a scoped evaluation of AdmitPath's student-facing tools.",
+  name: "AdmitPath for Schools and Districts",
+  description: "Custom-priced AdmitPath licenses for schools and districts.",
   isPartOf: { "@id": `${BASE}/#website` },
   inLanguage: "en-US",
 };

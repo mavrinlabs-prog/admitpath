@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { TrendingUp, Users } from "lucide-react";
+import { isSuppressedPath, safeStorage } from "@/lib/popup-policy";
 
 /**
  * SocialProofToast — periodic feature-highlight notifications.
@@ -11,7 +12,7 @@ import { TrendingUp, Users } from "lucide-react";
  * capabilities (scoring rubrics, essay feedback axes, free-plan limits, etc.)
  * to educate visitors and logged-in users.
  *
- * - Rotates every 30 seconds
+ * - First toast after 30s, then every 60s, max 2 per session
  * - Auto-dismisses after 5 seconds
  * - Respects prefers-reduced-motion (no auto-rotation)
  * - Landing variant: product feature highlights
@@ -93,7 +94,21 @@ export function SocialProofToast({ variant = "landing" }: SocialProofToastProps 
     let cycleTimer: ReturnType<typeof setTimeout>;
     let localIndex = 0;
 
+    // Frequency cap: at most 2 toasts per browser session, never on
+    // auth/checkout/legal pages, and never while a modal is open.
+    const SESSION_KEY = `ap_toasts_${variant}`;
+    const shownSoFar = Number(safeStorage("session")?.getItem(SESSION_KEY) ?? 0) || 0;
+    if (shownSoFar >= 2 || isSuppressedPath(window.location.pathname) && variant === "landing") return;
+    let shownThisPage = shownSoFar;
+
     function show() {
+      if (shownThisPage >= 2) return;
+      if (document.querySelector('[role="dialog"][aria-modal="true"]')) {
+        cycleTimer = setTimeout(show, 30000);
+        return;
+      }
+      shownThisPage += 1;
+      try { safeStorage("session")?.setItem(SESSION_KEY, String(shownThisPage)); } catch { /* ignore */ }
       const item = shuffled[localIndex % shuffled.length];
       setCurrent({ ...item, id: Date.now() });
 
@@ -103,19 +118,19 @@ export function SocialProofToast({ variant = "landing" }: SocialProofToastProps 
       localIndex += 1;
       setIndex(localIndex);
 
-      // Schedule next notification in 30 seconds
-      cycleTimer = setTimeout(show, 30000);
+      // Schedule next notification in 60 seconds
+      cycleTimer = setTimeout(show, 60000);
     }
 
-    // Initial delay: 8 seconds before first notification
-    const initialDelay = setTimeout(show, 8000);
+    // Initial delay: 30 seconds before first notification (not on first paint)
+    const initialDelay = setTimeout(show, 30000);
 
     return () => {
       clearTimeout(initialDelay);
       clearTimeout(dismissTimer);
       clearTimeout(cycleTimer);
     };
-  }, [shuffled]);
+  }, [shuffled, variant]);
 
   return (
     <div

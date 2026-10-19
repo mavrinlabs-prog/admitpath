@@ -52,6 +52,10 @@ export default async function AdminReferralsPage({
               <th className="text-left px-4 py-3 font-semibold" style={{ color: "var(--dl-text-muted)" }}>Referee</th>
               <th className="text-left px-4 py-3 font-semibold" style={{ color: "var(--dl-text-muted)" }}>Code</th>
               <th className="text-left px-4 py-3 font-semibold" style={{ color: "var(--dl-text-muted)" }}>Status</th>
+              <th className="text-left px-4 py-3 font-semibold" style={{ color: "var(--dl-text-muted)" }}>Referee code (50%)</th>
+              <th className="text-left px-4 py-3 font-semibold" style={{ color: "var(--dl-text-muted)" }}>Redeemed</th>
+              <th className="text-left px-4 py-3 font-semibold" style={{ color: "var(--dl-text-muted)" }}>Referrer reward</th>
+              <th className="text-left px-4 py-3 font-semibold" style={{ color: "var(--dl-text-muted)" }}>Blocked reason</th>
               <th className="text-left px-4 py-3 font-semibold" style={{ color: "var(--dl-text-muted)" }}>Created</th>
             </tr>
           </thead>
@@ -71,13 +75,17 @@ export default async function AdminReferralsPage({
                   <span
                     className="rounded-full px-2 py-0.5 text-[10px] font-bold"
                     style={{
-                      background: r.status === "credited" ? "rgba(34,197,94,0.1)" : "rgba(74,111,165,0.08)",
-                      color: r.status === "credited" ? "#16A34A" : "var(--dl-brand)",
+                      background: r.status === "redeemed" || r.status === "credited" ? "rgba(34,197,94,0.1)" : r.status === "blocked" ? "rgba(217,119,6,0.12)" : "rgba(74,111,165,0.08)",
+                      color: r.status === "redeemed" || r.status === "credited" ? "#16A34A" : r.status === "blocked" ? "#A15C07" : "var(--dl-brand)",
                     }}
                   >
                     {r.status}
                   </span>
                 </td>
+                <td className="px-4 py-2.5 font-mono text-xs">{r.refereePromoCode ?? "—"}</td>
+                <td className="px-4 py-2.5 text-xs">{r.redeemedAt ? r.redeemedAt.toISOString().slice(0, 10) : "—"}</td>
+                <td className="px-4 py-2.5 text-xs">{r.rewardCode ? `${r.rewardCode} (${r.rewardStatus})` : r.rewardStatus}</td>
+                <td className="px-4 py-2.5 text-xs" style={{ color: r.blockedReason ? "#A15C07" : undefined }}>{r.blockedReason ?? "—"}</td>
                 <td className="px-4 py-2.5 text-xs" style={{ color: "var(--dl-text-muted)" }}>
                   {r.createdAt.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                 </td>

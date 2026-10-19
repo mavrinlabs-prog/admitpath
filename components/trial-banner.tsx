@@ -247,7 +247,7 @@ export function FreeLimitBanner() {
         </div>
         <div className="flex items-center gap-2">
           <Link
-            href="/pricing"
+            href="/checkout/pro"
             className="inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-bold text-white transition-all hover:-translate-y-0.5"
             style={{
               background: "#4A6FA5",

@@ -1,3 +1,4 @@
+import { ProFeatureGate } from "@/components/pro-feature-gate";
 import { redirect } from "next/navigation";
 import { getGoogleUser, hasSessionCookie } from "@/lib/google-auth";
 import Link from "next/link";
@@ -24,7 +25,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default async function ScholarshipsDashboardPage() {
+async function ScholarshipsDashboardContent() {
   const googleUser = await getGoogleUser();
   if (!googleUser && !(await hasSessionCookie())) redirect("/sign-in");
   if (!googleUser) redirect("/sign-in");
@@ -220,5 +221,13 @@ export default async function ScholarshipsDashboardPage() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function ScholarshipsDashboardPage() {
+  return (
+    <ProFeatureGate feature="scholarshipMatches">
+      <ScholarshipsDashboardContent />
+    </ProFeatureGate>
   );
 }

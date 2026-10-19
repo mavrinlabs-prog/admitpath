@@ -107,7 +107,7 @@ export function TrialUsageBar({
         </p>
         {anyNearLimit && (
           <Link
-            href="/pricing"
+            href="/checkout/pro"
             className="text-[12px] font-bold transition-colors hover:opacity-80"
             style={{ color: "#4A6FA5" }}
           >
@@ -138,7 +138,7 @@ export function TrialUsageBar({
         >
           You&apos;ve hit a free plan limit.{" "}
           <Link
-            href="/pricing"
+            href="/checkout/pro"
             className="font-semibold underline underline-offset-2"
             style={{ color: "#4A6FA5" }}
           >

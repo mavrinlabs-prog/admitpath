@@ -1,61 +1,92 @@
 /**
- * Shared referral system logic.
+ * Referral system.
  *
- * Referral codes contain the exact account ID plus a truncated HMAC signature.
- * When a referee upgrades to Pro ($19.99/mo), both
- * referrer and referee get 1 free month via Stripe subscription credit.
+ * Flow (2026-10):
+ *   1. Referrer shares /r/CODE (CODE = base64url(userId) + HMAC signature).
+ *   2. /r/CODE sets an httpOnly `ref` cookie and redirects to
+ *      /sign-up?ref=CODE&redirect_url=/checkout/pro (attribution kept in both
+ *      cookie and query string).
+ *   3. Google OAuth callback records a Referral row (status "pending") for NEW
+ *      accounts only, after anti-abuse checks (self-referral, same normalized
+ *      email, same device token, same Stripe customer => "blocked").
+ *   4. /checkout/pro (or POST /api/stripe/create-checkout) creates a ONE-TIME
+ *      Stripe promotion code — 50% off the first Pro invoice, max_redemptions
+ *      1, restricted to the referee's Stripe customer — and pre-applies it via
+ *      Checkout `discounts`, so the referee never types a code.
+ *   5. checkout.session.completed marks the referral "redeemed" and generates
+ *      the referrer's single-use reward code. It is emailed when Resend is
+ *      configured, otherwise stored ("stored_manual_send") for admin follow-up.
  *
- * Flow:
- *   1. User shares /r/CODE link
- *   2. Visitor lands on /r/CODE -> redirected to /sign-up?ref=CODE
- *   3. POST /api/referrals { referralCode } records the Referral row
- *   4. On referee's checkout.session.completed (upgrade to Pro), webhook
- *      calls creditReferral() to apply Stripe invoice credits to both users
+ * The referee is never granted free access; Pro still requires a paid
+ * Stripe subscription. Rewards are capped per referrer.
  */
 
+import { createHmac, randomBytes, timingSafeEqual } from "crypto";
+import type Stripe from "stripe";
 import { prisma } from "@/lib/prisma";
-import Stripe from "stripe";
-import { createHmac, timingSafeEqual } from "crypto";
+import { assessPair, type AccountSignals } from "@/lib/abuse-signals";
 
-const APP_NAME = "AdmitPath";
-const CREDIT_AMOUNT_CENTS = 1999; // $19.99 = 1 free month of Pro
+export const REFEREE_DISCOUNT_PERCENT = 50;
+export const MAX_REWARDS_PER_REFERRER = 12;
 
-function getStripeClient(): Stripe {
-  const key = process.env.STRIPE_SECRET_KEY;
-  if (!key) throw new Error("STRIPE_SECRET_KEY not set");
-  return new Stripe(key, { apiVersion: "2025-02-24.acacia" as Stripe.LatestApiVersion });
+export function rewardPercentOff(): number {
+  const raw = Number(process.env.REFERRAL_REWARD_PERCENT_OFF ?? 100);
+  return Number.isFinite(raw) && raw > 0 && raw <= 100 ? Math.round(raw) : 100;
 }
 
-/**
- * Generate a signed referral code that resolves to exactly one user.
- * The signature prevents callers from changing the embedded account ID.
- */
-export function generateReferralCode(userId: string): string {
-  const payload = Buffer.from(userId, "utf8").toString("base64url");
-  const signature = createHmac("sha256", referralSecret())
-    .update(payload)
-    .digest("base64url")
-    .slice(0, 22);
-  return `${payload}.${signature}`;
+export function rewardDescription(): string {
+  const pct = rewardPercentOff();
+  return pct === 100 ? "one free month of AdmitPath Pro" : `${pct}% off one month of AdmitPath Pro`;
 }
 
-function referralSecret(): string {
+/** Statuses: pending -> checkout_started -> redeemed; or blocked. */
+export const REFERRAL_STATUS = {
+  PENDING: "pending",
+  CHECKOUT_STARTED: "checkout_started",
+  REDEEMED: "redeemed",
+  BLOCKED: "blocked",
+  /** Legacy rows from the previous free-month credit system. */
+  LEGACY_CREDITED: "credited",
+} as const;
+
+function referralSecret(): string | null {
   const value = process.env.REFERRAL_SECRET
     || process.env.SESSION_SECRET
     || process.env.AUTH_SECRET
     || process.env.NEXTAUTH_SECRET;
   if (value && value.trim().length >= 32) return value.trim();
   if (process.env.NODE_ENV !== "production") return "dev-referral-secret-32-characters";
-  throw new Error("REFERRAL_SECRET or SESSION_SECRET must be at least 32 characters");
+  return null;
 }
 
-export function referralUserId(code: string): string | null {
+/**
+ * Signed referral code. Throws only when no signing secret is configured in
+ * production; callers that render pages use `tryGenerateReferralCode`.
+ */
+export function generateReferralCode(userId: string): string {
+  const secret = referralSecret();
+  if (!secret) throw new Error("REFERRAL_SECRET or SESSION_SECRET must be at least 32 characters");
+  const payload = Buffer.from(userId, "utf8").toString("base64url");
+  const signature = createHmac("sha256", secret).update(payload).digest("base64url").slice(0, 22);
+  return `${payload}.${signature}`;
+}
+
+export function tryGenerateReferralCode(userId: string): string | null {
+  try {
+    return generateReferralCode(userId);
+  } catch {
+    return null;
+  }
+}
+
+/** Resolve a code to the referrer's user ID. Never throws. */
+export function referralUserId(code: string | null | undefined): string | null {
+  if (!code || code.length > 300) return null;
+  const secret = referralSecret();
+  if (!secret) return null;
   const [payload, signature, extra] = code.split(".");
   if (!payload || !signature || extra || signature.length !== 22) return null;
-  const expected = createHmac("sha256", referralSecret())
-    .update(payload)
-    .digest("base64url")
-    .slice(0, 22);
+  const expected = createHmac("sha256", secret).update(payload).digest("base64url").slice(0, 22);
   const actualBuffer = Buffer.from(signature);
   const expectedBuffer = Buffer.from(expected);
   if (actualBuffer.length !== expectedBuffer.length || !timingSafeEqual(actualBuffer, expectedBuffer)) {
@@ -69,9 +100,42 @@ export function referralUserId(code: string): string | null {
   }
 }
 
+const SIGNAL_SELECT = {
+  id: true,
+  email: true,
+  name: true,
+  deviceId: true,
+  signupIpHash: true,
+  stripeCustomerId: true,
+  abuseReviewStatus: true,
+} as const;
+
+type SignalRow = {
+  id: string;
+  email: string;
+  name: string | null;
+  deviceId: string | null;
+  signupIpHash: string | null;
+  stripeCustomerId: string | null;
+  abuseReviewStatus: string | null;
+};
+
+function toSignals(row: SignalRow): AccountSignals {
+  return {
+    id: row.id,
+    email: row.email,
+    name: row.name,
+    deviceHash: row.deviceId,
+    ipHash: row.signupIpHash,
+    stripeCustomerId: row.stripeCustomerId,
+    abuseReviewStatus: row.abuseReviewStatus,
+  };
+}
+
 /**
- * Record a referral relationship when a new user signs up via a referral link.
- * Returns the created Referral row or null if the referral is invalid/duplicate.
+ * Record a referral for a newly created account. Idempotent per referee
+ * (unique refereeId). Abuse-blocked attempts are stored with status
+ * "blocked" so admins can see them; they never receive a discount.
  */
 export async function recordReferral(
   refereeId: string,
@@ -79,151 +143,222 @@ export async function recordReferral(
 ): Promise<{ success: boolean; error?: string }> {
   const referrerId = referralUserId(referralCode);
   if (!referrerId) return { success: false, error: "Invalid referral code" };
+  if (referrerId === refereeId) return { success: false, error: "Cannot refer yourself" };
 
-  const referrer = await prisma.user.findFirst({
-    where: { id: referrerId, deletedAt: null },
-    select: { id: true },
-  });
+  const [referrer, referee] = await Promise.all([
+    prisma.user.findFirst({ where: { id: referrerId, deletedAt: null }, select: SIGNAL_SELECT }),
+    prisma.user.findFirst({ where: { id: refereeId, deletedAt: null }, select: SIGNAL_SELECT }),
+  ]);
+  if (!referrer || !referee) return { success: false, error: "Invalid referral code" };
 
-  if (!referrer) return { success: false, error: "Invalid referral code" };
-  if (referrer.id === refereeId) return { success: false, error: "Cannot refer yourself" };
-
-  // Check for existing referral (idempotent)
-  const existing = await prisma.referral.findUnique({
-    where: { refereeId },
-  }).catch(() => null);
-
+  const existing = await prisma.referral.findUnique({ where: { refereeId } }).catch(() => null);
   if (existing) return { success: false, error: "Referral already recorded" };
 
+  const assessment = assessPair(toSignals(referrer), toSignals(referee));
+  const blocked = assessment.decision === "block";
   try {
     await prisma.referral.create({
       data: {
         referrerId: referrer.id,
         refereeId,
         referralCode,
-        status: "pending",
+        status: blocked ? REFERRAL_STATUS.BLOCKED : REFERRAL_STATUS.PENDING,
+        refereeDiscountPct: REFEREE_DISCOUNT_PERCENT,
+        blockedReason: blocked ? assessment.flags.join(",") : null,
       },
     });
-    return { success: true };
   } catch (err: unknown) {
-    const code = (err as { code?: string })?.code;
-    if (code === "P2002") return { success: false, error: "Referral already recorded" };
+    if ((err as { code?: string })?.code === "P2002") return { success: false, error: "Referral already recorded" };
     throw err;
   }
+  if (blocked) return { success: false, error: "Referral not eligible" };
+  return { success: true };
+}
+
+function promoCode(prefix: string): string {
+  return `${prefix}-${randomBytes(5).toString("base64url").replace(/[^A-Za-z0-9]/g, "").toUpperCase().slice(0, 8)}`;
 }
 
 /**
- * Credit both referrer and referee with 1 free month when the referee upgrades.
- *
- * Uses Stripe customer balance credits (negative balance = credit).
- * This approach works regardless of billing cycle and doesn't require
- * modifying the subscription itself.
- *
- * Called from the Stripe webhook handler on checkout.session.completed
- * when the referee's plan changes to "pro".
+ * Ensure the referee has a one-time 50%-off promotion code for their first Pro
+ * invoice. Returns the Stripe promotion-code ID to pass as a Checkout
+ * discount, or null when the user has no eligible referral. Idempotent: the
+ * same code is reused across checkout retries.
  */
-export async function creditReferral(refereeId: string): Promise<void> {
-  const referral = await prisma.referral.findUnique({
-    where: { refereeId },
-  }).catch(() => null);
+export async function ensureRefereeDiscount(
+  stripe: Stripe,
+  refereeId: string,
+  customerId: string,
+): Promise<{ promotionCodeId: string; code: string; referralId: string } | null> {
+  const referral = await prisma.referral.findUnique({ where: { refereeId } }).catch(() => null);
+  if (!referral) return null;
+  if (referral.status !== REFERRAL_STATUS.PENDING && referral.status !== REFERRAL_STATUS.CHECKOUT_STARTED) return null;
+  if (referral.redeemedAt || referral.blockedReason) return null;
 
-  if (!referral || referral.status !== "pending") return;
+  if (referral.refereePromoCodeId && referral.refereePromoCode) {
+    try {
+      const existing = await stripe.promotionCodes.retrieve(referral.refereePromoCodeId);
+      if (existing.active && (existing.max_redemptions == null || existing.times_redeemed < existing.max_redemptions)) {
+        return { promotionCodeId: existing.id, code: existing.code, referralId: referral.id };
+      }
+      return null; // already used
+    } catch {
+      // fall through and mint a fresh code
+    }
+  }
 
-  const creditedCount = await prisma.referral.count({
-    where: { referrerId: referral.referrerId, status: "credited" },
+  const coupon = await stripe.coupons.create(
+    {
+      percent_off: referral.refereeDiscountPct || REFEREE_DISCOUNT_PERCENT,
+      duration: "once",
+      max_redemptions: 1,
+      name: `Referral ${referral.refereeDiscountPct || REFEREE_DISCOUNT_PERCENT}% off first month`,
+      metadata: { app: "admitpath", kind: "referee_discount", referralId: referral.id, refereeId },
+    },
+    { idempotencyKey: `admitpath-referee-coupon-${referral.id}` },
+  );
+  const promotion = await stripe.promotionCodes.create(
+    {
+      promotion: { type: "coupon", coupon: coupon.id },
+      code: promoCode("FRIEND"),
+      max_redemptions: 1,
+      customer: customerId,
+      restrictions: { first_time_transaction: true },
+      metadata: { app: "admitpath", kind: "referee_discount", referralId: referral.id, refereeId },
+    },
+    { idempotencyKey: `admitpath-referee-promo-${referral.id}` },
+  );
+  await prisma.referral.update({
+    where: { id: referral.id },
+    data: {
+      refereeCouponId: coupon.id,
+      refereePromoCodeId: promotion.id,
+      refereePromoCode: promotion.code,
+    },
   });
-  if (creditedCount >= 12) return;
+  return { promotionCodeId: promotion.id, code: promotion.code, referralId: referral.id };
+}
+
+export async function markReferralCheckoutStarted(referralId: string, sessionId: string): Promise<void> {
+  await prisma.referral.updateMany({
+    where: { id: referralId, status: { in: [REFERRAL_STATUS.PENDING, REFERRAL_STATUS.CHECKOUT_STARTED] } },
+    data: { status: REFERRAL_STATUS.CHECKOUT_STARTED, checkoutSessionId: sessionId, checkoutStartedAt: new Date() },
+  }).catch(() => undefined);
+}
+
+/**
+ * Called from checkout.session.completed after the referee's Pro subscription
+ * is verified. Marks the referral redeemed exactly once (guarded update), then
+ * generates the referrer's single-use reward code.
+ */
+export async function completeReferral(
+  stripe: Stripe,
+  refereeId: string,
+  options: {
+    sendEmail?: (to: string, firstName: string, code: string, description: string) => Promise<{ error?: unknown } | unknown>;
+  } = {},
+): Promise<"redeemed" | "skipped"> {
+  const referral = await prisma.referral.findUnique({ where: { refereeId } }).catch(() => null);
+  if (!referral || referral.redeemedAt) return "skipped";
+  if (referral.status !== REFERRAL_STATUS.PENDING && referral.status !== REFERRAL_STATUS.CHECKOUT_STARTED) return "skipped";
 
   const claim = await prisma.referral.updateMany({
-    where: { id: referral.id, status: "pending" },
-    data: { status: "processing" },
+    where: { id: referral.id, redeemedAt: null, status: { in: [REFERRAL_STATUS.PENDING, REFERRAL_STATUS.CHECKOUT_STARTED] } },
+    data: { status: REFERRAL_STATUS.REDEEMED, redeemedAt: new Date() },
   });
-  if (claim.count !== 1) return;
+  if (claim.count !== 1) return "skipped";
+
+  const rewardedSoFar = await prisma.referral.count({
+    where: { referrerId: referral.referrerId, rewardStatus: { in: ["generated", "emailed", "stored_manual_send"] } },
+  });
+  const referrer = await prisma.user.findFirst({
+    where: { id: referral.referrerId, deletedAt: null },
+    select: { id: true, email: true, name: true, stripeCustomerId: true },
+  });
+  if (!referrer || rewardedSoFar >= MAX_REWARDS_PER_REFERRER) {
+    await prisma.referral.update({ where: { id: referral.id }, data: { rewardStatus: "none" } });
+    return "redeemed";
+  }
 
   try {
-  const stripe = getStripeClient();
-
-  // Load both users' Stripe customer IDs
-  const [referrer, referee] = await Promise.all([
-    prisma.user.findUnique({
-      where: { id: referral.referrerId },
-      select: { id: true, email: true, name: true, stripeCustomerId: true },
-    }),
-    prisma.user.findUnique({
-      where: { id: referral.refereeId },
-      select: { id: true, email: true, name: true, stripeCustomerId: true },
-    }),
-  ]);
-
-  if (!referrer || !referee || (referrer.stripeCustomerId === referee.stripeCustomerId && !!referrer.stripeCustomerId)) {
-    throw new Error("Referral users are invalid or share a billing customer");
-  }
-
-  const ensureStripeCustomer = async (user: typeof referrer) => {
-    if (user.stripeCustomerId) return user.stripeCustomerId;
-    const customer = await stripe.customers.create(
-      { email: user.email, name: user.name ?? undefined, metadata: { app: APP_NAME, userId: user.id } },
-      { idempotencyKey: `referral-customer-${user.id}` },
-    );
-    await prisma.user.update({ where: { id: user.id }, data: { stripeCustomerId: customer.id } });
-    return customer.id;
-  };
-
-  const [referrerCustomerId, refereeCustomerId] = await Promise.all([
-    ensureStripeCustomer(referrer),
-    ensureStripeCustomer(referee),
-  ]);
-
-  await Promise.all([
-      stripe.customers.createBalanceTransaction(referrerCustomerId, {
-        amount: -CREDIT_AMOUNT_CENTS, // negative = credit
-        currency: "usd",
-        description: `${APP_NAME} referral reward: 1 free month (referred ${referral.refereeId.slice(0, 8)})`,
-      }, { idempotencyKey: `referral-credit-${referral.id}-referrer` }),
-      stripe.customers.createBalanceTransaction(refereeCustomerId, {
-        amount: -CREDIT_AMOUNT_CENTS,
-        currency: "usd",
-        description: `${APP_NAME} referral reward: 1 free month (referred by ${referral.referrerId.slice(0, 8)})`,
-      }, { idempotencyKey: `referral-credit-${referral.id}-referee` }),
-  ]);
-
-  // Mark referral as credited + update referrer stats
-  await prisma.$transaction([
-    prisma.referral.update({
-      where: { id: referral.id },
-      data: { status: "credited", creditedAt: new Date() },
-    }),
-    prisma.user.update({
-      where: { id: referral.referrerId },
-      data: {
-        referralCount: { increment: 1 },
-        referralMonthsEarned: { increment: 1 },
+    const coupon = await stripe.coupons.create(
+      {
+        percent_off: rewardPercentOff(),
+        duration: "once",
+        max_redemptions: 1,
+        name: "AdmitPath referral reward",
+        metadata: { app: "admitpath", kind: "referrer_reward", referralId: referral.id, referrerId: referrer.id },
       },
-    }),
-  ]);
+      { idempotencyKey: `admitpath-reward-coupon-${referral.id}` },
+    );
+    const promotion = await stripe.promotionCodes.create(
+      {
+        promotion: { type: "coupon", coupon: coupon.id },
+        code: promoCode("THANKS"),
+        max_redemptions: 1,
+        ...(referrer.stripeCustomerId ? { customer: referrer.stripeCustomerId } : {}),
+        metadata: { app: "admitpath", kind: "referrer_reward", referralId: referral.id, referrerId: referrer.id },
+      },
+      { idempotencyKey: `admitpath-reward-promo-${referral.id}` },
+    );
+    let rewardStatus: "generated" | "emailed" | "stored_manual_send" = "stored_manual_send";
+    let rewardEmailedAt: Date | null = null;
+    if (process.env.RESEND_API_KEY?.trim() && options.sendEmail) {
+      try {
+        const result = await options.sendEmail(referrer.email, referrer.name?.split(" ")[0] ?? "", promotion.code, rewardDescription());
+        if (!(result as { error?: unknown } | null)?.error) {
+          rewardStatus = "emailed";
+          rewardEmailedAt = new Date();
+        }
+      } catch {
+        rewardStatus = "stored_manual_send";
+      }
+    }
+    await prisma.$transaction([
+      prisma.referral.update({
+        where: { id: referral.id },
+        data: {
+          rewardCouponId: coupon.id,
+          rewardPromoCodeId: promotion.id,
+          rewardCode: promotion.code,
+          rewardStatus,
+          rewardGeneratedAt: new Date(),
+          rewardEmailedAt,
+        },
+      }),
+      prisma.user.update({
+        where: { id: referrer.id },
+        data: { referralCount: { increment: 1 }, referralMonthsEarned: { increment: 1 } },
+      }),
+    ]);
   } catch (error) {
-    await prisma.referral.updateMany({
-      where: { id: referral.id, status: "processing" },
-      data: { status: "pending" },
+    console.error("[referral] reward generation failed (referral stays redeemed; retry from admin)", {
+      referralId: referral.id,
+      name: error instanceof Error ? error.name : "UnknownError",
     });
-    throw error;
+    await prisma.referral.update({ where: { id: referral.id }, data: { rewardStatus: "failed" } }).catch(() => undefined);
   }
+  return "redeemed";
 }
 
-/**
- * Get referral stats for a user (referrer perspective).
- */
+/** Referral stats for the referrer's /refer page. */
 export async function getReferralStats(userId: string) {
-  const [totalReferred, totalCredited] = await Promise.all([
-    prisma.referral.count({ where: { referrerId: userId } }).catch(() => 0),
+  const [totalReferred, totalRedeemed, rewards] = await Promise.all([
+    prisma.referral.count({ where: { referrerId: userId, status: { not: REFERRAL_STATUS.BLOCKED } } }).catch(() => 0),
     prisma.referral.count({
-      where: { referrerId: userId, status: "credited" },
+      where: { referrerId: userId, status: { in: [REFERRAL_STATUS.REDEEMED, REFERRAL_STATUS.LEGACY_CREDITED] } },
     }).catch(() => 0),
+    prisma.referral.findMany({
+      where: { referrerId: userId, rewardCode: { not: null } },
+      select: { rewardCode: true, rewardStatus: true, rewardGeneratedAt: true },
+      orderBy: { rewardGeneratedAt: "desc" },
+      take: 12,
+    }).catch(() => []),
   ]);
-
   return {
-    referralCode: generateReferralCode(userId),
+    referralCode: tryGenerateReferralCode(userId),
     totalReferred,
-    freeMonthsEarned: totalCredited,
+    totalRedeemed,
+    rewards,
   };
 }

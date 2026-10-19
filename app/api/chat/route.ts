@@ -3,6 +3,7 @@ import { groqChatStream } from "@/lib/groq";
 import { prisma, withRetry } from "@/lib/prisma";
 import { checkFeatureAccess, accessDenialResponse } from "@/lib/trial";
 import { requireUser, parseJsonBody } from "@/lib/api-helpers";
+import { effectivePlan } from "@/lib/utils";
 import { COUNSELOR_CHAT_RUNTIME_SYSTEM } from "@/lib/prompts/counselor-chat-runtime";
 import { buildBoundedSystemPrompt, fitMessagesToProviderBudget, selectRecentMessages } from "@/lib/chat-budget";
 import { buildCounselorProfileContext } from "@/lib/counselor-context";
@@ -13,24 +14,8 @@ import { sanitizeUserInput } from "@/lib/api-quality";
 import { recordSuccess, recordFailure, recordResponseTime } from "@/lib/monitoring";
 import { FreePlanLimitReachedError, freeUsageLimitBody, releaseFreeUsage, reserveFreeUsage } from "@/lib/free-usage";
 import { buildCounselorFallbackReply } from "@/lib/counselor-fallback";
-import { z } from "zod";
 
-// `content: z.string().min(1)` — without the lower bound, an empty-string
-// message would pass validation and burn a trial chat slot on a no-op AI call
-// (the client already guards against this, but the server is the authority).
-const chatSchema = z.preprocess((raw) => {
-  if (!raw || typeof raw !== "object") return raw;
-  const body = raw as Record<string, unknown>;
-  if (typeof body.message === "string" && !Array.isArray(body.messages)) {
-    return { messages: [{ role: "user", content: body.message }] };
-  }
-  return raw;
-}, z.object({
-  messages: z.array(z.object({
-    role: z.enum(["user", "assistant"]),
-    content: z.string().trim().min(1).max(4000),
-  })).min(1).max(40),
-}));
+import { chatSchema } from "@/lib/chat-contract";
 
 // The full counselor persona lives in lib/prompts/counselor-chat.ts so it's
 // editable in one place across surfaces (chat page, floating widget,
@@ -80,13 +65,14 @@ export async function POST(req: Request) {
   // withRetry handles Neon cold-start so context fetch doesn't fail on first load.
   let context = "";
   try {
-    const [profile, latest] = await Promise.all([
+    const [profile, latest, essaysSaved, collegesSaved, latestEssay] = await Promise.all([
       withRetry(() =>
         prisma.profile.findUnique({
           where: { userId },
           select: {
             gpa: true, weightedGpa: true, satScore: true, actScore: true,
             grade: true, intendedMajor: true, targetColleges: true, admissionsConcern: true,
+            state: true,
           },
         }),
       ),
@@ -97,11 +83,25 @@ export async function POST(req: Request) {
           select: { result: true },
         }),
       ),
+      prisma.essay.count({ where: { userId, deletedAt: null } }).catch(() => undefined),
+      prisma.collegeList.count({ where: { userId, deletedAt: null } }).catch(() => undefined),
+      prisma.essay.findFirst({
+        where: { userId, deletedAt: null, latestScore: { not: null } },
+        orderBy: { updatedAt: "desc" },
+        select: { latestScore: true },
+      }).catch(() => null),
     ]);
     context = buildCounselorProfileContext({
       profile,
       latestAnalysis: latest,
-      plan: user?.plan,
+      plan: effectivePlan(user),
+      activity: {
+        analysesRun: typeof user?.analysisCount === "number" ? user.analysisCount : undefined,
+        essaysSaved,
+        collegesSaved,
+        latestEssayScore: typeof latestEssay?.latestScore === "number" ? latestEssay.latestScore : null,
+      },
+      currentPage: parsedBody.data.page,
     });
   } catch (err) {
     console.error("[/api/chat]", { event: "context_fetch_failed", fatal: false, error: String(err), hasDbUrl: !!process.env.DATABASE_URL });

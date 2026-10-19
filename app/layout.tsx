@@ -130,7 +130,7 @@ export const metadata: Metadata = {
     "college fit assessment",
     "college list builder",
     "how to get into college",
-    "admissions worksheets",
+    "college admissions tools",
     "college essay brainstorm",
     "activities list optimizer",
     "supplemental essay strategy",
@@ -367,7 +367,6 @@ const jsonLd = {
         "https://twitter.com/admitpath",
         "https://www.linkedin.com/company/admitpath",
         "https://github.com/admitpath",
-        "https://competeai.app",
       ],
     },
     {

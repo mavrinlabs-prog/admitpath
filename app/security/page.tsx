@@ -1,3 +1,4 @@
+// LEGAL REVIEW NEEDED (2026-10-18): confirm security/FERPA statements against actual contracts and controls.
 import type { Metadata } from "next";
 import { CreditCard, Database, KeyRound, Lock, Mail, ShieldCheck } from "lucide-react";
 import { MarketingLayout } from "@/components/marketing/MarketingLayout";
@@ -43,6 +44,16 @@ const rows = [
     icon: CreditCard,
     title: "Payments",
     body: "Subscription checkout and plan management are hosted by Stripe. AdmitPath stores Stripe customer and subscription identifiers, not card numbers. Webhook signatures are verified before subscription state is changed, and unknown prices do not grant paid access.",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Abuse and duplicate-account prevention",
+    body: "Sign-up and referral checks use a normalized account email, a random httpOnly device token (stored only as a hash), a salted IP hash, and shared Stripe customer IDs. Matches are flagged for admin review or make a referral discount ineligible; nothing is deleted automatically. AdmitPath cannot and does not read hardware identifiers such as MAC addresses.",
+  },
+  {
+    icon: Database,
+    title: "School and student data",
+    body: "Individual students control their own accounts. Organizational use with student records requires a written agreement that addresses FERPA and applicable state student-privacy laws. School inquiry forms ask organizations not to include student records.",
   },
   {
     icon: KeyRound,

@@ -13,6 +13,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { requireUser, parseJsonBody } from "@/lib/api-helpers";
+import { requireFeature } from "@/lib/entitlements-server";
 
 const ROUND_VALUES = ["ED", "EA", "REA", "RD", "RD_2", "rolling"] as const;
 const STATUS_VALUES = [
@@ -65,7 +66,7 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  const authed = await requireUser();
+  const authed = await requireFeature("tracker");
   if ("response" in authed) return authed.response;
   const { userId } = authed;
 
@@ -121,7 +122,7 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  const authed = await requireUser();
+  const authed = await requireFeature("tracker");
   if ("response" in authed) return authed.response;
   const { userId } = authed;
 

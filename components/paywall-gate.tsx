@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { effectivePlan, isPaidPlan } from "@/lib/utils";
+import { ENTITLEMENT_USER_SELECT } from "@/lib/entitlements";
 import { getFreePlanStatus, type PlanFeature, FREE_LIMITS } from "@/lib/trial";
 import { Sparkles, Lock, ArrowRight, CheckCircle2, Zap } from "lucide-react";
 
@@ -36,13 +37,10 @@ export async function PaywallGate({ children, feature, limitFeature }: Props) {
 
   const user = await prisma.user.findUnique({
     where: { id: userId },
+    // Full entitlement columns: without entitlementSource/ExpiresAt, manual
+    // grants and grandfathered trials were rendered as Free on gated pages.
     select: {
-      plan: true,
-      stripeSubscriptionId: true,
-      isInternal: true,
-      analysisCount: true,
-      trialEssayCount: true,
-      trialChatCount: true,
+      ...ENTITLEMENT_USER_SELECT,
       profile: { select: { id: true } },
     },
   });
@@ -191,7 +189,7 @@ export async function PaywallGate({ children, feature, limitFeature }: Props) {
 
         <div className="flex flex-col gap-3">
           <Link
-              href="/pricing"
+              href="/checkout/pro"
               className="inline-flex items-center justify-center gap-2 rounded-xl px-6 py-4 text-sm font-bold text-white transition-all hover:-translate-y-0.5"
               style={{
                 background: "linear-gradient(135deg, #4A6FA5, #1E3352)",
@@ -205,7 +203,7 @@ export async function PaywallGate({ children, feature, limitFeature }: Props) {
 
           <div className="flex gap-3">
             <Link
-              href="/pricing"
+              href="/checkout/pro"
               className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl border px-4 py-3 text-sm font-semibold transition-colors hover:bg-[rgba(255,255,255,0.45)]"
               style={{ borderColor: "rgba(0,0,0,0.06)", color: "var(--dl-text-primary, #1B2030)" }}
             >

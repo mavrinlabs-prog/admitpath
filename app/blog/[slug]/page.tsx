@@ -8,7 +8,7 @@ import { Eyebrow } from "@/components/eyebrow";
 import { PullQuote } from "@/components/pull-quote";
 import { Footnotes, FootnoteRef } from "@/components/footnote";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
-import { MarketingNav } from "@/components/marketing";
+import { MarketingNav, SiteFooter } from "@/components/marketing";
 
 export const dynamicParams = true;
 export const dynamic = "force-static";
@@ -146,7 +146,7 @@ function Block({ b }: { b: ArticleBlock }) {
       return <ol>{b.items.map((i) => <li key={i}>{i}</li>)}</ol>;
     case "callout":
       return (
-        <aside className="not-prose my-7 rounded-2xl border-2 p-5" style={{ borderColor: "#4A6FA5", background: "#E8EFF8" }}>
+        <aside className="not-prose my-7 rounded-2xl border p-5" style={{ borderColor: "rgba(74,111,165,0.18)", background: "var(--color-primary-light, #E8EFF8)" }}>
           <p style={{ color: "var(--dl-text-primary, #1B2030)", fontFamily: "var(--font-inter)", fontSize: "0.95rem", margin: 0, fontWeight: 500 }}>{b.text}</p>
         </aside>
       );
@@ -272,14 +272,14 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
 
             {/* Inline CTA — #E8EFF8 background */}
             <section
-              className="mt-16 rounded-3xl border-2 p-8 flex flex-col sm:flex-row items-start sm:items-center gap-6"
-              style={{ borderColor: "#4A6FA5", background: "#E8EFF8" }}
+              className="mt-16 rounded-3xl border p-8 flex flex-col sm:flex-row items-start sm:items-center gap-6"
+              style={{ borderColor: "rgba(74,111,165,0.18)", background: "var(--color-primary-light, #E8EFF8)" }}
             >
               <div className="flex-1">
                 <h2 className="text-2xl font-bold mb-1.5" style={{ color: "var(--dl-text-primary, #1B2030)", fontFamily: "var(--font-inter)" }}>See where you actually stand</h2>
                 <p className="text-base" style={{ color: "var(--dl-text-secondary, #454B5E)", fontFamily: "var(--font-inter)" }}>AdmitPath scores your profile across 7 dimensions using real CDS admissions data. Free plan included.</p>
               </div>
-              <Link href="/sign-up" className="btn-primary inline-flex items-center gap-2 px-6 py-3.5 text-sm whitespace-nowrap">
+              <Link href="/sign-up" className="dl-btn dl-btn-primary dl-btn-lg whitespace-nowrap">
                 Sign up free <ArrowRight className="h-4 w-4" />
               </Link>
             </section>
@@ -397,6 +397,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
           )}
         </div>
       </div>
+      <SiteFooter />
     </div>
   );
 }

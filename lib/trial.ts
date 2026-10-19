@@ -91,7 +91,7 @@ export function checkFeatureAccess(
   }
   const status = getFreePlanStatus(user, collegeCount);
   if (status.usage[feature].exhausted) {
-    return { allowed: false, reason: "free_limit_reached", feature, upgradeUrl: "/pricing" };
+    return { allowed: false, reason: "free_limit_reached", feature, upgradeUrl: "/checkout/pro" };
   }
   return { allowed: true, reason: "free" };
 }

@@ -7,6 +7,7 @@ import {
   type ProgramSignals,
 } from "@/lib/summer-program-matcher";
 import programsRaw from "@/../../public/summer-programs.json";
+import { requireFeature } from "@/lib/entitlements-server";
 
 /**
  * Personalized summer program recommender.
@@ -20,7 +21,7 @@ import programsRaw from "@/../../public/summer-programs.json";
  */
 export async function GET() {
   try {
-  const authed = await requireUser();
+  const authed = await requireFeature("summerPrograms");
   if ("response" in authed) return authed.response;
   const { userId } = authed;
 

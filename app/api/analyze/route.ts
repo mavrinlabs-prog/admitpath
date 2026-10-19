@@ -3,7 +3,7 @@ import { prisma, withRetry } from "@/lib/prisma";
 import { checkFeatureAccess, accessDenialResponse, FREE_LIMITS } from "@/lib/trial";
 import { callWithJsonRetry, JsonParseError } from "@/lib/json-repair";
 import { rateLimitUserAndIp } from "@/lib/rate-limit";
-import { requireUser, parseJsonBody } from "@/lib/api-helpers";
+import { requireUser } from "@/lib/api-helpers";
 import { routeLlmCall } from "@/lib/llm-router";
 import { effectivePlan } from "@/lib/utils";
 import { COLLEGES, type College } from "@/data/colleges";
@@ -16,85 +16,8 @@ import { getVerifiedPrograms, groundProgramReference } from "@/lib/verified-prog
 import { recordSuccess, recordFailure, recordResponseTime } from "@/lib/monitoring";
 import { FreePlanLimitReachedError, freeUsageLimitBody } from "@/lib/free-usage";
 import { normalizeAnalysisQuality } from "@/lib/analysis-quality";
-import { z } from "zod";
 
-const emptyToUndefined = (value: unknown) =>
-  value === "" || value === null ? undefined : value;
-const optionalString = (maxLength: number) =>
-  z.preprocess(
-    (value) => {
-      const cleaned = emptyToUndefined(value);
-      return typeof cleaned === "number" ? String(cleaned) : cleaned;
-    },
-    z.string().trim().max(maxLength).optional(),
-  );
-const optionalActivityNumber = (max: number) =>
-  z.preprocess((value) => {
-    const cleaned = emptyToUndefined(value);
-    if (typeof cleaned === "number") return Number.isFinite(cleaned) ? cleaned : undefined;
-    if (typeof cleaned !== "string") return undefined;
-    const match = cleaned.match(/\d+(?:\.\d+)?/);
-    return match ? Number(match[0]) : undefined;
-  }, z.number().min(0).max(max).optional());
-const stringList = (maxItemLength: number, maxItems = 60) =>
-  z.preprocess((value) => {
-    if (typeof value === "string") {
-      return value.split(/[,\n]/).map((item) => item.trim()).filter(Boolean);
-    }
-    if (Array.isArray(value)) {
-      return value.map((item) => {
-        if (typeof item === "string") return item;
-        if (item && typeof item === "object") {
-          const record = item as Record<string, unknown>;
-          return String(record.name ?? record.title ?? record.course ?? "").trim();
-        }
-        return "";
-      }).filter(Boolean);
-    }
-    return value;
-  }, z.array(z.string().max(maxItemLength)).max(maxItems).optional().default([]));
-
-const analyzeSchema = z.object({
-  gpa: z.preprocess(emptyToUndefined, z.coerce.number().min(0).max(5).optional().default(3.0)),
-  weightedGpa: z.preprocess(emptyToUndefined, z.coerce.number().min(0).max(5.5).optional()),
-  satScore: z.preprocess(emptyToUndefined, z.coerce.number().min(400).max(1600).optional()),
-  actScore: z.preprocess(emptyToUndefined, z.coerce.number().min(1).max(36).optional()),
-  grade: z.preprocess(emptyToUndefined, z.coerce.number().min(7).max(12).optional().default(11)),
-  activities: z.preprocess((value) => {
-    if (typeof value === "string") {
-      return value.split(/\n/).map((name) => ({ name: name.trim() })).filter((item) => item.name);
-    }
-    if (Array.isArray(value)) {
-      return value.map((item) => {
-        if (typeof item === "string") return { name: item };
-        if (item && typeof item === "object") {
-          const record = item as Record<string, unknown>;
-          return { ...record, name: String(record.name ?? record.title ?? record.activity ?? "") };
-        }
-        return { name: "" };
-      }).filter((item) => String(item.name).trim());
-    }
-    return value;
-  }, z.array(z.object({
-    name: z.string().max(200),
-    role: optionalString(120),
-    impact: optionalString(500),
-    hoursPerWeek: optionalActivityNumber(168),
-    yearsInvolved: optionalActivityNumber(12),
-  })).max(30).optional().default([])),
-  awards: stringList(200, 30),
-  courses: stringList(120, 60),
-  intendedMajor: optionalString(120),
-  targetColleges: stringList(160, 40),
-  admissionsConcern: optionalString(2000),
-  // The prompt only uses the first 800 chars of essaySnippet — bound the
-  // whole field at 8000 (a generous Common App-length essay) so an attacker
-  // can't waste memory parsing a multi-MB payload that we'll slice anyway.
-  essaySnippet: optionalString(8000),
-  recommendationNote: optionalString(2000),
-});
-
-type AnalyzeInput = z.infer<typeof analyzeSchema>;
+import { parseAnalyzeRequest, type AnalyzeInput, type AnalyzeWarning } from "@/lib/analyze-contract";
 
 /**
  * Best-effort lookup against the seed dataset. We match by slug, exact name,
@@ -785,11 +708,40 @@ export async function POST(req: Request) {
     return NextResponse.json(body, { status });
   }
 
-  // includeDetails: keep returning `parsed.error.flatten()` — the analyze form
-  // surfaces field-level errors and removing them would break that UX.
-  const parsedBody = await parseJsonBody(req, analyzeSchema, { includeDetails: true });
-  if ("response" in parsedBody) return parsedBody.response;
-  const parsed = parsedBody;
+  // Normalize + validate. Recoverable issues (too many activities, long
+  // lines, 6.0-scale weighted GPA) become warnings instead of a 400; only
+  // values that would make the score wrong are rejected, each with a
+  // field-specific message the form renders inline.
+  const requestId = crypto.randomUUID();
+  let rawBody: unknown;
+  try {
+    rawBody = await req.json();
+  } catch {
+    return NextResponse.json({
+      error: "Invalid JSON",
+      code: "INVALID_JSON",
+      message: "The analysis request could not be read. Refresh the page and try again.",
+      fieldErrors: {},
+      requestId,
+      recoverable: true,
+    }, { status: 400, headers: { "X-Request-Id": requestId } });
+  }
+  const contract = parseAnalyzeRequest(rawBody);
+  if (!contract.ok) {
+    console.warn("[/api/analyze] validation rejected", { requestId, fields: Object.keys(contract.fieldErrors) });
+    return NextResponse.json({
+      error: "Invalid input",
+      code: "VALIDATION_ERROR",
+      message: "Check the highlighted fields and try again.",
+      fieldErrors: contract.fieldErrors,
+      warnings: contract.warnings,
+      requestId,
+      recoverable: true,
+    }, { status: 400, headers: { "X-Request-Id": requestId } });
+  }
+  const inputWarnings: AnalyzeWarning[] = contract.warnings;
+  const parsed: { data: AnalyzeInput } = { data: contract.data };
+  let usedFallback = false;
 
   // Sanitize all string inputs to prevent prompt injection
   parsed.data = sanitizeInputObject(parsed.data);
@@ -864,12 +816,15 @@ export async function POST(req: Request) {
       hasCerebrasKey: !!process.env.CEREBRAS_API_KEY,
       hasDbUrl: !!process.env.DATABASE_URL,
     });
-    if (err instanceof AnalyzeTimeoutError) {
+    // Reliability: every provider failure mode (timeout, unparseable JSON,
+    // missing/rotated keys, provider outage, rate limit) falls back to the
+    // deterministic heuristic analysis instead of failing the request. The
+    // response is flagged so the UI can say it is a calibrated estimate.
+    const fallbackEligible = err instanceof AnalyzeTimeoutError || err instanceof JsonParseError || process.env.ANALYZE_DISABLE_HEURISTIC_FALLBACK !== "true";
+    if (fallbackEligible) {
       result = buildHeuristicAnalysis(parsed.data, signals);
+      usedFallback = true;
     } else {
-    if (err instanceof JsonParseError) {
-      return NextResponse.json({ error: "AI returned an unparseable response. Please retry." }, { status: 502 });
-    }
     const errMsg = err instanceof Error ? err.message.toLowerCase() : "";
     if (errMsg.includes("all llm") || errMsg.includes("exhausted") || errMsg.includes("429")) {
       return NextResponse.json(
@@ -1312,6 +1267,8 @@ export async function POST(req: Request) {
   return NextResponse.json({
     id: savedId,
     ...(result as object),
+    ...(inputWarnings.length > 0 ? { inputWarnings } : {}),
+    ...(usedFallback ? { fallback: { used: true, reason: "ai_unavailable" } } : {}),
     nextSteps,
     _meta: meta,
     _quality: quality.passed ? undefined : { issues: quality.issues },

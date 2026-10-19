@@ -34,6 +34,15 @@ export function buildCounselorProfileContext(input: {
   profile: CounselorProfile | null;
   latestAnalysis?: CounselorAnalysis;
   plan?: string | null;
+  /** Aggregate prior activity only — never essay text or other students' data. */
+  activity?: {
+    analysesRun?: number;
+    essaysSaved?: number;
+    latestEssayScore?: number | null;
+    collegesSaved?: number;
+  } | null;
+  /** Route the student opened the counselor from, e.g. "/essays". */
+  currentPage?: string | null;
 }): string {
   const { profile, latestAnalysis } = input;
   const lines: string[] = ["[STUDENT CONTEXT]"];
@@ -75,8 +84,21 @@ export function buildCounselorProfileContext(input: {
     }
   }
 
+  const activity = input.activity;
+  if (activity) {
+    const parts = [
+      typeof activity.analysesRun === "number" ? `${activity.analysesRun} analyses run` : null,
+      typeof activity.essaysSaved === "number" ? `${activity.essaysSaved} essays saved` : null,
+      typeof activity.latestEssayScore === "number" ? `latest essay score ${activity.latestEssayScore}/100` : null,
+      typeof activity.collegesSaved === "number" ? `${activity.collegesSaved} colleges on list` : null,
+    ].filter(Boolean);
+    if (parts.length) lines.push(`- Prior activity: ${parts.join(", ")}`);
+  }
+
   const plan = compactValue(input.plan, 24);
-  if (plan) lines.push(`- Plan: ${plan}`);
+  if (plan) lines.push(`- Plan: ${plan === "pro" ? "Pro (all tools unlocked)" : "Free (usage-capped; Pro tools locked — mention upgrade only if directly relevant)"}`);
+  const page = compactValue(input.currentPage, 80);
+  if (page) lines.push(`- Currently on screen: ${page}`);
 
   return lines.join("\n").slice(0, MAX_COUNSELOR_PROFILE_CONTEXT_CHARS);
 }

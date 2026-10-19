@@ -19,7 +19,7 @@ import { analytics } from "@/lib/analytics";
 import { ResumeQuickImport } from "@/components/resume-quick-import";
 import { HydrationSafeSelect } from "@/components/ui/hydration-safe-select";
 import { ESSAY_TYPE_LABELS, ESSAY_TYPE_VALUES, type EssayType } from "@/lib/essay-types";
-import { essaySubmissionSchema, type EssayFieldErrors } from "@/lib/essay-contract";
+import { ESSAY_LIMITS, essaySubmissionSchema, newEssayRequestKey, type EssayFieldErrors } from "@/lib/essay-contract";
 import {
   firstEssayFieldError,
   getEssaySubmissionError,
@@ -307,7 +307,7 @@ export default function EssaysPage() {
         // Quota / private mode — no-op.
       }
       // Save to DB (if user has typed enough content)
-      if (prompt.trim().length > 0 && content.trim().length >= 50) {
+      if (prompt.trim().length > 0 && content.trim().length >= 50 && content.length <= ESSAY_LIMITS.draftContentChars) {
         try {
           const res = await fetch("/api/essay", {
             method: "PATCH",
@@ -351,7 +351,7 @@ export default function EssaysPage() {
   async function handleFeedback() {
     if (feedbackInFlightRef.current) return;
 
-    const requestKey = feedbackRequestKeyRef.current ?? crypto.randomUUID();
+    const requestKey = feedbackRequestKeyRef.current ?? newEssayRequestKey();
     const parsed = essaySubmissionSchema.safeParse({
       essayId: draftEssayId || undefined,
       requestKey,
@@ -688,7 +688,7 @@ export default function EssaysPage() {
                 {(error.includes("Pro") || error.includes("Upgrade")) ? (
                   <span>
                     {error}{" "}
-                    <Link href="/pricing" className="font-bold underline">
+                    <Link href="/checkout/pro" className="font-bold underline">
                       See plans →
                     </Link>
                   </span>
@@ -1225,7 +1225,7 @@ export default function EssaysPage() {
                     </p>
 
                     <Link
-                      href="/pricing"
+                      href="/checkout/pro"
                       className="dl-btn dl-btn-primary dl-btn-sm w-full justify-center"
                     >
                       <Sparkles className="h-3.5 w-3.5" />

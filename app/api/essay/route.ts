@@ -9,16 +9,15 @@ import { scoreVoice } from "@/lib/voice-rubric";
 import { effectivePlan } from "@/lib/utils";
 import { sanitizeUserInput, validateAIOutput, buildResponseMeta, buildNextSteps } from "@/lib/api-quality";
 import { FreePlanLimitReachedError, freeUsageLimitBody } from "@/lib/free-usage";
-import { ESSAY_TYPE_VALUES } from "@/lib/essay-types";
 import {
   essaySubmissionSchema,
+  essayDraftSchema,
   getEssayReplayDecision,
   isRequestKeyConflict,
   type EssayReplayRecord,
 } from "@/lib/essay-contract";
 import { callEssayProviderWithFallback } from "@/lib/essay-provider";
 import { buildEssayFallbackFeedback, normalizeEssayFeedback } from "@/lib/essay-fallback";
-import { z } from "zod";
 
 function replayResponse(prior: EssayReplayRecord) {
   return NextResponse.json({
@@ -333,13 +332,7 @@ export async function POST(req: Request) {
  * and sessions. Called by the client every 3s while the user is typing.
  * Does NOT create a version row (versions are only created on AI scoring).
  */
-const draftSchema = z.object({
-  essayId: z.string().optional(),
-  prompt: z.string().max(500),
-  content: z.string().max(7000),
-  college: z.string().max(200).optional(),
-  essayType: z.enum(ESSAY_TYPE_VALUES).optional(),
-});
+const draftSchema = essayDraftSchema;
 
 export async function PATCH(req: Request) {
   const authed = await requireUser();

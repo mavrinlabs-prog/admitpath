@@ -8,6 +8,7 @@ import {
 } from "@/lib/competition-matcher";
 import { readFileSync } from "fs";
 import { join } from "path";
+import { requireFeature } from "@/lib/entitlements-server";
 const competitionsRaw = JSON.parse(readFileSync(join(process.cwd(), "public/competitions.json"), "utf8"));
 
 /**
@@ -22,7 +23,7 @@ const competitionsRaw = JSON.parse(readFileSync(join(process.cwd(), "public/comp
  */
 export async function GET() {
   try {
-  const authed = await requireUser();
+  const authed = await requireFeature("competitionMatches");
   if ("response" in authed) return authed.response;
   const { userId } = authed;
 

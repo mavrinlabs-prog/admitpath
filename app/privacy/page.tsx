@@ -43,53 +43,60 @@ const privacySchema = {
   ],
 };
 
+// LEGAL REVIEW NEEDED (2026-10-18): FERPA/COPPA/state student-privacy,
+// retention periods, and processor list must be confirmed by counsel and
+// against current vendor contracts before publication is relied upon.
 const sections = [
   {
     h: "1. What we collect",
-    p: "When you sign in with Google, we receive your name, email address, profile image, and Google account identifier. We store the academic, extracurricular, essay, college-list, and other content you choose to enter. Stripe collects payment details in its hosted checkout; AdmitPath does not receive or store full card numbers.",
+    p: "Account data from Google sign-in (name, email, profile image, Google account ID). Content you enter or upload: grades, test scores, activities, awards, courses, essays, college lists, uploaded resumes (PDF, DOCX, TXT — we extract the text and do not keep the original file), and counselor-chat messages. Billing data is collected by Stripe; we receive your Stripe customer and subscription IDs, never full card numbers. School inquiry forms collect contact details you provide.",
   },
   {
     h: "2. How we use it",
-    p: "We use account and profile data to provide analyses, essay feedback, college planning, support, billing, security, and product operations. We do not sell personal information or use it for third-party advertising. We share data with service providers only as needed to operate these functions or comply with law.",
+    p: "To provide analyses, essay feedback, planning tools, the AI counselor, billing, support, security, and abuse prevention. The AI counselor uses your saved profile, plan level, activity counts (for example how many essays you have saved), and the page you opened it from to tailor answers. We do not sell personal information or use it for third-party advertising.",
   },
   {
     h: "3. AI model providers",
-    p: "Relevant profile or essay context may be sent to Groq, Cerebras, and, for eligible requests when configured, Anthropic to generate analyses, feedback, and counselor responses. Their handling of request data is governed by their service terms and privacy policies. Do not submit sensitive information that is not needed for the feature.",
+    p: "Relevant profile, essay, or chat content may be sent to Groq, Cerebras, and (when configured) Anthropic to generate responses. Providers process requests under their own terms. Avoid entering sensitive information a feature does not need (for example health, disciplinary, or immigration details).",
   },
   {
-    h: "4. Cookies & analytics",
-    p: "We use essential first-party cookies for signed Google OAuth sessions and preferences. Vercel Analytics is loaded only after analytics consent. Stripe may set cookies on its hosted checkout and billing pages. We do not use third-party advertising trackers.",
+    h: "4. Anti-abuse signals",
+    p: "To prevent duplicate accounts and referral abuse we store a normalized form of your email, a random device token in an httpOnly cookie (we store only a hash of it), and a salted hash of your IP address at sign-up. We do not collect hardware identifiers such as MAC addresses and do not use browser fingerprinting. These signals are used only for security review.",
   },
   {
-    h: "5. Optional product-improvement data",
-    p: "Training-data collection is off by default. If you explicitly enable it in Settings, selected analyses and feedback may be stored for product improvement after direct identifiers are removed. You can withdraw that consent in Settings; withdrawal applies to future collection.",
+    h: "5. Referrals",
+    p: "If you join through a referral link we record which account referred you, the status of your discount, and whether the referrer received a reward. The referrer does not see your profile, essays, or scores.",
   },
   {
-    h: "6. Storage, email, and service providers",
-    p: "Account data is stored in the configured Postgres database and the application is hosted on Vercel. Resend may process email addresses and message content for transactional or consented marketing email. Operational providers receive only the information needed for their role.",
+    h: "6. Cookies & analytics",
+    p: "Essential cookies keep you signed in, protect OAuth sign-in, store referral attribution (30 days), and the anti-abuse device token. Analytics load only after consent. See the Cookie Policy for the full list.",
   },
   {
-    h: "7. Your rights",
-    p: "You can export, edit, or delete your profile data at any time from /settings. To request full account deletion, email maestro.committee@gmail.com — we will remove your records within 30 days.",
+    h: "7. Students, schools, FERPA and COPPA",
+    p: "AdmitPath is for students 13 and older and is not directed to children under 13. Individual students use AdmitPath directly; we are not acting on behalf of a school unless a written agreement says so. Where a school or district contracts with us, student records are handled under that agreement and applicable law, including FERPA and state student-privacy laws. Do not upload other students' records.",
   },
   {
-    h: "8. Children",
-    p: "AdmitPath is intended for high school students aged 13 and older. If you are under 13, do not create an account.",
+    h: "8. Storage, retention, and providers",
+    p: "Data is stored in our Postgres database and the app is hosted on Vercel. Resend sends transactional and consented emails. We keep account data while your account is active and delete it after an account-deletion request, except records we must retain for billing, tax, security, or legal reasons.",
   },
   {
-    h: "9. Changes",
-    p: "We may update this policy. The effective date below will reflect the most recent revision. Material changes will be announced by email to subscribed users.",
+    h: "9. Your rights: access, export, deletion",
+    p: "Export your data or delete your account from Settings at any time. You can also email maestro.committee@gmail.com; we respond within 30 days. Depending on where you live (for example California), you may have additional rights to know, correct, or delete personal information.",
   },
   {
-    h: "10. Contact",
-    p: "Questions? Email maestro.committee@gmail.com.",
+    h: "10. Optional product-improvement data",
+    p: "Training-data collection is off by default. If you opt in under Settings, selected de-identified analyses and feedback may be used to improve AdmitPath. You can withdraw consent for future collection at any time.",
+  },
+  {
+    h: "11. Changes and contact",
+    p: "We will update the effective date for any change and email subscribers about material changes. Questions: maestro.committee@gmail.com.",
   },
 ];
 
 export default function PrivacyPage() {
   return (
     <MarketingLayout
-      eyebrow={`Legal · ${new Date("2026-07-13").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`}
+      eyebrow={`Legal · ${new Date("2026-10-18").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`}
       title="Privacy Policy"
       description="How AdmitPath collects, uses, and protects your data. We never sell your information."
     >

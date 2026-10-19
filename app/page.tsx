@@ -39,6 +39,9 @@ const ParallaxWrapper = dynamic(() =>
 );
 import { LogoMark } from "@/components/admitpath-logo";
 import { OneTimeOffersSection } from "@/components/landing/OneTimeOffersSection";
+import { CommandCenterPreview } from "@/components/landing/CommandCenterPreview";
+import { AudienceMenu } from "@/components/marketing/AudienceMenu";
+import { SiteFooter } from "@/components/marketing/SiteFooter";
 import {
   ArrowRight,
   CheckCircle2,
@@ -96,7 +99,7 @@ const homepageJsonLd = {
           name: "What is AdmitPath?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "AdmitPath is an AI college counseling platform that scores your application across 7 dimensions — academic rigor, leadership, awards, activity depth, spike, essay quality, and recommendations — using available Common Data Set (CDS) admissions data where available. It includes structured admissions worksheets, college profiles, supplemental essay guides, and Florida-specific guidance.",
+            text: "AdmitPath is an AI college counseling platform that scores your application across 7 dimensions — academic rigor, leadership, awards, activity depth, spike, essay quality, and recommendations — using available Common Data Set (CDS) admissions data where available. It includes planning tools, college profiles, supplemental essay guides, and Florida-specific guidance.",
           },
         },
         {
@@ -112,7 +115,7 @@ const homepageJsonLd = {
           name: "Is AdmitPath better than a private college counselor?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "AdmitPath provides structured, worksheet-driven planning informed by published Common Data Set factors. It can supplement a qualified school or private counselor, but it does not replace a counselor's judgment or guarantee comparable outcomes.",
+            text: "AdmitPath provides structured, tool-driven planning informed by published Common Data Set factors. It can supplement a qualified school or private counselor, but it does not replace a counselor's judgment or guarantee comparable outcomes.",
           },
         },
         {
@@ -136,7 +139,7 @@ const homepageJsonLd = {
           name: "Does AdmitPath help with college essays?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "Yes. AdmitPath provides essay feedback across 6 dimensions: voice authenticity, narrative structure, self-reflection depth, specificity, emotional resonance, and admissions alignment. It also includes a topic finder, revision checklist, Common App prompt guides, supplemental-essay guidance, and a brainstorm worksheet.",
+            text: "Yes. AdmitPath provides essay feedback across 6 dimensions: voice authenticity, narrative structure, self-reflection depth, specificity, emotional resonance, and admissions alignment. It also includes a topic finder, revision checklist, Common App prompt guides, supplemental-essay guidance, and an essay topic finder.",
           },
         },
         {
@@ -261,26 +264,7 @@ const plans = [
   },
 ];
 
-const testimonials = [
-  {
-    name: "A.C.",
-    detail: "Class of 2026, New York",
-    text: "AdmitPath showed me my spike score was 45 — brutally honest, but exactly what I needed to hear junior fall. I spent the summer building my research portfolio instead of padding my resume. Got into Cornell ED.",
-    icon: Target,
-  },
-  {
-    name: "S.R.",
-    detail: "Class of 2026, Washington",
-    text: "The essay feedback caught three clichés I didn’t even realize were clichés. My counselor at school just said ‘looks good.’ AdmitPath’s line-by-line feedback was more useful than the $5,000 my friend spent on a private consultant.",
-    icon: PenLine,
-  },
-  {
-    name: "M.J.",
-    detail: "Class of 2026, Tennessee",
-    text: "As a first-gen student, I had no idea about demonstrated interest or yield protection. The AI counselor explained everything in plain language and helped me build a balanced list. I got into 4 of my 5 target schools.",
-    icon: GraduationCap,
-  },
-];
+
 
 // Calibration sources must be ones the analyzer actually pulls from. Previous
 // list claimed "Naviance benchmarks" (we don't license Naviance data) and
@@ -313,14 +297,14 @@ export default async function LandingPage() {
 
           <div className="dl-landing-nav-links hidden md:flex">
             <a href="#how-it-works">How it works</a>
-            <a href="#parents">For parents</a>
+            <AudienceMenu />
             <Link href="/for-schools">For schools</Link>
-            <Link href="/counselor">For counselors</Link>
+            <Link href="/for-counselors">For counselors</Link>
             <Link href="/tools">Tools</Link>
             <a href="#pricing">Pricing</a>
             <Link href="/blog">Blog</Link>
             <Link href={signedIn ? "/dashboard" : "/sign-up"} className="dl-btn dl-btn-primary dl-btn-sm" style={{ color: "#FFFFFF" }}>
-              {signedIn ? "Open dashboard" : "Get Started"} <ArrowRight size={14} strokeWidth={2} />
+              {signedIn ? "Dashboard" : "Get started"} <ArrowRight size={14} strokeWidth={2} />
             </Link>
           </div>
         </div>
@@ -500,189 +484,10 @@ export default async function LandingPage() {
           </div>
           </ScrollReveal>
 
-          {/* Dashboard mockup card */}
+          {/* Dashboard preview — real HTML/CSS command center (example data) */}
           <ScrollReveal delay={0.15}>
-          <ParallaxWrapper strength={0.06}>
-          <div
-            role="img"
-            aria-label="Example AdmitPath dashboard showing 7-dimension profile score, strengths, gaps, and priority actions"
-            className="relative w-full overflow-hidden rounded-3xl border"
-            style={{
-              background: "#FFFFFF",
-              borderColor: "rgba(0,0,0,0.08)",
-              boxShadow: "0 32px 96px rgba(0,0,0,0.08), 0 8px 32px rgba(74,111,165,0.06)",
-            }}
-          >
-            {/* Light nav bar mockup */}
-            <div
-              className="flex items-center justify-between px-6 py-4 border-b"
-              style={{ borderColor: "rgba(0,0,0,0.06)" }}
-            >
-              <div className="flex items-center gap-3">
-                <div className="flex gap-1.5">
-                  <div className="h-3 w-3 rounded-full bg-red-500 opacity-70" />
-                  <div className="h-3 w-3 rounded-full bg-yellow-400 opacity-70" />
-                  <div className="h-3 w-3 rounded-full bg-green-400 opacity-70" />
-                </div>
-                <div
-                  className="hidden sm:flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-medium"
-                  style={{ background: "var(--dl-bg-root, #EFF2F8)", color: "var(--dl-text-secondary, #454B5E)" }}
-                >
-                  <span>admith.vercel.app/dashboard</span>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="h-7 w-7 rounded-full" style={{ background: "linear-gradient(135deg, var(--dl-brand, #4A6FA5), var(--dl-brand-deep, #1E3352))" }} />
-                <span className="text-xs font-medium hidden sm:inline" style={{ color: "var(--dl-text-secondary, #454B5E)" }}>Maya R.</span>
-              </div>
-            </div>
-
-            {/* Dashboard content mockup */}
-            <div className="p-6 md:p-10">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Left — score + tools */}
-                <div className="lg:col-span-2 space-y-5">
-                  {/* Welcome + score */}
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-5">
-                    <div>
-                      <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: "var(--dl-brand, #4A6FA5)" }}>
-                        Good morning
-                      </p>
-                      <h3 className="text-2xl font-bold" style={{ color: "var(--dl-text-primary, #1B2030)" }}>
-                        Welcome back, Maya
-                      </h3>
-                    </div>
-                    <div
-                      className="sm:ml-auto flex items-center gap-4 rounded-2xl px-5 py-3"
-                      style={{ background: "var(--dl-bg-root, #EFF2F8)", border: "1px solid rgba(0,0,0,0.06)" }}
-                    >
-                      <div>
-                        <p className="text-[10px] font-semibold uppercase tracking-widest" style={{ color: "var(--dl-text-muted, #5A6275)" }}>Overall Score</p>
-                        <p className="text-3xl font-extrabold leading-none" style={{ color: "var(--dl-brand, #4A6FA5)" }}>81</p>
-                      </div>
-                      <div className="h-10 w-px" style={{ background: "rgba(0,0,0,0.08)" }} />
-                      <div>
-                        <p className="text-[10px]" style={{ color: "var(--dl-text-muted, #5A6275)" }}>out of 100</p>
-                        <p className="text-xs font-semibold mt-0.5" style={{ color: "var(--dl-brand, #4A6FA5)" }}>Top 18% ↑</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Score bars grid */}
-                  <div
-                    className="rounded-2xl p-5 space-y-3"
-                    style={{ background: "var(--dl-bg-root, #EFF2F8)", border: "1px solid rgba(0,0,0,0.06)" }}
-                  >
-                    <p className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: "var(--dl-text-muted, #5A6275)" }}>
-                      7-Dimension Breakdown
-                    </p>
-                    {[
-                      { label: "Academic Rigor", score: 88 },
-                      { label: "Leadership", score: 74 },
-                      { label: "Awards", score: 91 },
-                      { label: "Activity Depth", score: 67 },
-                      { label: "Spike", score: 82 },
-                    ].map((item) => (
-                      <div key={item.label} className="flex items-center gap-3">
-                        <span className="w-28 shrink-0 text-[10px] font-medium" style={{ color: "var(--dl-text-secondary, #454B5E)" }}>{item.label}</span>
-                        <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(0,0,0,0.08)" }}>
-                          <div
-                            className="h-full rounded-full"
-                            style={{
-                              width: `${item.score}%`,
-                              background: "linear-gradient(90deg, var(--dl-brand, #4A6FA5), var(--dl-brand-dark, #2E4A6E))",
-                            }}
-                          />
-                        </div>
-                        <span className="w-7 shrink-0 text-xs font-bold" style={{ color: "var(--dl-brand, #4A6FA5)" }}>{item.score}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Quick action tiles */}
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                    {[
-                      { Icon: Brain,          label: "Run Analysis",   tint: "var(--dl-brand-dark, #2E4A6E)" },
-                      { Icon: PenLine,        label: "Essay Feedback", tint: "var(--dl-brand-light, #7A99C9)" },
-                      { Icon: GraduationCap,  label: "College List",   tint: "var(--dl-brand, #4A6FA5)" },
-                    ].map((action) => (
-                      <div
-                        key={action.label}
-                        className="rounded-2xl p-4 flex flex-col gap-3"
-                        style={{ background: "var(--dl-bg-root, #EFF2F8)", border: "1px solid rgba(0,0,0,0.06)" }}
-                      >
-                        <div
-                          className="h-9 w-9 rounded-xl flex items-center justify-center"
-                          style={{ background: "rgba(74,111,165,0.10)", color: action.tint }}
-                        >
-                          <action.Icon className="h-4 w-4" strokeWidth={1.75} />
-                        </div>
-                        <p className="text-xs font-bold" style={{ color: "var(--dl-text-primary, #1B2030)" }}>{action.label}</p>
-                        <div className="flex items-center gap-1 text-[10px] font-semibold" style={{ color: action.tint }}>
-                          Open <ArrowRight className="h-2.5 w-2.5" />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Right — action plan */}
-                <div
-                  className="rounded-2xl p-5 flex flex-col gap-4"
-                  style={{ background: "var(--dl-bg-root, #EFF2F8)", border: "1px solid rgba(0,0,0,0.06)" }}
-                >
-                  <p className="text-xs font-bold uppercase tracking-widest" style={{ color: "var(--dl-text-muted, #5A6275)" }}>
-                    Your Action Plan
-                  </p>
-                  <div className="space-y-3 flex-1">
-                    {[
-                      { text: "Join 2 more clubs in a leadership role", priority: "high", done: false },
-                      { text: "Apply for Science Olympiad regionals", priority: "high", done: false },
-                      { text: "Revise Common App essay — add specifics", priority: "medium", done: false },
-                      { text: "Request recommendation from Mr. Torres", priority: "medium", done: true },
-                      { text: "Add 3 more reach schools to college list", priority: "low", done: true },
-                    ].map((item, i) => (
-                      <div key={i} className="flex items-start gap-3">
-                        <div
-                          className="mt-0.5 h-4 w-4 rounded-full flex items-center justify-center shrink-0"
-                          style={{
-                            background: item.done ? "var(--dl-green, #22C55E)" : "transparent",
-                            border: item.done ? "none" : `1.5px solid ${item.priority === "high" ? "var(--dl-brand, #4A6FA5)" : item.priority === "medium" ? "var(--dl-brand-dark, #2E4A6E)" : "var(--dl-text-muted, #8890A5)"}`,
-                          }}
-                        >
-                          {item.done && <span className="text-[8px] text-white font-bold">&#10003;</span>}
-                        </div>
-                        <p
-                          className="text-xs leading-snug"
-                          style={{
-                            color: item.done ? "var(--dl-text-muted, #8890A5)" : "var(--dl-text-secondary, #454B5E)",
-                            textDecoration: item.done ? "line-through" : "none",
-                          }}
-                        >
-                          {item.text}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                  <div
-                    className="rounded-xl px-4 py-3 text-center"
-                    style={{ background: "rgba(74,111,165,0.08)", border: "1px solid rgba(74,111,165,0.15)" }}
-                  >
-                    <p className="text-xs font-bold" style={{ color: "var(--dl-brand, #4A6FA5)" }}>Profile 68% complete</p>
-                    <div className="mt-2 h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(0,0,0,0.08)" }}>
-                      <div className="h-full rounded-full" style={{ width: "68%", background: "linear-gradient(90deg, var(--dl-brand, #4A6FA5), var(--dl-brand-dark, #2E4A6E))" }} />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Subtle bottom edge for editorial feel */}
-            <div
-              className="absolute bottom-0 left-0 right-0 h-16 pointer-events-none"
-              style={{ background: "linear-gradient(to top, rgba(255,255,255,0.9), transparent)" }}
-            />
-          </div>
+          <ParallaxWrapper strength={0.04}>
+            <CommandCenterPreview />
           </ParallaxWrapper>
           </ScrollReveal>
 
@@ -842,7 +647,7 @@ export default async function LandingPage() {
                 lineHeight: 1.5,
               }}
             >
-              AdmitPath provides structured college-planning tools for <strong style={{ color: "var(--dl-brand, #4A6FA5)" }}>$1/day</strong>.
+              AdmitPath provides structured college-planning tools for <strong style={{ color: "var(--dl-brand, #4A6FA5)" }}>$19.99/month</strong> (about 67¢ a day), with a permanent Free plan.
             </p>
 
             <p
@@ -875,38 +680,6 @@ export default async function LandingPage() {
                   </span>
                 </div>
               ))}
-            </div>
-
-            {/* Parent testimonial */}
-            <div
-              className="p-5 mb-8"
-              style={{
-                background: "rgba(74,111,165,0.04)",
-                borderRadius: "var(--dl-radius-md)",
-                borderLeft: "3px solid var(--dl-brand, #4A6FA5)",
-              }}
-            >
-              <p
-                style={{
-                  fontSize: 15,
-                  fontStyle: "italic",
-                  color: "var(--dl-text-secondary, #454B5E)",
-                  lineHeight: 1.65,
-                  marginBottom: 8,
-                }}
-              >
-                &ldquo;I wish this existed when my older child was applying. The
-                clarity it gives is worth 10x the price.&rdquo;
-              </p>
-              <p
-                style={{
-                  fontSize: 12,
-                  fontWeight: 600,
-                  color: "var(--dl-text-muted, #5A6275)",
-                }}
-              >
-                &mdash; Parent of 2026 applicant
-              </p>
             </div>
 
             <div className="text-center">
@@ -1188,7 +961,7 @@ export default async function LandingPage() {
                   </Link>
                 ) : plan.highlighted ? (
                   <Link
-                    href={`/sign-up?plan=${plan.id}`}
+                    href="/checkout/pro?from=%2F%23pricing"
                     className="dl-btn dl-btn-primary dl-btn-lg hover:-translate-y-0.5 hover:shadow-lg"
                     style={{ width: "100%", justifyContent: "center" }}
                   >
@@ -1197,7 +970,7 @@ export default async function LandingPage() {
                   </Link>
                 ) : (
                   <Link
-                    href={`/sign-up?plan=${plan.id}`}
+                    href="/checkout/pro?from=%2F%23pricing"
                     className="pricing-cta-outline"
                     style={{
                       display: "flex",
@@ -1307,7 +1080,6 @@ export default async function LandingPage() {
 
       {/* ── Testimonials removed per owner feedback ── */}
 
-      {/* NOTE: testimonials data is still defined above in case needed in the future, but the section is removed from the landing page per owner instructions. */}
 
       {/* ── Data sources credibility section (moved toward end per AP-005) ── */}
       <ScrollReveal>
@@ -1347,8 +1119,6 @@ export default async function LandingPage() {
       <FAQSection />
       </ScrollReveal>
 
-      {/* Placeholder to skip removed testimonials content */}
-      {(() => { void testimonials; return null; })()}
 
       {/* ── Final CTA — DL slate-blue tri-stop ── */}
       <ScrollReveal>
@@ -1430,31 +1200,7 @@ export default async function LandingPage() {
 
       </main>
 
-      {/* ── Footer — compact, max 320px desktop ── */}
-      <footer className="py-8 sm:py-10" style={{ backgroundColor: "#1B2030" }}>
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row items-start justify-between gap-8">
-            <div>
-              <Link href="/" className="inline-flex items-center gap-2 mb-2">
-                <LogoMark size={22} />
-                <span className="font-semibold text-sm text-white">AdmitPath</span>
-              </Link>
-              <p className="text-xs" style={{ color: "rgba(255,255,255,0.55)" }}>AI college counseling calibrated to real admissions data.</p>
-            </div>
-            <div className="flex flex-wrap gap-x-8 gap-y-2 text-[13px]" style={{ color: "rgba(255,255,255,0.7)" }}>
-              <Link href="/terms" className="hover:text-white transition-colors">Terms</Link>
-              <Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link>
-              <Link href="/blog" className="hover:text-white transition-colors">Blog</Link>
-              <Link href="/resources" className="hover:text-white transition-colors">Resources</Link>
-              <a href="mailto:maestro.committee@gmail.com" className="hover:text-white transition-colors">Contact</a>
-            </div>
-          </div>
-          <div className="mt-6 border-t pt-5 flex flex-col sm:flex-row items-center justify-between gap-2" style={{ borderColor: "rgba(255,255,255,0.08)" }}>
-            <p className="text-[11px]" style={{ color: "rgba(255,255,255,0.4)" }}>&copy; 2026 AdmitPath. All rights reserved.</p>
-            <p className="text-[11px]" style={{ color: "rgba(255,255,255,0.4)" }}>maestro.committee@gmail.com</p>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter />
 
       <StickyMobileCTA signedIn={signedIn} />
 

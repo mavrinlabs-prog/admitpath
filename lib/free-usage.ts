@@ -55,6 +55,6 @@ export function freeUsageLimitBody(feature: CountedFreeFeature) {
     error: `You've used all ${limit} Free-plan ${feature}. Upgrade to Pro to remove that cap.`,
     reason: "free_limit_reached",
     feature,
-    upgradeUrl: "/pricing",
+    upgradeUrl: "/checkout/pro",
   } as const;
 }

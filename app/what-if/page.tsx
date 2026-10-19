@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   description:
     "Model how improving your GPA, SAT score, or extracurriculars changes your admission odds at 102 top schools. Live scenario updates powered by real CDS data.",
   alternates: { canonical: `${BASE}/what-if` },
-  robots: { index: true, follow: true },
+  robots: { index: false, follow: false },
   openGraph: {
     title: "What-If Scenario Modeler — Admissions Impact Calculator",
     description: "See exactly how GPA, SAT, and activity changes affect your odds at 102 schools. Real CDS data.",
