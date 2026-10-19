@@ -1,3 +1,4 @@
+// LEGAL REVIEW NEEDED (2026-10-18): confirm cookie inventory and consent model per jurisdiction.
 import type { Metadata } from "next";
 import { MarketingLayout } from "@/components/marketing/MarketingLayout";
 import { buildPageSchema } from "@/lib/seo-config";
@@ -52,12 +53,19 @@ export default function CookiePolicyPage() {
           essential cookies because the application will not work without them.
         </p>
         <ul>
-          <li><strong>Session cookie</strong> &mdash; keeps you signed in</li>
-          <li><strong>CSRF token</strong> &mdash; protects against cross-site request forgery</li>
-          <li><strong>Cookie consent</strong> &mdash; remembers your cookie preferences</li>
-          <li><strong>Theme preference</strong> &mdash; light or dark mode selection</li>
+          <li><strong>session / session_user</strong> &mdash; signed, httpOnly cookies that keep you signed in (30 days)</li>
+          <li><strong>oauth_state, oauth_return_to, oauth_email_consent</strong> &mdash; protect Google sign-in against forgery and remember where to return (10 minutes)</li>
+          <li><strong>ref</strong> &mdash; referral attribution when you arrive from a friend&apos;s link (30 days)</li>
+          <li><strong>ap_device</strong> &mdash; random, httpOnly device token used only to detect duplicate accounts and referral abuse (1 year; we store only a hash)</li>
+          <li><strong>Cookie consent and theme</strong> &mdash; remember your choices</li>
         </ul>
 
+        <h2 style={{ color: "var(--dl-text-primary)" }}>Browser storage</h2>
+        <p>
+          We use local and session storage (not cookies) for conveniences such as
+          essay drafts saved on your device and how often a sign-up prompt has been
+          shown, so we can limit it to once per session and once per week.
+        </p>
         <h2 style={{ color: "var(--dl-text-primary)" }}>Analytics Cookies</h2>
         <p>
           With your consent, we use Vercel Analytics and Speed Insights to
@@ -105,7 +113,7 @@ export default function CookiePolicyPage() {
         </p>
 
         <p className="mt-8 text-xs" style={{ color: "var(--dl-text-muted)" }}>
-          Last updated: May 2026
+          Last updated: October 18, 2026
         </p>
       </div>
     </MarketingLayout>
