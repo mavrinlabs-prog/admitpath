@@ -2,6 +2,22 @@
 
 ## [Unreleased]
 
+## 2026-10-18 (Prod-readiness pass — see docs/prod-readiness-2026-10/ADMITPATH_REPORT.md)
+
+### Fixed
+- /api/analyze manual-fill 400s (activity cap, 6.0 weighted GPA, long lines) → normalizing contract, inline field errors, rubric fallback when AI is unavailable.
+- /api/essay 400s from draft autosave and long prompts; Safari request-key fallback.
+- /chat "Couldn't reach the counselor" after 40 messages / long replies; specific error states + retry; richer counselor context.
+- Resume upload auto-fill put awards in courses and split impact lines into activities; section-aware local parser + visible extraction progress.
+- Referral link pages could crash when the signing secret was missing; referral URLs now use the configured origin.
+
+### Added
+- Single entitlements registry (lib/entitlements.ts) gating Pro pages, Pro APIs, dashboard, admin.
+- /checkout/pro direct Stripe checkout for every Go Pro CTA; referral one-time 50% promotion code + referrer reward code; anti-abuse signals.
+- School/counselor inquiry form saved to SchoolInquiry table, /for-counselors, /admin/inquiries.
+- /status page + live footer status; smart popup policy; audience submenu; rebuilt report card, school marquee, command-center preview.
+- Migration 20261018120000_prod_readiness_inquiries_referrals_abuse (additive).
+
 ## 2026-07-07 (Phase 2 — max AEO/AI-SEO: unified answer-engine crawler allow-list)
 
 ### Added

@@ -74,7 +74,7 @@ export const schoolInquirySchema = z.object({
       const n = typeof value === "number" ? value : Number(String(value).replace(/,/g, ""));
       return Number.isFinite(n) ? n : value;
     },
-    z.number({ invalid_type_error: "Enter a number of students." })
+    z.number({ required_error: "Enter the number of students.", invalid_type_error: "Enter a number of students." })
       .int("Enter a whole number.")
       .min(1, "Enter at least 1 student.")
       .max(1_000_000, "Enter a realistic number of students."),
