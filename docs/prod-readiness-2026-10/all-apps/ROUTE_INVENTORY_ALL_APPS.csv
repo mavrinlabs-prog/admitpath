@@ -1,0 +1,560 @@
+App,Route,Purpose,Public_Or_Protected,Expected_User,Status,Notes
+WorksheetGen,/,Landing page,Public,Visitor/teacher,local 200; prod before 200,Page: app/page.tsx
+WorksheetGen,/about,Page /about,Public,Visitor/teacher,local 200; prod before 200,Page: app/about/page.tsx
+WorksheetGen,/accessibility,Page /accessibility,Public,Visitor/teacher,local 200; prod before 200,Page: app/accessibility/page.tsx
+WorksheetGen,/account,Page /account,Protected (sign-in),Signed-in teacher,not crawled,Page: app/account/page.tsx
+WorksheetGen,/account-restricted,Page /account-restricted,Protected (sign-in),Signed-in teacher,not crawled,Page: app/account-restricted/page.tsx
+WorksheetGen,/admin,Page /admin,Admin only,Admin,local 307; prod before 200,Page: app/(admin)/admin/page.tsx
+WorksheetGen,/admin/coupons,Page /admin/coupons,Admin only,Admin,local 307,Page: app/admin/coupons/page.tsx
+WorksheetGen,/admin/generations,Page /admin/generations,Admin only,Admin,not crawled,Page: app/admin/generations/page.tsx
+WorksheetGen,/admin/messages,Page /admin/messages,Admin only,Admin,local 307,Page: app/admin/messages/page.tsx
+WorksheetGen,/admin/referrals,Page /admin/referrals,Admin only,Admin,not crawled,Page: app/admin/referrals/page.tsx
+WorksheetGen,/admin/schools,Page /admin/schools,Admin only,Admin,not crawled,Page: app/(admin)/admin/schools/page.tsx
+WorksheetGen,/admin/users,Page /admin/users,Admin only,Admin,not crawled,Page: app/admin/users/page.tsx
+WorksheetGen,/admin/worksheets,Page /admin/worksheets,Admin only,Admin,local 307,Page: app/admin/worksheets/page.tsx
+WorksheetGen,/api/access-code,API /api/access-code,Protected (session),Signed-in teacher,local 401,API: app/api/access-code/route.ts
+WorksheetGen,/api/admin/access-codes,API /api/admin/access-codes,Admin only,Admin,not crawled (API/POST or needs session),API: app/api/admin/access-codes/route.ts
+WorksheetGen,/api/admin/backfill-searchable,API /api/admin/backfill-searchable,Admin only,Admin,not crawled (API/POST or needs session),API: app/api/admin/backfill-searchable/route.ts
+WorksheetGen,/api/admin/block-user,API /api/admin/block-user,Admin only,Admin,not crawled (API/POST or needs session),API: app/api/admin/block-user/route.ts
+WorksheetGen,/api/admin/contact-message-status,API /api/admin/contact-message-status,Admin only,Admin,not crawled (API/POST or needs session),API: app/api/admin/contact-message-status/route.ts
+WorksheetGen,/api/admin/generations,API /api/admin/generations,Admin only,Admin,not crawled (API/POST or needs session),API: app/api/admin/generations/route.ts
+WorksheetGen,/api/admin/listing-moderate,API /api/admin/listing-moderate,Admin only,Admin,not crawled (API/POST or needs session),API: app/api/admin/listing-moderate/route.ts
+WorksheetGen,/api/admin/migrate-settings-fields,API /api/admin/migrate-settings-fields,Admin only,Admin,not crawled (API/POST or needs session),API: app/api/admin/migrate-settings-fields/route.ts
+WorksheetGen,/api/admin/provision,API /api/admin/provision,Admin only,Admin,not crawled (API/POST or needs session),API: app/api/admin/provision/route.ts
+WorksheetGen,/api/admin/school-inquiry-status,API /api/admin/school-inquiry-status,Admin only,Admin,not crawled (API/POST or needs session),API: app/api/admin/school-inquiry-status/route.ts
+WorksheetGen,/api/admin/user-access,API /api/admin/user-access,Admin only,Admin,not crawled (API/POST or needs session),API: app/api/admin/user-access/route.ts
+WorksheetGen,/api/admin/worksheet-review,API /api/admin/worksheet-review,Admin only,Admin,not crawled (API/POST or needs session),API: app/api/admin/worksheet-review/route.ts
+WorksheetGen,/api/admin/worksheets,API /api/admin/worksheets,Admin only,Admin,not crawled (API/POST or needs session),API: app/api/admin/worksheets/route.ts
+WorksheetGen,/api/auth/google,API /api/auth/google,Public,Visitor/teacher,not crawled (API/POST or needs session),API: app/api/auth/google/route.ts
+WorksheetGen,/api/auth/google/callback,API /api/auth/google/callback,Public,Visitor/teacher,not crawled (API/POST or needs session),API: app/api/auth/google/callback/route.ts
+WorksheetGen,/api/auth/signout,API /api/auth/signout,Public,Visitor/teacher,not crawled (API/POST or needs session),API: app/api/auth/signout/route.ts
+WorksheetGen,/api/auth/status,API /api/auth/status,Public,Visitor/teacher,not crawled (API/POST or needs session),API: app/api/auth/status/route.ts
+WorksheetGen,/api/billing/invoices,API /api/billing/invoices,Protected (session),Signed-in teacher,not crawled (API/POST or needs session),API: app/api/billing/invoices/route.ts
+WorksheetGen,/api/billing/status,API /api/billing/status,Protected (session),Signed-in teacher,not crawled (API/POST or needs session),API: app/api/billing/status/route.ts
+WorksheetGen,/api/chat,API /api/chat,Protected (session),Signed-in teacher,not crawled (API/POST or needs session),API: app/api/chat/route.ts
+WorksheetGen,/api/contact,API /api/contact,Public,Visitor/teacher,not crawled (API/POST or needs session),API: app/api/contact/route.ts
+WorksheetGen,/api/content-terms,API /api/content-terms,Protected (session),Signed-in teacher,local 401,API: app/api/content-terms/route.ts
+WorksheetGen,/api/coupon,API /api/coupon,Public,Visitor/teacher,not crawled (API/POST or needs session),API: app/api/coupon/route.ts
+WorksheetGen,/api/coupons,API /api/coupons,Public,Visitor/teacher,not crawled (API/POST or needs session),API: app/api/coupons/route.ts
+WorksheetGen,/api/cron/audit/hourly,API /api/cron/audit/hourly,Cron secret,Vercel cron,not crawled (API/POST or needs session),API: app/api/cron/audit/hourly/route.ts
+WorksheetGen,/api/cron/backup-reminder,API /api/cron/backup-reminder,Cron secret,Vercel cron,not crawled (API/POST or needs session),API: app/api/cron/backup-reminder/route.ts
+WorksheetGen,/api/cron/cleanup-worksheets,API /api/cron/cleanup-worksheets,Cron secret,Vercel cron,not crawled (API/POST or needs session),API: app/api/cron/cleanup-worksheets/route.ts
+WorksheetGen,/api/cron/daily-nudges,API /api/cron/daily-nudges,Cron secret,Vercel cron,not crawled (API/POST or needs session),API: app/api/cron/daily-nudges/route.ts
+WorksheetGen,/api/cron/health-check,API /api/cron/health-check,Cron secret,Vercel cron,not crawled (API/POST or needs session),API: app/api/cron/health-check/route.ts
+WorksheetGen,/api/cron/trial-ended,API /api/cron/trial-ended,Cron secret,Vercel cron,not crawled (API/POST or needs session),API: app/api/cron/trial-ended/route.ts
+WorksheetGen,/api/cron/trial-ending,API /api/cron/trial-ending,Cron secret,Vercel cron,not crawled (API/POST or needs session),API: app/api/cron/trial-ending/route.ts
+WorksheetGen,/api/cron/weekly-progress,API /api/cron/weekly-progress,Cron secret,Vercel cron,not crawled (API/POST or needs session),API: app/api/cron/weekly-progress/route.ts
+WorksheetGen,/api/cron/worksheet-expiry-warning,API /api/cron/worksheet-expiry-warning,Cron secret,Vercel cron,not crawled (API/POST or needs session),API: app/api/cron/worksheet-expiry-warning/route.ts
+WorksheetGen,/api/device/register,API /api/device/register,Protected (session),Signed-in teacher,not crawled (API/POST or needs session),API: app/api/device/register/route.ts
+WorksheetGen,/api/export/all,API /api/export/all,Protected (session),Signed-in teacher,not crawled (API/POST or needs session),API: app/api/export/all/route.ts
+WorksheetGen,/api/export/packet,API /api/export/packet,Protected (session),Signed-in teacher,not crawled (API/POST or needs session),API: app/api/export/packet/route.ts
+WorksheetGen,/api/export/pdf,API /api/export/pdf,Protected (session),Signed-in teacher,not crawled (API/POST or needs session),API: app/api/export/pdf/route.ts
+WorksheetGen,/api/export/zip,API /api/export/zip,Protected (session),Signed-in teacher,not crawled (API/POST or needs session),API: app/api/export/zip/route.ts
+WorksheetGen,/api/generate,API /api/generate,Protected (session),Signed-in teacher,not crawled (API/POST or needs session),API: app/api/generate/route.ts
+WorksheetGen,/api/generate/bulk,API /api/generate/bulk,Protected (session),Signed-in teacher,not crawled (API/POST or needs session),API: app/api/generate/bulk/route.ts
+WorksheetGen,/api/generate/differentiate,API /api/generate/differentiate,Protected (session),Signed-in teacher,not crawled (API/POST or needs session),API: app/api/generate/differentiate/route.ts
+WorksheetGen,/api/generate/stream,API /api/generate/stream,Protected (session),Signed-in teacher,not crawled (API/POST or needs session),API: app/api/generate/stream/route.ts
+WorksheetGen,/api/health,API /api/health,Public,Visitor/teacher,not crawled (API/POST or needs session),API: app/api/health/route.ts
+WorksheetGen,/api/log-client-error,API /api/log-client-error,Public,Visitor/teacher,not crawled (API/POST or needs session),API: app/api/log-client-error/route.ts
+WorksheetGen,/api/og,API /api/og,Public,Visitor/teacher,not crawled (API/POST or needs session),API: app/api/og/route.tsx
+WorksheetGen,/api/parse-intent,API /api/parse-intent,Protected (session),Signed-in teacher,not crawled (API/POST or needs session),API: app/api/parse-intent/route.ts
+WorksheetGen,/api/parse-upload,API /api/parse-upload,Protected (session),Signed-in teacher,not crawled (API/POST or needs session),API: app/api/parse-upload/route.ts
+WorksheetGen,/api/profile,API /api/profile,Protected (session),Signed-in teacher,not crawled (API/POST or needs session),API: app/api/profile/route.ts
+WorksheetGen,/api/referral,API /api/referral,Protected (session),Signed-in teacher,not crawled (API/POST or needs session),API: app/api/referral/route.ts
+WorksheetGen,/api/referrals,API /api/referrals,Protected (session),Signed-in teacher,not crawled (API/POST or needs session),API: app/api/referrals/route.ts
+WorksheetGen,/api/school-inquiry,API /api/school-inquiry,Public,Visitor/teacher,not crawled (API/POST or needs session),API: app/api/school-inquiry/route.ts
+WorksheetGen,/api/stripe/checkout,API /api/stripe/checkout,Protected (session),Signed-in teacher,not crawled (API/POST or needs session),API: app/api/stripe/checkout/route.ts
+WorksheetGen,/api/stripe/connect/onboard,API /api/stripe/connect/onboard,Protected (session),Signed-in teacher,not crawled (API/POST or needs session),API: app/api/stripe/connect/onboard/route.ts
+WorksheetGen,/api/stripe/create-portal,API /api/stripe/create-portal,Protected (session),Signed-in teacher,not crawled (API/POST or needs session),API: app/api/stripe/create-portal/route.ts
+WorksheetGen,/api/stripe/settle,API /api/stripe/settle,Protected (session),Signed-in teacher,not crawled (API/POST or needs session),API: app/api/stripe/settle/route.ts
+WorksheetGen,/api/stripe/webhook,API /api/stripe/webhook,Signed webhook,Stripe/Clerk,not crawled (API/POST or needs session),API: app/api/stripe/webhook/route.ts
+WorksheetGen,/api/tracking/events,API /api/tracking/events,Public,Visitor/teacher,not crawled (API/POST or needs session),API: app/api/tracking/events/route.ts
+WorksheetGen,/api/unsubscribe,API /api/unsubscribe,Public,Visitor/teacher,not crawled (API/POST or needs session),API: app/api/unsubscribe/route.ts
+WorksheetGen,/api/usage,API /api/usage,Protected (session),Signed-in teacher,not crawled (API/POST or needs session),API: app/api/usage/route.ts
+WorksheetGen,/api/user/delete,API /api/user/delete,Protected (session),Signed-in teacher,not crawled (API/POST or needs session),API: app/api/user/delete/route.ts
+WorksheetGen,/api/user/export,API /api/user/export,Protected (session),Signed-in teacher,not crawled (API/POST or needs session),API: app/api/user/export/route.ts
+WorksheetGen,/api/user/profile,API /api/user/profile,Protected (session),Signed-in teacher,not crawled (API/POST or needs session),API: app/api/user/profile/route.ts
+WorksheetGen,/api/version,API /api/version,Public,Visitor/teacher,not crawled (API/POST or needs session),API: app/api/version/route.ts
+WorksheetGen,/api/webhooks/clerk,API /api/webhooks/clerk,Signed webhook,Stripe/Clerk,not crawled (API/POST or needs session),API: app/api/webhooks/clerk/route.ts
+WorksheetGen,/api/worksheets,API /api/worksheets,Protected (session),Signed-in teacher,not crawled (API/POST or needs session),API: app/api/worksheets/route.ts
+WorksheetGen,/api/worksheets/[id],API /api/worksheets/[id],Protected (session),Signed-in teacher,dynamic (see sitemap crawl),API: app/api/worksheets/[id]/route.ts
+WorksheetGen,/api/worksheets/[id]/duplicate,API /api/worksheets/[id]/duplicate,Protected (session),Signed-in teacher,dynamic (see sitemap crawl),API: app/api/worksheets/[id]/duplicate/route.ts
+WorksheetGen,/api/worksheets/[id]/grade,API /api/worksheets/[id]/grade,Protected (session),Signed-in teacher,dynamic (see sitemap crawl),API: app/api/worksheets/[id]/grade/route.ts
+WorksheetGen,/api/worksheets/[id]/patch,API /api/worksheets/[id]/patch,Protected (session),Signed-in teacher,dynamic (see sitemap crawl),API: app/api/worksheets/[id]/patch/route.ts
+WorksheetGen,/api/worksheets/[id]/regenerate-question,API /api/worksheets/[id]/regenerate-question,Protected (session),Signed-in teacher,dynamic (see sitemap crawl),API: app/api/worksheets/[id]/regenerate-question/route.ts
+WorksheetGen,/api/worksheets/[id]/rename,API /api/worksheets/[id]/rename,Protected (session),Signed-in teacher,dynamic (see sitemap crawl),API: app/api/worksheets/[id]/rename/route.ts
+WorksheetGen,/api/worksheets/[id]/share,API /api/worksheets/[id]/share,Protected (session),Signed-in teacher,dynamic (see sitemap crawl),API: app/api/worksheets/[id]/share/route.ts
+WorksheetGen,/api/worksheets/[id]/versions,API /api/worksheets/[id]/versions,Protected (session),Signed-in teacher,dynamic (see sitemap crawl),API: app/api/worksheets/[id]/versions/route.ts
+WorksheetGen,/api/worksheets/[id]/versions/[versionId]/restore,API /api/worksheets/[id]/versions/[versionId]/restore,Protected (session),Signed-in teacher,dynamic (see sitemap crawl),API: app/api/worksheets/[id]/versions/[versionId]/restore/route.ts
+WorksheetGen,/api/worksheets/list,API /api/worksheets/list,Protected (session),Signed-in teacher,not crawled (API/POST or needs session),API: app/api/worksheets/list/route.ts
+WorksheetGen,/author/[name],Page /author/[name],Public,Visitor/teacher,dynamic (see sitemap crawl),Page: app/author/[name]/page.tsx
+WorksheetGen,/billing,Page /billing,Protected (sign-in),Signed-in teacher,not crawled,Page: app/billing/page.tsx
+WorksheetGen,/blog,Page /blog,Public,Visitor/teacher,local 200; prod before 200,Page: app/blog/page.tsx
+WorksheetGen,/blog/[slug],Page /blog/[slug],Public,Visitor/teacher,dynamic (see sitemap crawl),Page: app/blog/[slug]/page.tsx
+WorksheetGen,/blog/feed.xml,API /blog/feed.xml,Public,Visitor/teacher,not crawled (API/POST or needs session),API: app/blog/feed.xml/route.ts
+WorksheetGen,/certifications,Page /certifications,Public,Visitor/teacher,not crawled,Page: app/certifications/page.tsx
+WorksheetGen,/community,Page /community,Public,Visitor/teacher,not crawled,Page: app/community/page.tsx
+WorksheetGen,/contact,Page /contact,Public,Visitor/teacher,local 200; prod before 200,Page: app/contact/page.tsx
+WorksheetGen,/contact/schools,Page /contact/schools,Public,Visitor/teacher,local 200; prod before 200,Page: app/contact/schools/page.tsx
+WorksheetGen,/cookie-policy,Page /cookie-policy,Public,Visitor/teacher,local 200; prod before 200,Page: app/cookie-policy/page.tsx
+WorksheetGen,/coppa-compliance,Page /coppa-compliance,Public,Visitor/teacher,not crawled,Page: app/coppa-compliance/page.tsx
+WorksheetGen,/create,Page /create,Public,Visitor/teacher,not crawled,Page: app/create/page.tsx
+WorksheetGen,/create/[generator]/[grade]/[subject],Page /create/[generator]/[grade]/[subject],Public,Visitor/teacher,dynamic (see sitemap crawl),Page: app/create/[generator]/[grade]/[subject]/page.tsx
+WorksheetGen,/dashboard,Page /dashboard,Protected (sign-in),Signed-in teacher,local 307; prod before 200,Page: app/(dashboard)/dashboard/page.tsx
+WorksheetGen,/dashboard/[id],Page /dashboard/[id],Protected (sign-in),Signed-in teacher,dynamic (see sitemap crawl),Page: app/(dashboard)/dashboard/[id]/page.tsx
+WorksheetGen,/dashboard/settings,Page /dashboard/settings,Protected (sign-in),Signed-in teacher,local 307,Page: app/(dashboard)/dashboard/settings/page.tsx
+WorksheetGen,/dashboard/welcome,Page /dashboard/welcome,Protected (sign-in),Signed-in teacher,not crawled,Page: app/(dashboard)/dashboard/welcome/page.tsx
+WorksheetGen,/data-processing-agreement,Page /data-processing-agreement,Public,Visitor/teacher,not crawled,Page: app/data-processing-agreement/page.tsx
+WorksheetGen,/districts,Page /districts,Public,Visitor/teacher,local 200; prod before 200,Page: app/districts/page.tsx
+WorksheetGen,/faq,Page /faq,Public,Visitor/teacher,local 200; prod before 200,Page: app/faq/page.tsx
+WorksheetGen,/faq/[slug],Page /faq/[slug],Public,Visitor/teacher,dynamic (see sitemap crawl),Page: app/faq/[slug]/page.tsx
+WorksheetGen,/ferpa-compliance,Page /ferpa-compliance,Public,Visitor/teacher,not crawled,Page: app/ferpa-compliance/page.tsx
+WorksheetGen,/for-schools,Page /for-schools,Public,Visitor/teacher,local 200; prod before 200,Page: app/for-schools/page.tsx
+WorksheetGen,/for-schools/privacy,Page /for-schools/privacy,Public,Visitor/teacher,local 200; prod before 200,Page: app/for-schools/privacy/page.tsx
+WorksheetGen,/for-schools/roi,Page /for-schools/roi,Public,Visitor/teacher,local 200; prod before 200,Page: app/for-schools/roi/page.tsx
+WorksheetGen,/for/[role],Page /for/[role],Public,Visitor/teacher,dynamic (see sitemap crawl),Page: app/for/[role]/page.tsx
+WorksheetGen,/gdpr-compliance,Page /gdpr-compliance,Public,Visitor/teacher,not crawled,Page: app/gdpr-compliance/page.tsx
+WorksheetGen,/generate,Page /generate,Protected (sign-in),Signed-in teacher,local 307; prod before 200,Page: app/(dashboard)/generate/page.tsx
+WorksheetGen,/generate/bulk,Page /generate/bulk,Protected (sign-in),Signed-in teacher,not crawled,Page: app/(dashboard)/generate/bulk/page.tsx
+WorksheetGen,/glossary,Page /glossary,Public,Visitor/teacher,local 200; prod before 200,Page: app/glossary/page.tsx
+WorksheetGen,/glossary/[term],Page /glossary/[term],Public,Visitor/teacher,dynamic (see sitemap crawl),Page: app/glossary/[term]/page.tsx
+WorksheetGen,/grade/[grade],Page /grade/[grade],Public,Visitor/teacher,dynamic (see sitemap crawl),Page: app/grade/[grade]/page.tsx
+WorksheetGen,/grade/[grade]/[subject],Page /grade/[grade]/[subject],Public,Visitor/teacher,dynamic (see sitemap crawl),Page: app/grade/[grade]/[subject]/page.tsx
+WorksheetGen,/guides,Page /guides,Public,Visitor/teacher,local 200; prod before 200,Page: app/guides/page.tsx
+WorksheetGen,/help,Page /help,Public,Visitor/teacher,local 200; prod before 200,Page: app/help/page.tsx
+WorksheetGen,/how-it-works,Page /how-it-works,Public,Visitor/teacher,local 200; prod before 200,Page: app/how-it-works/page.tsx
+WorksheetGen,/onboarding,Page /onboarding,Protected (sign-in),Signed-in teacher,not crawled,Page: app/onboarding/page.tsx
+WorksheetGen,/opensearch.xml,API /opensearch.xml,Public,Visitor/teacher,not crawled (API/POST or needs session),API: app/opensearch.xml/route.ts
+WorksheetGen,/pricing,Page /pricing,Public,Visitor/teacher,local 200; prod before 200,Page: app/pricing/page.tsx
+WorksheetGen,/privacy,Page /privacy,Public,Visitor/teacher,local 200; prod before 200,Page: app/privacy/page.tsx
+WorksheetGen,/r/[code],API /r/[code],Public,Visitor/teacher,dynamic (see sitemap crawl),API: app/r/[code]/route.ts
+WorksheetGen,/ref/[userId],API /ref/[userId],Public,Visitor/teacher,dynamic (see sitemap crawl),API: app/ref/[userId]/route.ts
+WorksheetGen,/refer,Page /refer,Protected (sign-in),Signed-in teacher,local 307; prod before 200,Page: app/refer/page.tsx
+WorksheetGen,/research,Page /research,Public,Visitor/teacher,not crawled,Page: app/research/page.tsx
+WorksheetGen,/resources,Page /resources,Public,Visitor/teacher,local 200; prod before 200,Page: app/resources/page.tsx
+WorksheetGen,/schools,Page /schools,Public,Visitor/teacher,local 200; prod before 200,Page: app/schools/page.tsx
+WorksheetGen,/security,Page /security,Public,Visitor/teacher,not crawled,Page: app/security/page.tsx
+WorksheetGen,/share/[id],Page /share/[id],Public,Visitor/teacher,dynamic (see sitemap crawl),Page: app/share/[id]/page.tsx
+WorksheetGen,/sign-in,Page /sign-in,Public,Visitor/teacher,local 200; prod before 200,Page: app/(auth)/sign-in/[[...sign-in]]/page.tsx
+WorksheetGen,/sign-up,Page /sign-up,Public,Visitor/teacher,local 200; prod before 200,Page: app/(auth)/sign-up/[[...sign-up]]/page.tsx
+WorksheetGen,/site-map,Page /site-map,Public,Visitor/teacher,local 200; prod before 200,Page: app/site-map/page.tsx
+WorksheetGen,/sitemap,Page /sitemap,Public,Visitor/teacher,not crawled,Page: app/sitemap/page.tsx
+WorksheetGen,/sitemap.xml,API /sitemap.xml,Public,Visitor/teacher,local 200; prod before 200,API: app/sitemap.xml/route.ts
+WorksheetGen,/sitemaps/[id],API /sitemaps/[id],Public,Visitor/teacher,dynamic (see sitemap crawl),API: app/sitemaps/[id]/route.ts
+WorksheetGen,/standards,Standards references,Public,Visitor/teacher,local 200; prod before 200,Page: app/standards/page.tsx
+WorksheetGen,/standards/[state],Page /standards/[state],Public,Visitor/teacher,dynamic (see sitemap crawl),Page: app/standards/[state]/page.tsx
+WorksheetGen,/standards/common-core/[code],Page /standards/common-core/[code],Public,Visitor/teacher,dynamic (see sitemap crawl),Page: app/standards/common-core/[code]/page.tsx
+WorksheetGen,/status,Page /status,Public,Visitor/teacher,not crawled,Page: app/status/page.tsx
+WorksheetGen,/subject/[subject],Page /subject/[subject],Public,Visitor/teacher,dynamic (see sitemap crawl),Page: app/subject/[subject]/page.tsx
+WorksheetGen,/teachers,Page /teachers,Public,Visitor/teacher,local 200; prod before 200,Page: app/teachers/page.tsx
+WorksheetGen,/templates,Templates (former /examples),Public,Visitor/teacher,local 200; prod before 200,Page: app/templates/page.tsx
+WorksheetGen,/templates/[slug],Page /templates/[slug],Public,Visitor/teacher,dynamic (see sitemap crawl),Page: app/templates/[slug]/page.tsx
+WorksheetGen,/terms,Page /terms,Public,Visitor/teacher,local 200; prod before 200,Page: app/terms/page.tsx
+WorksheetGen,/themes/[holiday],Page /themes/[holiday],Public,Visitor/teacher,dynamic (see sitemap crawl),Page: app/themes/[holiday]/page.tsx
+WorksheetGen,/tools,Worksheet tools index,Public,Visitor/teacher,local 200; prod before 200,Page: app/tools/page.tsx
+WorksheetGen,/tools/[slug],Page /tools/[slug],Public,Visitor/teacher,dynamic (see sitemap crawl),Page: app/tools/[slug]/page.tsx
+WorksheetGen,/unsubscribe,Page /unsubscribe,Public,Visitor/teacher,not crawled,Page: app/unsubscribe/page.tsx
+WorksheetGen,/upgrade,Page /upgrade,Protected (sign-in),Signed-in teacher,local 200; prod before 200,Page: app/upgrade/page.tsx
+WorksheetGen,/usage,Page /usage,Protected (sign-in),Signed-in teacher,local 307,Page: app/(dashboard)/usage/page.tsx
+WorksheetGen,/use-cases/[useCase],Page /use-cases/[useCase],Public,Visitor/teacher,dynamic (see sitemap crawl),Page: app/use-cases/[useCase]/page.tsx
+WorksheetGen,/vs/[competitor],Page /vs/[competitor],Public,Visitor/teacher,dynamic (see sitemap crawl),Page: app/vs/[competitor]/page.tsx
+WorksheetGen,/webinars,Page /webinars,Public,Visitor/teacher,not crawled,Page: app/webinars/page.tsx
+WorksheetGen,/whats-new,Page /whats-new,Public,Visitor/teacher,local 200; prod before 200,Page: app/whats-new/page.tsx
+WorksheetGen,/generators,Removed route (redirect),Public,Visitor,redirect to /tools (308); verified locally,next.config.ts redirects()
+WorksheetGen,/generators/*,Removed route (redirect),Public,Visitor,redirect to /tools/* (308); verified locally,next.config.ts redirects()
+WorksheetGen,/examples,Removed route (redirect),Public,Visitor,redirect to /templates (308); verified locally,next.config.ts redirects()
+WorksheetGen,/examples/*,Removed route (redirect),Public,Visitor,redirect to /templates (308); verified locally,next.config.ts redirects()
+WorksheetGen,/alternatives,Removed route (redirect),Public,Visitor,redirect to / (308); verified locally,next.config.ts redirects()
+WorksheetGen,/alternatives/*,Removed route (redirect),Public,Visitor,redirect to / (308); verified locally,next.config.ts redirects()
+WorksheetGen,/for-schools/case-studies,Removed route (redirect),Public,Visitor,redirect to /for-schools (308); verified locally,next.config.ts redirects()
+AdmitPath/Admith,/,Landing page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/about,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/accelerated-degree-programs,Content/app page,Public,Visitor,Not in sitemap; not crawled,Page
+AdmitPath/Admith,/acceptance-rate/[slug],Content/app page,Public,Visitor,Dynamic route — sampled via sitemap crawl,Page
+AdmitPath/Admith,/accessibility,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/admin,Admin,Protected (ADMIN_EMAILS),Admin,Local 200,Page
+AdmitPath/Admith,/admin/coupons,Admin,Protected (ADMIN_EMAILS),Admin,Not in sitemap; not crawled,Page
+AdmitPath/Admith,/admin/generations,Admin,Protected (ADMIN_EMAILS),Admin,Not in sitemap; not crawled,Page
+AdmitPath/Admith,/admin/inquiries,Admin inquiry list (new),Protected (ADMIN_EMAILS),Admin,Local 200,Page
+AdmitPath/Admith,/admin/referrals,Admin,Protected (ADMIN_EMAILS),Admin,Not in sitemap; not crawled,Page
+AdmitPath/Admith,/admin/users,Admin,Protected (ADMIN_EMAILS),Admin,Not in sitemap; not crawled,Page
+AdmitPath/Admith,/admissions-jargon-decoder,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/admissions-statistics-2026,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/admits-wall,Content/app page,Public,Visitor,Not in sitemap; not crawled,Page
+AdmitPath/Admith,/aid-comparison,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/analyze,Content/app page,Protected (session),Signed-in student,Local 200; Prod 200,Page
+AdmitPath/Admith,/api/account/delete,API,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/account/export,API,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/account/training-consent,API,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/admin/backfill-trial-stamps,API,Protected (secret/admin),System/admin,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/admin/generations,API,Protected (secret/admin),System/admin,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/admin/reset-db,API,Protected (secret/admin),System/admin,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/admin/training-data,API,Protected (secret/admin),System/admin,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/analyze,7-dimension analysis,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/auth/google,API,Public,Visitor,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/auth/google/callback,API,Public,Visitor,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/auth/signout,API,Public,Visitor,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/auth/status,API,Public,Visitor,Local 200,API
+AdmitPath/Admith,/api/billing/sync,API,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/chat,AI counselor stream,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/college-fit,API,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/colleges,API,Public,Visitor,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/colleges/[id],API,Public,Visitor,Dynamic route — sampled via sitemap crawl,API
+AdmitPath/Admith,/api/colleges/search,API,Public,Visitor,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/competitions/recommend,API,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/counselor-widget,API,Public,Visitor,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/coupons,API,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/cron/audit/hourly,Cron job (bearer secret),Protected (secret/admin),System/admin,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/cron/backup-reminder,Cron job (bearer secret),Protected (secret/admin),System/admin,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/cron/daily-emails,Cron job (bearer secret),Protected (secret/admin),System/admin,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/cron/wakeup-brief,Cron job (bearer secret),Protected (secret/admin),System/admin,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/cron/weekly-progress,Cron job (bearer secret),Protected (secret/admin),System/admin,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/deadlines/ics,API,Public,Visitor,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/essay,Essay feedback + draft autosave,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/essay/[id]/diff,API,Protected (session),Signed-in student,Dynamic route — sampled via sitemap crawl,API
+AdmitPath/Admith,/api/essay/[id]/versions,API,Protected (session),Signed-in student,Dynamic route — sampled via sitemap crawl,API
+AdmitPath/Admith,/api/essay/[id]/versions/[version],API,Protected (session),Signed-in student,Dynamic route — sampled via sitemap crawl,API
+AdmitPath/Admith,/api/essay/supplemental,API,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/essay/topics,API,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/essay/why-us,API,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/health,API,Public,Visitor,Local 200,API
+AdmitPath/Admith,/api/interview,API,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/log-client-error,API,Public,Visitor,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/me,API,Protected (session),Signed-in student,Local 200,API
+AdmitPath/Admith,/api/newsletter,API,Public,Visitor,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/og,API,Public,Visitor,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/profile,API,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/profile/extract-file,API,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/profile/parse-resume,API,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/rec-letter/brag-sheet,API,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/rec-letter/recommenders,API,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/referrals,API,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/sat-feedback,API,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/scholarships/recommend,API,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/school-inquiry,Save school inquiry (JSON),Public,Visitor,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/school-inquiry-form,Save school inquiry (no-JS form),Public,Visitor,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/share,API,Public,Visitor,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/status,Public status JSON (new),Public,Visitor,Local 200,API
+AdmitPath/Admith,/api/stripe/checkout,API,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/stripe/create-checkout,API,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/stripe/create-portal,API,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/stripe/one-time-checkout,API,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/stripe/webhook,Legacy alias of Stripe webhook,Public,Visitor,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/summer-programs/recommend,API,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/tracker,API,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/tracker/[id],API,Protected (session),Signed-in student,Dynamic route — sampled via sitemap crawl,API
+AdmitPath/Admith,/api/tracker/survey,API,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/tracking/events,API,Public,Visitor,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/trial/start,API,Protected (session),Signed-in student,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/unsubscribe,API,Public,Visitor,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/version,API,Public,Visitor,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/webhooks/clerk,API,Public,Visitor,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/api/webhooks/stripe,Stripe webhook (signature verified),Public,Visitor,Not crawled (API; key APIs exercised in TEST_MATRIX),API
+AdmitPath/Admith,/appeal-letter,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/application-component-weighting,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/billing,Content/app page,Protected (session),Signed-in student,Not in sitemap; not crawled,Page
+AdmitPath/Admith,/billing/receipts/[id],Content/app page,Protected (session),Signed-in student,Dynamic route — sampled via sitemap crawl,Page
+AdmitPath/Admith,/billing/success,Content/app page,Protected (session),Signed-in student,Not in sitemap; not crawled,Page
+AdmitPath/Admith,/blog,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/blog/[slug],Content/app page,Public,Visitor,Dynamic route — sampled via sitemap crawl,Page
+AdmitPath/Admith,/blog/feed.xml,Content/app page,Public,Visitor,Not in sitemap; not crawled,Route handler
+AdmitPath/Admith,/calculator,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/chat,Content/app page,Protected (session),Signed-in student,Local 200; Prod 200,Page
+AdmitPath/Admith,/checkout/pro,Direct Stripe checkout for Pro (new),Public entry -> auth,Visitor/student,Local 303; Prod 404,Route handler
+AdmitPath/Admith,/choose-a-major,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/college,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/college-acceptance-letter-decoder,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/college-admissions-framework-2026,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/college-application-checklist,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/college-application-timeline-2026,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/college-decision-comparison-guide,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/college-decision-day,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/college-essay-examples,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/college-essay-revision-checklist,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/college-essay-topic-finder,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/college-list-builder,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/college-rankings-explained,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/college-rejection-recovery,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/college-rejection-recovery-checklist,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/college-research-strategy,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/college-tour-checklist,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/college/[slug],Content/app page,Public,Visitor,Dynamic route — sampled via sitemap crawl,Page
+AdmitPath/Admith,/college/[slug]/why,Content/app page,Public,Visitor,Dynamic route — sampled via sitemap crawl,Page
+AdmitPath/Admith,/colleges,Content/app page,Protected (session),Signed-in student,Not in sitemap; not crawled,Page
+AdmitPath/Admith,/colleges/[slug],Content/app page,Protected (session),Signed-in student,Dynamic route — sampled via sitemap crawl,Page
+AdmitPath/Admith,/colleges/[slug]/[subpage],Content/app page,Protected (session),Signed-in student,Dynamic route — sampled via sitemap crawl,Page
+AdmitPath/Admith,/colleges/[slug]/essays,Content/app page,Protected (session),Signed-in student,Dynamic route — sampled via sitemap crawl,Page
+AdmitPath/Admith,/compare,Content/app page,Public,Visitor,Not in sitemap; not crawled,Page
+AdmitPath/Admith,/compare-scores,Content/app page,Public,Visitor,Not in sitemap; not crawled,Page
+AdmitPath/Admith,/compare/[slug],Content/app page,Public,Visitor,Dynamic route — sampled via sitemap crawl,Page
+AdmitPath/Admith,/competitions,Content/app page,Protected (Pro),Pro student,Local 200,Page
+AdmitPath/Admith,/contact,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/cookie-policy,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/counselor,Redirect -> /for-counselors,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/counselor-toolkit,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/creators,Content/app page,Public,Visitor,Not in sitemap; not crawled,Page
+AdmitPath/Admith,/dashboard,Content/app page,Protected (session),Signed-in student,Local 200; Prod 200,Page
+AdmitPath/Admith,/data/2026-admissions-trends,Content/app page,Public,Visitor,Not in sitemap; not crawled,Page
+AdmitPath/Admith,/data/common-app-trends,Content/app page,Public,Visitor,Not in sitemap; not crawled,Page
+AdmitPath/Admith,/data/essay-angle-study,Content/app page,Public,Visitor,Not in sitemap; not crawled,Page
+AdmitPath/Admith,/data/florida-admit-rates,Content/app page,Public,Visitor,Not in sitemap; not crawled,Page
+AdmitPath/Admith,/data/state-admissions-difficulty,Content/app page,Public,Visitor,Not in sitemap; not crawled,Page
+AdmitPath/Admith,/deadlines,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/decision-matrix,Content/app page,Public,Visitor,Not in sitemap; not crawled,Page
+AdmitPath/Admith,/diverse-college-list,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/essays,Content/app page,Protected (session),Signed-in student,Local 200; Prod 200,Page
+AdmitPath/Admith,/essays/[id]/versions,Content/app page,Protected (session),Signed-in student,Dynamic route — sampled via sitemap crawl,Page
+AdmitPath/Admith,/essays/topics,Content/app page,Protected (session),Signed-in student,Not in sitemap; not crawled,Page
+AdmitPath/Admith,/fafsa-checklist,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/faq,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/financial-aid-appeal-guide,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/florida/[slug],Content/app page,Public,Visitor,Dynamic route — sampled via sitemap crawl,Page
+AdmitPath/Admith,/florida/admissions-guide,Content/app page,Public,Visitor,Local 200,Page
+AdmitPath/Admith,/for-counselors,Counselor pricing + inquiry form (new),Public,Visitor,Local 200; Prod 404,Page
+AdmitPath/Admith,/for-schools,School/district pricing + inquiry form,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/for/[audience],Content/app page,Public,Visitor,Dynamic route — sampled via sitemap crawl,Page
+AdmitPath/Admith,/glossary,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/grad-school,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/grade/[grade],Content/app page,Public,Visitor,Dynamic route — sampled via sitemap crawl,Page
+AdmitPath/Admith,/guides,Content/app page,Public,Visitor,Local 200,Page
+AdmitPath/Admith,/guides/[slug],Content/app page,Public,Visitor,Dynamic route — sampled via sitemap crawl,Page
+AdmitPath/Admith,/help,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/honors-college-explained,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/how-it-works,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/how-to-get-into/[slug],Content/app page,Public,Visitor,Dynamic route — sampled via sitemap crawl,Page
+AdmitPath/Admith,/how-to-pick-a-counselor,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/icon-512.png,Content/app page,Public,Visitor,Not in sitemap; not crawled,Route handler
+AdmitPath/Admith,/international,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/interview-practice,Content/app page,Protected (Pro),Pro student,Local 200,Page
+AdmitPath/Admith,/majors/[slug]/colleges,Content/app page,Public,Visitor,Dynamic route — sampled via sitemap crawl,Page
+AdmitPath/Admith,/merit-match,Content/app page,Public,Visitor,Not in sitemap; not crawled,Page
+AdmitPath/Admith,/methodology,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/money,Content/app page,Public,Visitor,Not in sitemap; not crawled,Page
+AdmitPath/Admith,/need-blind-vs-need-aware-schools,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/net-price,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/offers,Content/app page,Public,Visitor,Not in sitemap; not crawled,Page
+AdmitPath/Admith,/offers/orders,Content/app page,Protected (session),Signed-in student,Not in sitemap; not crawled,Page
+AdmitPath/Admith,/offers/success,Content/app page,Protected (session),Signed-in student,Not in sitemap; not crawled,Page
+AdmitPath/Admith,/outcomes,Content/app page,Protected (Pro),Pro student,Local 200,Page
+AdmitPath/Admith,/parent,Content/app page,Protected (Pro),Pro student,Local 200,Page
+AdmitPath/Admith,/peer-profiles,Content/app page,Public,Visitor,Not in sitemap; not crawled,Page
+AdmitPath/Admith,/personal-statement-guide,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/press,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/pricing,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/pricing-comparison,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/pricing-faq,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/privacy,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/profile,Content/app page,Protected (session),Signed-in student,Not in sitemap; not crawled,Page
+AdmitPath/Admith,/profile/create,Content/app page,Protected (session),Signed-in student,Not in sitemap; not crawled,Page
+AdmitPath/Admith,/profile/import,Content/app page,Protected (session),Signed-in student,Not in sitemap; not crawled,Page
+AdmitPath/Admith,/quiz,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/r/[code],Referral link capture -> sign-up -> checkout,Public,Visitor,Dynamic route — sampled via sitemap crawl,Route handler
+AdmitPath/Admith,/rec-letters,Content/app page,Protected (Pro),Pro student,Local 200,Page
+AdmitPath/Admith,/refer,Content/app page,Protected (session),Signed-in student,Local 200; Prod 200,Page
+AdmitPath/Admith,/resources,Resources hub,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/resources/common-app-essay,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/resources/competitions,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/resources/demonstrated-interest,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/resources/financial-aid,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/resources/interview-prep,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/resources/rec-letters,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/resources/scholarships,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/resources/summer-programs,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/resources/supplemental-essays,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/roi,Content/app page,Public,Visitor,Not in sitemap; not crawled,Page
+AdmitPath/Admith,/scattergram/[slug],Content/app page,Public,Visitor,Dynamic route — sampled via sitemap crawl,Page
+AdmitPath/Admith,/scholarship-application-guide,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/scholarship-match,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/scholarships,Content/app page,Protected (Pro),Pro student,Local 200,Page
+AdmitPath/Admith,/scholarships-by-category,Content/app page,Protected (session),Signed-in student,Local 200; Prod 200,Page
+AdmitPath/Admith,/scholarships/[slug],Content/app page,Public,Visitor,Dynamic route — sampled via sitemap crawl,Page
+AdmitPath/Admith,/schools,Redirect -> /for-schools,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/security,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/settings,Content/app page,Protected (session),Signed-in student,Not in sitemap; not crawled,Page
+AdmitPath/Admith,/sign-in/[[...sign-in]],Content/app page,Public,Visitor,Dynamic route — sampled via sitemap crawl,Page
+AdmitPath/Admith,/sign-up/[[...sign-up]],Content/app page,Public,Visitor,Dynamic route — sampled via sitemap crawl,Page
+AdmitPath/Admith,/site-map,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/sitemap,Content/app page,Public,Visitor,Not in sitemap; not crawled,Page
+AdmitPath/Admith,/sitemap.xml,Content/app page,Public,Visitor,Local 200,Route handler
+AdmitPath/Admith,/sitemaps/[section],Content/app page,Public,Visitor,Dynamic route — sampled via sitemap crawl,Route handler
+AdmitPath/Admith,/start-trial,Content/app page,Public,Visitor,Not in sitemap; not crawled,Page
+AdmitPath/Admith,/states,Content/app page,Public,Visitor,Local 200,Page
+AdmitPath/Admith,/states/[state],Content/app page,Public,Visitor,Dynamic route — sampled via sitemap crawl,Page
+AdmitPath/Admith,/states/[state]/[subpage],Content/app page,Public,Visitor,Dynamic route — sampled via sitemap crawl,Page
+AdmitPath/Admith,/status,System status (new),Public,Visitor,Local 200; Prod 404,Page
+AdmitPath/Admith,/summer,Content/app page,Protected (Pro),Pro student,Local 200,Page
+AdmitPath/Admith,/summer-experience-strategy,Content/app page,Protected (session),Signed-in student,Local 200; Prod 200,Page
+AdmitPath/Admith,/supplemental/[slug],Content/app page,Public,Visitor,Dynamic route — sampled via sitemap crawl,Page
+AdmitPath/Admith,/terms,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/test-optional-schools-2026,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/test-prep-guide,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/this-week,Content/app page,Protected (Pro),Pro student,Local 200; Prod 200,Page
+AdmitPath/Admith,/timeline,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/tools,Tools hub,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/tools/[slug],Content/app page,Public,Visitor,Dynamic route — sampled via sitemap crawl,Page
+AdmitPath/Admith,/tracker,Content/app page,Protected (Pro),Pro student,Local 200; Prod 200,Page
+AdmitPath/Admith,/transfer-college-strategy,Content/app page,Public,Visitor,Local 200; Prod 200,Page
+AdmitPath/Admith,/undermatch,Content/app page,Public,Visitor,Not in sitemap; not crawled,Page
+AdmitPath/Admith,/unsubscribed,Content/app page,Public,Visitor,Not in sitemap; not crawled,Page
+AdmitPath/Admith,/vs-college-counselor,Content/app page,Public,Visitor,Not in sitemap; not crawled,Page
+AdmitPath/Admith,/vs/[slug],Content/app page,Public,Visitor,Dynamic route — sampled via sitemap crawl,Page
+AdmitPath/Admith,/what-if,Content/app page,Protected (Pro),Pro student,Local 200; Prod 200,Page
+AdmitPath/Admith,/why-admitpath,Content/app page,Public,Visitor,Not in sitemap; not crawled,Page
+AdmitPath/Admith,/worksheets/*,Removed pages; 308 redirect to mapped tool or /tools,Public,Visitor,Local 308,app/worksheets deleted
+CompeteAI,/,Landing page,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/about,About,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/accessibility,Accessibility,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/account,307 -> settings,Public,Anyone,Pass,local: 307 -> /dashboard/settings | prod before: 200 [200 + NEXT_REDIRECT/404 digest]
+CompeteAI,/admin,Admin (ADMIN_EMAILS),Protected (session),Admin,Pass,local: 307 -> /sign-in?redirect_url=%2Fadmin | prod before: Not crawled
+CompeteAI,/admin/contacts,Admin (ADMIN_EMAILS),Protected (session),Admin,Pass,local: 307 -> /sign-in?redirect_url=%2Fadmin%2Fcontacts | prod before: Not crawled
+CompeteAI,/admin/coupons,Admin (ADMIN_EMAILS),Protected (session),Admin,Pass,local: 307 -> /sign-in?redirect_url=%2Fadmin%2Fcoupons | prod before: Not crawled
+CompeteAI,/admin/generations,Admin (ADMIN_EMAILS),Protected (session),Admin,Pass,local: 307 -> /sign-in?redirect_url=%2Fadmin%2Fgenerations | prod before: Not crawled
+CompeteAI,/admin/mrr,Admin (ADMIN_EMAILS),Protected (session),Admin,Pass,local: 307 -> /sign-in?redirect_url=%2Fadmin%2Fmrr | prod before: Not crawled
+CompeteAI,/admin/referrals,Admin (ADMIN_EMAILS),Protected (session),Admin,Pass,local: 307 -> /sign-in?redirect_url=%2Fadmin%2Freferrals | prod before: Not crawled
+CompeteAI,/admin/users,Admin (ADMIN_EMAILS),Protected (session),Admin,Pass,local: 307 -> /sign-in?redirect_url=%2Fadmin%2Fusers | prod before: Not crawled
+CompeteAI,/api/admin/generations,Admin API (allowlisted),Protected (secret/signature/admin),Admin,Needs prod verify (auth/DB/Stripe),local: Not crawled (POST or needs session/secret) | prod before: Not crawled
+CompeteAI,/api/admin/sync-stripe-products,Admin API (allowlisted),Protected (secret/signature/admin),Admin,Needs prod verify (auth/DB/Stripe),local: Not crawled (POST or needs session/secret) | prod before: Not crawled
+CompeteAI,/api/auth/google,Google OAuth start/callback/sign-out,Public,Anyone,Pass,local: 307 -> https://competeai-c.vercel.app/sign-in?error=not_configured | prod before: Not crawled
+CompeteAI,/api/auth/google/callback,Google OAuth start/callback/sign-out,Public,Anyone,Needs prod verify (auth/DB/Stripe),local: Not crawled (POST or needs session/secret) | prod before: Not crawled
+CompeteAI,/api/auth/signout,Google OAuth start/callback/sign-out,Public,Anyone,Needs prod verify (auth/DB/Stripe),local: Not crawled (POST or needs session/secret) | prod before: Not crawled
+CompeteAI,/api/billing/status,Billing status,Protected (session),Signed-in student,Pass,local: 401 | prod before: Not crawled
+CompeteAI,/api/chat,AI coach chat (account-aware),Protected (session),Signed-in student,Needs prod verify (auth/DB/Stripe),local: Not crawled (POST or needs session/secret) | prod before: Not crawled
+CompeteAI,/api/contact,Contact + school inquiry form (saved to DB),Public,Anyone,Needs prod verify (auth/DB/Stripe),local: Not crawled (POST or needs session/secret) | prod before: Not crawled
+CompeteAI,/api/coupon,Coupon redemption,Protected (session),Signed-in student,Needs prod verify (auth/DB/Stripe),local: Not crawled (POST or needs session/secret) | prod before: Not crawled
+CompeteAI,/api/coupon/redeem,Coupon redemption,Protected (session),Signed-in student,Needs prod verify (auth/DB/Stripe),local: Not crawled (POST or needs session/secret) | prod before: Not crawled
+CompeteAI,/api/coupons,Coupon redemption,Protected (session),Signed-in student,Needs prod verify (auth/DB/Stripe),local: Not crawled (POST or needs session/secret) | prod before: Not crawled
+CompeteAI,/api/cron/daily-nudges,Vercel cron jobs (CRON_SECRET),Protected (secret/signature/admin),Vercel cron,Needs prod verify (auth/DB/Stripe),local: Not crawled (POST or needs session/secret) | prod before: Not crawled
+CompeteAI,/api/cron/data-cleanup,Vercel cron jobs (CRON_SECRET),Protected (secret/signature/admin),Vercel cron,Needs prod verify (auth/DB/Stripe),local: Not crawled (POST or needs session/secret) | prod before: Not crawled
+CompeteAI,/api/cron/weekly-progress,Vercel cron jobs (CRON_SECRET),Protected (secret/signature/admin),Vercel cron,Needs prod verify (auth/DB/Stripe),local: Not crawled (POST or needs session/secret) | prod before: Not crawled
+CompeteAI,/api/grade-roleplay,"Role-play grading (official PIs, per-PI 0-5)",Protected (session),Signed-in student,Needs prod verify (auth/DB/Stripe),local: Not crawled (POST or needs session/secret) | prod before: Not crawled
+CompeteAI,/api/health,Health check (DB),Public,Anyone,Expected 503 locally (no DB),local: 503 | prod before: Not crawled
+CompeteAI,/api/log-client-error,Client error reporting,Public,Anyone,Needs prod verify (auth/DB/Stripe),local: Not crawled (POST or needs session/secret) | prod before: Not crawled
+CompeteAI,/api/me/access,Viewer access/export/delete/settings,Protected (session),Signed-in student,Pass,local: 401 | prod before: Not crawled
+CompeteAI,/api/me/delete,Viewer access/export/delete/settings,Protected (session),Signed-in student,Needs prod verify (auth/DB/Stripe),local: Not crawled (POST or needs session/secret) | prod before: Not crawled
+CompeteAI,/api/me/export,Viewer access/export/delete/settings,Protected (session),Signed-in student,Needs prod verify (auth/DB/Stripe),local: Not crawled (POST or needs session/secret) | prod before: Not crawled
+CompeteAI,/api/me/notifications,Viewer access/export/delete/settings,Protected (session),Signed-in student,Needs prod verify (auth/DB/Stripe),local: Not crawled (POST or needs session/secret) | prod before: Not crawled
+CompeteAI,/api/me/onboarding-status,Viewer access/export/delete/settings,Protected (session),Signed-in student,Needs prod verify (auth/DB/Stripe),local: Not crawled (POST or needs session/secret) | prod before: Not crawled
+CompeteAI,/api/me/session,Public viewer status (nav/popup),Public,Anyone,Pass,local: 200 | prod before: Not crawled
+CompeteAI,/api/me/target,Viewer access/export/delete/settings,Protected (session),Signed-in student,Needs prod verify (auth/DB/Stripe),local: Not crawled (POST or needs session/secret) | prod before: Not crawled
+CompeteAI,/api/og,Open Graph image,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/api/onboarding,Onboarding save,Protected (session),Signed-in student,Needs prod verify (auth/DB/Stripe),local: Not crawled (POST or needs session/secret) | prod before: Not crawled
+CompeteAI,/api/practice/[id],Practice test generate/submit/read,Protected (session),Signed-in student,Needs prod verify (auth/DB/Stripe),local: Not crawled (POST or needs session/secret) | prod before: Not crawled
+CompeteAI,/api/practice/generate,Practice test generate/submit/read,Protected (session),Signed-in student,Needs prod verify (auth/DB/Stripe),local: Not crawled (POST or needs session/secret) | prod before: Not crawled
+CompeteAI,/api/practice/submit,Practice test generate/submit/read,Protected (session),Signed-in student,Needs prod verify (auth/DB/Stripe),local: Not crawled (POST or needs session/secret) | prod before: Not crawled
+CompeteAI,/api/profile,Profile,Protected (session),Signed-in student,Needs prod verify (auth/DB/Stripe),local: Not crawled (POST or needs session/secret) | prod before: Not crawled
+CompeteAI,/api/question-bank/catalog,Event catalog,Public,Anyone,Pass,local: 200 | prod before: Not crawled
+CompeteAI,/api/referral,Referral link stats/apply,Protected (session),Signed-in student,Needs prod verify (auth/DB/Stripe),local: Not crawled (POST or needs session/secret) | prod before: Not crawled
+CompeteAI,/api/referrals,Referral link stats/apply,Protected (session),Signed-in student,Pass,local: 401 | prod before: Not crawled
+CompeteAI,/api/roleplay/attempts,Saved role-play attempts,Protected (session),Signed-in student,Needs prod verify (auth/DB/Stripe),local: Not crawled (POST or needs session/secret) | prod before: Not crawled
+CompeteAI,/api/roleplay/attempts/[id],Saved role-play attempts,Protected (session),Signed-in student,Needs prod verify (auth/DB/Stripe),local: Not crawled (POST or needs session/secret) | prod before: Not crawled
+CompeteAI,/api/stripe/billing-portal,Stripe checkout/settle/billing portal,Protected (session),Signed-in student,Needs prod verify (auth/DB/Stripe),local: Not crawled (POST or needs session/secret) | prod before: Not crawled
+CompeteAI,/api/stripe/checkout,Stripe checkout/settle/billing portal,Protected (session),Signed-in student,Needs prod verify (auth/DB/Stripe),local: Not crawled (POST or needs session/secret) | prod before: Not crawled
+CompeteAI,/api/stripe/create-checkout,Stripe checkout/settle/billing portal,Protected (session),Signed-in student,Needs prod verify (auth/DB/Stripe),local: Not crawled (POST or needs session/secret) | prod before: Not crawled
+CompeteAI,/api/stripe/one-time-checkout,Stripe checkout/settle/billing portal,Protected (session),Signed-in student,Needs prod verify (auth/DB/Stripe),local: Not crawled (POST or needs session/secret) | prod before: Not crawled
+CompeteAI,/api/stripe/settle,Stripe checkout/settle/billing portal,Protected (session),Signed-in student,Needs prod verify (auth/DB/Stripe),local: Not crawled (POST or needs session/secret) | prod before: Not crawled
+CompeteAI,/api/stripe/webhook,"Stripe webhook (signature-verified, idempotent)",Protected (secret/signature/admin),Stripe,Needs prod verify (auth/DB/Stripe),local: Not crawled (POST or needs session/secret) | prod before: Not crawled
+CompeteAI,/api/trial/start,Free plan activation,Protected (session),Signed-in student,Needs prod verify (auth/DB/Stripe),local: Not crawled (POST or needs session/secret) | prod before: Not crawled
+CompeteAI,/author/founder,Author page,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/billing,307 -> settings,Public,Anyone,Pass,local: 307 -> /dashboard/settings | prod before: 200 [200 + NEXT_REDIRECT/404 digest]
+CompeteAI,/blog,Blog,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/blog/[slug],Blog,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/blog/feed.xml,Blog,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/chapters,Alias of /schools,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/clusters,Cluster SEO pages,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/clusters/[cluster],Cluster SEO pages,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/contact,Contact form,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/cookie-policy,Cookie policy,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/dashboard,Signed-in dashboard,Protected (session),Signed-in student,Pass,local: 307 -> /sign-in?redirect_url=%2Fdashboard | prod before: 307
+CompeteAI,/dashboard/history,Test history (Pro),Protected (session),Signed-in student,Pass,local: 307 -> /sign-in?redirect_url=%2Fdashboard%2Fhistory | prod before: 307
+CompeteAI,/dashboard/leaderboard,Leaderboard (Pro),Protected (session),Signed-in student,Pass,local: 307 -> /sign-in?redirect_url=%2Fdashboard%2Fleaderboard | prod before: 307
+CompeteAI,/dashboard/new-test,Signed-in dashboard,Protected (session),Signed-in student,Needs prod verify (auth/DB/Stripe),local: Not crawled | prod before: Not crawled
+CompeteAI,/dashboard/practice,Generate practice test,Protected (session),Signed-in student,Pass,local: 307 -> /sign-in?redirect_url=%2Fdashboard%2Fpractice | prod before: 307
+CompeteAI,/dashboard/results/[id],Practice test results,Protected (session),Signed-in student,Pass,local: 307 -> /sign-in?redirect_url=%2Fdashboard%2Fresults%2Fabc | prod before: Not crawled
+CompeteAI,/dashboard/roleplay,Role-play practice + voice judge,Protected (session),Signed-in student,Pass,local: 307 -> /sign-in?redirect_url=%2Fdashboard%2Froleplay | prod before: 307
+CompeteAI,/dashboard/settings,Settings/billing/sign out,Protected (session),Signed-in student,Pass,local: 307 -> /sign-in?redirect_url=%2Fdashboard%2Fsettings | prod before: 307
+CompeteAI,/dashboard/test/[id],Take practice test,Protected (session),Signed-in student,Pass,local: 307 -> /sign-in?redirect_url=%2Fdashboard%2Ftest%2Fabc | prod before: Not crawled
+CompeteAI,/dashboard/written,Written & presentation event workspace,Protected (session),Signed-in student,Pass,local: 307 -> /sign-in?redirect_url=%2Fdashboard%2Fwritten | prod before: 307
+CompeteAI,/dashboard/written/[code],Written & presentation event workspace,Protected (session),Signed-in student,Pass,local: 307 -> /sign-in?redirect_url=%2Fdashboard%2Fwritten%2FEBG | prod before: 307
+CompeteAI,/data/icdc-winner-analysis,Retired (308 -> /resources),Public,Anyone,Pass,local: 308 -> /resources | prod before: 200 [200 + NEXT_REDIRECT/404 digest]
+CompeteAI,/data/state-of-competition-2026,Retired (308 -> /resources),Public,Anyone,Pass,local: 308 -> /resources | prod before: 200 [200 + NEXT_REDIRECT/404 digest]
+CompeteAI,/deca,DECA hub,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/deca/aam-apparel-and-accessories-marketing,DECA event SEO guide,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/deca/above-and-beyond-strategy,DECA event SEO guide,Public,Anyone,Pass,local: 308 -> /guides/above-and-beyond-strategy | prod before: 200 [200 + NEXT_REDIRECT/404 digest]
+CompeteAI,/deca/act-accounting-applications,DECA event SEO guide,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/deca/asm-automotive-services-marketing,DECA event SEO guide,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/deca/bfs-business-finance,DECA event SEO guide,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/deca/bsm-business-services-marketing,DECA event SEO guide,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/deca/btdm-buying-and-merchandising,DECA event SEO guide,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/deca/deca-framework-guide,DECA event SEO guide,Public,Anyone,Pass,local: 308 -> /guides/deca-framework | prod before: 200 [200 + NEXT_REDIRECT/404 digest]
+CompeteAI,/deca/ent-entrepreneurship,DECA event SEO guide,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/deca/fms-food-marketing,DECA event SEO guide,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/deca/ftdm-financial-consulting,DECA event SEO guide,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/deca/hlm-hotel-and-lodging,DECA event SEO guide,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/deca/hrm-human-resources-management,DECA event SEO guide,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/deca/htdm-hospitality-services,DECA event SEO guide,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/deca/icdc-prep-guide,DECA event SEO guide,Public,Anyone,Pass,local: 308 -> /guides/icdc-prep | prod before: 200 [200 + NEXT_REDIRECT/404 digest]
+CompeteAI,/deca/judge-psychology,DECA event SEO guide,Public,Anyone,Pass,local: 308 -> /guides/judge-psychology | prod before: 200 [200 + NEXT_REDIRECT/404 digest]
+CompeteAI,/deca/marketing-cluster-exam,DECA event SEO guide,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/deca/mtdm-marketing-communications,DECA event SEO guide,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/deca/pbm-principles-of-business-management,DECA event SEO guide,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/deca/pfn-principles-of-finance,DECA event SEO guide,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/deca/pht-principles-of-hospitality,DECA event SEO guide,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/deca/pmk-principles-of-marketing,DECA event SEO guide,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/deca/practice-tests,DECA event SEO guide,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/deca/qsrm-quick-serve-restaurant,DECA event SEO guide,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/deca/rfsm-restaurant-food-service,DECA event SEO guide,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/deca/rms-retail-merchandising,DECA event SEO guide,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/deca/roleplay-grading,DECA event SEO guide,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/deca/sem-sports-and-entertainment,DECA event SEO guide,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/deca/stdm-sports-entertainment-marketing,DECA event SEO guide,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/deca/ttdm-travel-and-tourism,DECA event SEO guide,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/deca/written-events,Public written/presentation events guide,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/difficulty/[level],Difficulty SEO pages,Public,Anyone,Pass,local: 200 | prod before: Not crawled
+CompeteAI,/events,Legacy event aliases (308),Public,Anyone,Pass,local: 308 -> /deca | prod before: 200 [200 + NEXT_REDIRECT/404 digest]
+CompeteAI,/events/[slug],Legacy event aliases (308),Public,Anyone,Pass,local: 308 -> /deca/mtdm-marketing-communications | prod before: 200 [200 + NEXT_REDIRECT/404 digest]
+CompeteAI,/faq,FAQ,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/favicon.ico,Favicon,Public,Anyone,Pass,local: 308 -> /icon | prod before: 308
+CompeteAI,/guides/above-and-beyond,Guides,Public,Anyone,Pass,local: 308 -> /guides/above-and-beyond-strategy | prod before: 308
+CompeteAI,/guides/above-and-beyond-strategy,Guides,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/guides/deca-framework,Guides,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/guides/icdc-prep,Guides,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/guides/judge-psychology,Guides,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/help,Help,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/icon-large,App icon,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/legal/privacy,Legal,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/legal/terms,Legal,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/new-test,Redirect to practice,Public,Anyone,Pass,local: 307 -> /dashboard/practice | prod before: 307
+CompeteAI,/offers,One-time offers,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/offers/deca-prep-pack,One-time offers,Protected (session),Signed-in student,Pass,local: 307 -> /sign-in?redirect_url=%2Foffers%2Fdeca-prep-pack | prod before: 200 [200 + NEXT_REDIRECT/404 digest]
+CompeteAI,/offers/orders,One-time offers,Protected (session),Signed-in student,Pass,local: 307 -> /sign-in?redirect_url=%2Foffers%2Forders | prod before: 200 [200 + NEXT_REDIRECT/404 digest]
+CompeteAI,/offers/success,One-time offers,Protected (session),Signed-in student,Pass,local: 307 -> /sign-in?redirect_url=%2Foffers%2Fsuccess | prod before: 200 [200 + NEXT_REDIRECT/404 digest]
+CompeteAI,/onboarding,Onboarding wizard,Protected (session),Signed-in student,Pass,local: 307 -> /sign-in?redirect_url=%2Fonboarding | prod before: 200
+CompeteAI,/practice,Practice SEO pages,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/practice/[event]/[level]/[state],Practice SEO pages,Public,Anyone,Pass (404 for invalid sample slug),local: 404 | prod before: Not crawled
+CompeteAI,/pricing,Pricing,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/privacy,308 -> /legal/privacy,Public,Anyone,Pass,local: 308 -> /legal/privacy | prod before: 308
+CompeteAI,/r/[code],Referral entry (redirect only),Public,Anyone,Pass,local: 307 -> /sign-up?ref=11225607&plan=pro | prod before: 307
+CompeteAI,/refer,Referral link page,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/refer-a-chapter,308 -> /schools,Public,Anyone,Pass,local: 308 -> /schools | prod before: 200 [200 + NEXT_REDIRECT/404 digest]
+CompeteAI,/resources,Resources,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/roleplay,Public role-play landing,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/schools,Schools/district pricing + inquiry form,Public,Anyone,Pass,local: 200 | prod before: 200 [200 + NEXT_REDIRECT/404 digest]
+CompeteAI,/sign-in/[[...sign-in]],Sign in,Public,Anyone,Pass,local: 200 | prod before: Not crawled
+CompeteAI,/sign-up/[[...sign-up]],Create account (+referral banner),Public,Anyone,Pass,local: 200 | prod before: Not crawled
+CompeteAI,/site-map,HTML sitemap,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/sitemap,Sitemap,Public,Anyone,Pass,local: 308 -> /site-map | prod before: 308
+CompeteAI,/sitemap.xml,Sitemap,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/sitemaps/[name],Sitemap,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/states,State SEO pages,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/states/[state],State SEO pages,Public,Anyone,Pass,local: 200 | prod before: Not crawled
+CompeteAI,/states/[state]/[...org],State SEO pages,Public,Anyone,Pass,local: 307 -> /states/texas | prod before: Not crawled
+CompeteAI,/terms,308 -> /legal/terms,Public,Anyone,Pass,local: 308 -> /legal/terms | prod before: 308
+CompeteAI,/tools/pi-quiz,PI quiz,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/upgrade,Direct Stripe checkout launcher,Public,Anyone,Pass,local: 200 | prod before: 200
+CompeteAI,/vs/competeai-vs-chatgpt,Retired (308 -> /pricing),Public,Anyone,Pass,local: 308 -> /pricing | prod before: 200 [200 + NEXT_REDIRECT/404 digest]
+CompeteAI,/vs/competeai-vs-deca-org,Retired (308 -> /pricing),Public,Anyone,Pass,local: 308 -> /pricing | prod before: 200 [200 + NEXT_REDIRECT/404 digest]
+CompeteAI,/vs/competeai-vs-flashcards,Retired (308 -> /pricing),Public,Anyone,Pass,local: 308 -> /pricing | prod before: 200 [200 + NEXT_REDIRECT/404 digest]
+CompeteAI,/vs/competeai-vs-prilo,Retired (308 -> /pricing),Public,Anyone,Pass,local: 308 -> /pricing | prod before: 200 [200 + NEXT_REDIRECT/404 digest]
+CompeteAI,/vs/competeai-vs-quizlet,Retired (308 -> /pricing),Public,Anyone,Pass,local: 308 -> /pricing | prod before: 200 [200 + NEXT_REDIRECT/404 digest]
+CompeteAI,/vs/competeai-vs-studying-alone,Retired (308 -> /pricing),Public,Anyone,Pass,local: 308 -> /pricing | prod before: 200 [200 + NEXT_REDIRECT/404 digest]
+CompeteAI,/vs/competeai-vs-youtube-deca,Retired (308 -> /pricing),Public,Anyone,Pass,local: 308 -> /pricing | prod before: 200 [200 + NEXT_REDIRECT/404 digest]
