@@ -72,7 +72,8 @@ export async function createProCheckoutSession(
       metadata: { userId: user.id, planId: "pro", ...(discount ? { referralId: discount.referralId } : {}) },
       subscription_data: {
         metadata: { userId: user.id, planId: "pro" },
-        ...(trialDays ? { trial_period_days: trialDays } : {}),
+        // Referred users get their 50%-off first month instead of the trial (offers don't stack).
+        ...(trialDays && !discount ? { trial_period_days: trialDays } : {}),
       },
       // Stripe forbids allow_promotion_codes together with discounts.
       ...(discount
