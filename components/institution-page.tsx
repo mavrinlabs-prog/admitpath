@@ -109,7 +109,7 @@ export function InstitutionPage({
           Request pricing
         </h2>
         <p className="mb-6 mt-1 text-sm leading-relaxed" style={{ color: "var(--dl-text-secondary, #454B5E)" }}>
-          Tell us about your {audience === "counselor" ? "students and caseload" : "school or district"} and we&apos;ll reply with a quote.
+          {`Tell us about your ${audience === "counselor" ? "students and caseload" : "school or district"} and we'll reply with a quote.`}
         </p>
         <SchoolInquiryForm audience={audience} sourcePage={sourcePage} initialStatus={inquiryStatus} />
       </section>
