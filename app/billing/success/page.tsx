@@ -15,6 +15,7 @@
  * note. The /billing page mount also calls /api/billing/sync defensively.
  */
 import type { Metadata } from "next";
+import { subscriptionGrantsPro } from "@/lib/billing-trial";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ArrowRight, Check, Crown } from "lucide-react";
@@ -60,7 +61,7 @@ export default async function BillingSuccessPage() {
         status: "all",
         limit: 5,
       });
-      const live = subs.data.find((s) => s.status === "active");
+      const live = subs.data.find((s) => subscriptionGrantsPro(s.status));
       if (live) {
         const priceId = live.items.data[0]?.price.id;
         const planId = resolvePlan(priceId);

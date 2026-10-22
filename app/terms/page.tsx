@@ -43,6 +43,7 @@ const termsSchema = {
   ],
 };
 
+// LEGAL REVIEW NEEDED (2026-10-22): 7-day free-trial automatic-renewal disclosure (state auto-renewal laws).
 // LEGAL REVIEW NEEDED (2026-10-18): referral, billing/discount, school
 // agreement, AI-output, and limitation-of-liability language below was drafted
 // for clarity by engineering and must be reviewed by counsel before relying on
@@ -66,7 +67,7 @@ const sections = [
   },
   {
     h: "5. Plans, billing, and cancellation",
-    p: "The Free plan is $0 with usage limits shown in the product. Pro is $19.99 per month, billed in advance through Stripe until you cancel. You can cancel any time from Billing; access continues through the end of the paid period. Prices may change with advance notice for future billing periods.",
+    p: "The Free plan is $0 with usage limits shown in the product. Pro is $19.99 per month, billed in advance through Stripe until you cancel. Your first Pro subscription starts with a 7-day free trial; a payment card is required, and you are charged $19.99 when the trial ends unless you cancel before then. The trial is offered once per customer. You can cancel any time from Billing; access continues through the end of the paid period. Prices may change with advance notice for future billing periods.",
   },
   {
     h: "6. Refunds",

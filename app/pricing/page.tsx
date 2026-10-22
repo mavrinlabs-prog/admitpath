@@ -37,7 +37,7 @@ const plans = [
     name: "Pro",
     priceMonthly: "$19.99",
     period: "/ month",
-    tagline: "Everything you need to plan and iterate",
+    tagline: "7-day free trial, then $19.99/month",
     icon: Crown,
     color: "var(--dl-brand, #4A6FA5)",
     gradient: "var(--dl-brand, #4A6FA5)",
@@ -50,7 +50,7 @@ const plans = [
       { icon: Zap, text: "Weekly AI progress check-ins" },
       { icon: Sparkles, text: "All current student planning tools" },
     ],
-    cta: "Subscribe to Pro",
+    cta: "Start 7-day free trial",
     subCta: "Powered by Stripe",
     highlighted: true,
   },
@@ -64,7 +64,7 @@ const TRUST_ITEMS = [
 
 const pricingFAQs = [
   { q: "What does the Free plan include?", a: "Sign up with just an email. You get 5 profile analyses, 5 essay reviews, 5 counselor chat messages, and up to 8 saved colleges — no time limit." },
-  { q: "What changes when I upgrade to Pro?", a: "Pro removes the Free-plan usage caps for analyses, essay feedback, counselor chat, and college saves, and unlocks the current personalized planning tools for $19.99 per month. Automated abuse controls and the Terms still apply." },
+  { q: "What changes when I upgrade to Pro?", a: "Pro removes the Free-plan usage caps for analyses, essay feedback, counselor chat, and college saves, and unlocks the current personalized planning tools for $19.99 per month after a 7-day free trial (first subscription only; card required, cancel before the trial ends to avoid the charge). Automated abuse controls and the Terms still apply." },
   { q: "What does Pro include?", a: "Pro includes profile analysis, essay feedback on 6 dimensions, AI counselor chat, personalized planning, progress history, and the full college-list builder without the Free-plan caps." },
   { q: "How do I manage my subscription?", a: "Manage your subscription directly from your billing settings. If you have an issue, email maestro.committee@gmail.com and we'll sort it out." },
   { q: "What happens when I hit my Free plan limits?", a: "You'll see exactly what insights you're missing — blurred previews of the full analysis. Your data, college list, and past scores are preserved. Upgrade anytime to pick up right where you left off." },
