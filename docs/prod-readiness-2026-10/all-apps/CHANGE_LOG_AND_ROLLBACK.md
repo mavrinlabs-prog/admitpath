@@ -134,3 +134,24 @@ Undo: `git revert -m 1 e0cd2fb17e834d5d02529dd08a59991397b64e3d` (revert this be
 95b2515 feat(results): redesign practice test results page (C25)
 d5a6d90 docs(prod-readiness): mark C22 chat widget and C25 results page done-needs-prod-verify
 ```
+
+## 6. Changes on 2026-10-22
+
+### Git (each is one merge commit; undo with `git revert -m 1 <sha>`)
+| Repo | Merge | What |
+|---|---|---|
+| worksheetgen | `f086600` | 7-day free trial on a customer's first Pro subscription (trialing grants Pro; referred users get 50% off instead; pricing/Terms copy) |
+| admitpath | `cefe5cd` | Same 7-day trial (webhook, billing sync, success page, checkout, pricing/Terms) |
+| admitpath | `55a9534` | Copy fix: missing space in the school/counselor inquiry intro |
+| competeai | `5d64447` | Same 7-day trial (subscription state, checkout policy incl. no_payment_required trial checkouts, pricing/Terms) |
+
+### Vercel / databases (not in git)
+| Change | Undo |
+|---|---|
+| Accepted Neon marketplace terms on team arunningidiots-projects (owner authorized "create databases") | Uninstall Neon integration in Vercel dashboard |
+| Created free Neon Postgres: worksheetgen-mavrin-db, admitpath-mavrin-db, competeai-mavrin-db (iad1), connected to each project (sets DATABASE_URL, DATABASE_URL_UNPOOLED, POSTGRES_*) | `npx vercel integration resource delete <name>` |
+| Env vars DIRECT_URL (= unpooled URL) and ADMIN_EMAILS (owner's email) on production + preview for all three | `npx vercel env rm <NAME> <env>` |
+| Created each app's full schema from schema.prisma (prisma migrate diff → applied over Neon HTTPS; port 5432 is filtered on this network) and recorded existing migrations as applied in _prisma_migrations | Delete the Neon database |
+| Production deploys of the commits above: worksheetgen (first successful deploy), admitpath, competeai | `npx vercel rollback` |
+| Test data: one "QA TEST … (delete me)" school inquiry in each database | Delete those rows from admin / SQL |
+| Attempted Stripe sandbox creation — blocked until a human accepts Stripe's terms in the Vercel dashboard; nothing created | n/a |
