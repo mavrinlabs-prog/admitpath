@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { subscriptionGrantsPro } from "@/lib/billing-trial";
 import { stripe, resolvePlan } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
 import { sendPaymentConfirmationEmail, sendPaymentFailedEmail, sendReferralRewardEmail, sendWinBackEmail } from "@/lib/email";
@@ -105,9 +106,10 @@ async function reconcileSubscriptionSnapshot(
     if (manualProtected) {
       accessGranted = true;
       userData = {
-        stripeSubscriptionId: status === "active" ? sub.id : null,
+        stripeSubscriptionId: subscriptionGrantsPro(status) ? sub.id : null,
       };
-    } else if (status === "active") {
+    } else if (status === "active" || (status === "trialing" && !legacyTrial?.endsAt)) {
+      // Paid subscriptions and Stripe-managed 7-day trials grant Pro.
       accessGranted = true;
       userData = {
         plan: planId,
@@ -380,7 +382,7 @@ export async function POST(req: Request) {
           !targetUser ||
           targetUser.stripeCustomerId !== customerId ||
           subscriptionCustomerId !== customerId ||
-          subscription.status !== "active" ||
+          !subscriptionGrantsPro(subscription.status) ||
           subscription.metadata?.userId !== userId ||
           subscription.metadata?.planId !== "pro" ||
           subscriptionPlan !== "pro"
@@ -599,7 +601,7 @@ export async function POST(req: Request) {
           return NextResponse.json({ error: "Invoice account mapping unavailable" }, { status: 500 });
         }
         const result = await reconcileSubscriptionSnapshot(sub, userId, planId);
-        if (sub.status !== "active") {
+        if (!subscriptionGrantsPro(sub.status)) {
           console.warn("[stripe/webhook] invoice.paid did not grant Stripe access", {
             subId,
             userId,

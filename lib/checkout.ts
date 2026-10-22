@@ -1,4 +1,5 @@
 import { stripe, PLANS } from "@/lib/stripe";
+import { PRO_TRIAL_DAYS, isEligibleForProTrial } from "@/lib/billing-trial";
 import { prisma } from "@/lib/prisma";
 import { getAppBaseUrl } from "@/lib/app-url";
 import { effectivePlan, type EffectivePlanUser } from "@/lib/utils";
@@ -54,6 +55,10 @@ export async function createProCheckoutSession(
       console.error("[checkout] referral discount unavailable", { name: error instanceof Error ? error.name : "UnknownError" });
     }
 
+    // 7-day free trial only on the customer's first-ever subscription (card still required).
+    const previousSubscriptions = await stripe.subscriptions.list({ customer: customerId, status: "all", limit: 1 });
+    const trialDays = isEligibleForProTrial(previousSubscriptions.data.length) ? PRO_TRIAL_DAYS : undefined;
+
     const appUrl = getAppBaseUrl();
     const cancelPath = options.cancelPath && options.cancelPath.startsWith("/") && !options.cancelPath.startsWith("//")
       ? options.cancelPath
@@ -65,7 +70,10 @@ export async function createProCheckoutSession(
       success_url: `${appUrl}/billing/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${appUrl}${cancelPath}${cancelPath.includes("?") ? "&" : "?"}cancelled=1`,
       metadata: { userId: user.id, planId: "pro", ...(discount ? { referralId: discount.referralId } : {}) },
-      subscription_data: { metadata: { userId: user.id, planId: "pro" } },
+      subscription_data: {
+        metadata: { userId: user.id, planId: "pro" },
+        ...(trialDays ? { trial_period_days: trialDays } : {}),
+      },
       // Stripe forbids allow_promotion_codes together with discounts.
       ...(discount
         ? { discounts: [{ promotion_code: discount.promotionCodeId }] }

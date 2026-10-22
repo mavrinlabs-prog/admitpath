@@ -18,6 +18,7 @@
  *     price doesn't match either env var.
  */
 import { NextResponse } from "next/server";
+import { subscriptionGrantsPro } from "@/lib/billing-trial";
 import { stripe, resolvePlan } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/api-helpers";
@@ -49,14 +50,14 @@ export async function POST() {
     return NextResponse.json({ synced: false, reason: "no_customer" });
   }
 
-  // Only an active paid subscription grants Pro. Trials are retired.
+  // Active subscriptions and Stripe-managed 7-day trials grant Pro.
   const subs = await stripe.subscriptions.list({
     customer: user.stripeCustomerId,
     status: "all",
     limit: 5,
   });
 
-  const live = subs.data.find((s) => s.status === "active");
+  const live = subs.data.find((s) => subscriptionGrantsPro(s.status));
 
   if (!live) {
     // No active sub — make sure we're not pretending they're paid.
