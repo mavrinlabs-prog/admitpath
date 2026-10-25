@@ -17,10 +17,8 @@ export async function GET(req: NextRequest) {
 
   const clientId = cleanEnv(process.env.GOOGLE_CLIENT_ID);
   if (!clientId) {
-    return NextResponse.json(
-      { error: "Google sign-in is temporarily unavailable." },
-      { status: 503 },
-    );
+    console.error("[auth/google] GOOGLE_CLIENT_ID is not configured");
+    return NextResponse.redirect(new URL("/sign-in?error=not_configured", getAppBaseUrl()));
   }
 
   const baseUrl = getAppBaseUrl();

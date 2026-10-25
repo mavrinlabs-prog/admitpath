@@ -78,6 +78,7 @@ export default async function SignInPage({
     device_locked: "Another account is already signed in in this browser. Sign out first, then choose a different account.",
     account_sync_failed: "We could not safely finish syncing your account. No session was created. Please try again in a moment.",
     rate_limited: "Too many sign-in attempts were received. Wait a minute and try again.",
+    not_configured: "Google sign-in is temporarily unavailable. Please try again shortly.",
     invalid_state: "That sign-in request expired or could not be verified. Start the sign-in process again.",
     token_failed: "Google could not complete the sign-in exchange. Please try again.",
     userinfo_failed: "Google signed you in, but your account details could not be loaded. Please try again.",
