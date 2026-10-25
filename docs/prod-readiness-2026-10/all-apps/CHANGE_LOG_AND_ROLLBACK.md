@@ -155,3 +155,14 @@ d5a6d90 docs(prod-readiness): mark C22 chat widget and C25 results page done-nee
 | Production deploys of the commits above: worksheetgen (first successful deploy), admitpath, competeai | `npx vercel rollback` |
 | Test data: one "QA TEST … (delete me)" school inquiry in each database | Delete those rows from admin / SQL |
 | Attempted Stripe sandbox creation — blocked until a human accepts Stripe's terms in the Vercel dashboard; nothing created | n/a |
+
+## 7. Google sign-in setup (2026-10-24/25)
+| Change | Undo |
+|---|---|
+| Google Cloud project **Mavrin Labs Apps** (id `virtual-primer-512512-q4`) under the owner's Google account | Delete the project in Google Cloud console |
+| OAuth consent screen: app name "Mavrin Labs", External, **Testing** mode; owner accepted Google's API User Data Policy | Edit in Google Auth Platform → Branding/Audience |
+| OAuth web client "Mavrin Labs web (WorksheetGen, AdmitPath, CompeteAI)" with redirect URIs https://{worksheetgen,admitpath,competeai}-mavrin.vercel.app/api/auth/google/callback | Delete the client under Clients |
+| Test user: owner's email (only test users can sign in while in Testing mode; cap 100) | Remove under Audience → Test users |
+| Env vars GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET on production + preview of all three Vercel projects (secret is not stored anywhere in git) | `npx vercel env rm GOOGLE_CLIENT_SECRET production` etc. |
+| Git: worksheetgen merge `cc74eed`, admitpath merge `c1df569` — unconfigured Google sign-in now shows the sign-in page message instead of raw JSON mentioning .env.local | `git revert -m 1 <sha>` |
+| Verified: /api/auth/google on all three redirects to accounts.google.com with the new client, the correct callback URL and a state token | — |
